@@ -10,21 +10,21 @@
 # zpk = ss2zpk(ss)
 # tf = zpk2tf(zpk)
 # ss = zpk2ss(zpk, form='reachable')
-# zpkout = zpkfeedback(zpkP, zpkC, sys='S')
-# tfout = tffeedback(tfP, tfC, sys='S')
+# frd = sys2frd(sys, freq)
+# sys = feedback(sysP, sysC, sys='S')
 # frdout = frdfeedback(frdP, frdC, sys='S')
-# frd = tf2frd(tf, freq)
-# frd = zpk2frd(zpk, freq):
-# sys = pid(zeta1, freq1, zeta2, freq2, M, C, K, Ts=None, method='tustin')
-# sys = pl1st(freq1, freq2, Ts=None, method='tustin')
-# sys = pl2nd(zeta1, freq1, zeta2, freq2, Ts=None, method='tustin')
-# sys = lpf1st(freq, Ts=None, method='tustin')
-# sys = hpf1st(freq, Ts=None, method='tustin')
-# sys = lpf2nd(freq, zeta, Ts=None, method='tustin')
-# sys = hpf2nd(freq, zeta, Ts=None, method='tustin')
-# sys = nf(freq, zeta, depth, Ts=None, method='matched')
-# sys = pf(freq, zeta, k, phi, Ts=None, method='matched')
-# sys = pfopt(freq, zeta, kpdb, sysT, Ts=None, method='matched')
+# sysD = c2d_matched(sysC, dt)
+# sys = pid(zeta1, freq1, zeta2, freq2, M, C, K, dt=None, method='tustin')
+# sys = pl1st(freq1, freq2, dt=None, method='tustin')
+# sys = pl2nd(zeta1, freq1, zeta2, freq2, dt=None, method='tustin')
+# sys = lpf1st(freq, dt=None, method='tustin')
+# sys = hpf1st(freq, dt=None, method='tustin')
+# sys = lpf2nd(freq, zeta, dt=None, method='tustin')
+# sys = hpf2nd(freq, zeta, dt=None, method='tustin')
+# sys = nf(freq, zeta, depth, dt=None, method='matched')
+# sys = pf(freq, zeta, k, phi, dt=None, method='matched')
+# sys = pfopt(freq, zeta, kpdb, sysT, dt=None, method='matched')
+# freq, zeta, k, phi = pfoptparam(freq, zeta, depth, sysT, dt=None, method='tustin')
 
 
 import math
@@ -47,7 +47,7 @@ class ZpkModel():
         self.p = np.array(poles)
         if len(compz) > 0:
             print('The common pole-zeros of the zpk model have been deleted.')
-        self.k = gain
+        self.k = np.real(gain)
         self.dt = dt
 
     def __repr__(self):
@@ -293,21 +293,43 @@ def zpk2ss(zpk, form='reachable'):
     return tf2ss(tf, form)
 
 
-def zpkfeedback(zpkP, zpkC, sys='S'):
+def sys2frd(sys, freq):
+    if type(sys) == ZpkModel:
+        sys = zpk2tf(sys)
+    mag, phase, omega = matlab.freqresp(sys, freq*2.0*np.pi)
+    real = mag*np.cos(phase)
+    imag = mag*np.sin(phase)
+    frd = real+imag*1.j
+    return frd
+
+
+def feedback(sysP, sysC, sys='S'):
+    if type(sysP) == ZpkModel:
+        zpkP = sysP
+    elif type(sysP) == matlab.TransferFunction:
+        zpkP = tf2zpk(sysP)
+    else: # type(sysP) == matlab.StateSpace
+        zpkP = ss2zpk(sysP)
+    if type(sysC) == ZpkModel:
+        zpkC = sysC
+    elif type(sysC) == matlab.TransferFunction:
+        zpkC = tf2zpk(sysC)
+    else: # type(sysC) == matlab.StateSpace
+        zpkC = ss2zpk(sysC)
+
     if sys == 'S':
-        return 1/(1+zpkP*zpkC)
+        zpkout =  1/(1+zpkP*zpkC)
     elif sys == 'T':
-        return zpkP*zpkC/(1+zpkP*zpkC)
+        zpkout =  zpkP*zpkC/(1+zpkP*zpkC)
     else: # sys == 'SP':
-        return zpkP/(1+zpkP*zpkC)
+        zpkout =  zpkP/(1+zpkP*zpkC)
 
-
-def tffeedback(tfP, tfC, sys='S'):
-    zpkP = tf2zpk(tfP)
-    zpkC = tf2zpk(tfC)
-    zpkout = zpkfeedback(zpkP, zpkC, sys=sys)
-    tfout = zpk2tf(zpkout)
-    return tfout
+    if type(sysP) == ZpkModel:
+        return zpkout
+    elif type(sysP) == matlab.TransferFunction:
+        return zpk2tf(zpkout)
+    else: # type(sysP) == matlab.StateSpace
+        return zpk2ss(zpkout)
 
 
 def frdfeedback(frdP, frdC, sys='S'):
@@ -320,43 +342,37 @@ def frdfeedback(frdP, frdC, sys='S'):
     return frdout
 
 
-def tf2frd(tf, freq):
-    mag, phase, omega = matlab.freqresp(tf, freq*2.0*np.pi)
-    real = mag*np.cos(phase)
-    imag = mag*np.sin(phase)
-    frd = real+imag*1.j
-    return frd
-
-
-def zpk2frd(zpk, freq):
-    tf = zpk2tf(zpk)
-    frd = tf2frd(tf, freq)
-    return frd
-
-
-def c2d_matched(sysC, Ts):
+def c2d_matched(sysC, dt):
     # Pole-zero match method of continuous to discrete time conversion
-    zpk = tf2zpk(sysC)
+    if type(sysC) == ZpkModel:
+        zpk = sysC
+    elif type(sysC) == matlab.TransferFunction:
+        zpk = tf2zpk(sysC)
+    else: # type(sysC) == matlab.StateSpace
+        zpk = ss2zpk(sysC)
     szeros = zpk.z
     spoles = zpk.p
-    sgain, phaseC, tmp = matlab.freqresp(sysC, 0.01)
+    sgain = abs(sys2frd(sysC, 0.01)[0])
     zzeros = [0] * len(szeros)
     zpoles = [0] * len(spoles)
     for idx, s in enumerate(szeros):
-        sTs = s * Ts
-        z = np.exp(sTs)
+        z = np.exp(s * dt)
         zzeros[idx] = z
     for idx, s in enumerate(spoles):
-        sTs = s * Ts
-        z = np.exp(sTs)
+        z = np.exp(s * dt)
         zpoles[idx] = z
-    sysDpre = zpk2tf(ZpkModel(zzeros, zpoles, 1.0, Ts))
-    zgain, phaseC, tmp = matlab.freqresp(sysDpre, 0.01)
-    gain = sgain / zgain
-    return gain*sysDpre
+    sysDpre = ZpkModel(zzeros, zpoles, 1.0, dt)
+    zgain = abs(sys2frd(sysDpre, 0.01)[0])
+    sysD = sysDpre * sgain / zgain
+    if type(sysC) == ZpkModel:
+        return sysD
+    elif type(sysC) == matlab.TransferFunction:
+        return zpk2tf(sysD)
+    else: # type(sysC) == matlab.StateSpace
+        return zpk2ss(sysD)
 
     
-def pid(zeta1, freq1, zeta2, freq2, M, C, K, Ts=None, method='tustin'):
+def pid(zeta1, freq1, zeta2, freq2, M, C, K, dt=None, method='tustin'):
     # PID controller
     omega1 = 2.0*np.pi*freq1
     omega2 = 2.0*np.pi*freq2
@@ -367,166 +383,152 @@ def pid(zeta1, freq1, zeta2, freq2, M, C, K, Ts=None, method='tustin'):
     num = [bc2, bc1, bc0]
     den = [1, ac1, 0]
     TFs = matlab.tf(num, den)
-    if Ts == None:
+    if dt == None:
         return TFs
     else:
         if method == 'matched':
-            TFz = c2d_matched(TFs, Ts)
+            TFz = c2d_matched(TFs, dt)
         else:
-            TFz = matlab.c2d(TFs, Ts, method=method)
+            TFz = matlab.c2d(TFs, dt, method=method)
         return TFz
 
 
-def pl1st(freq1, freq2, Ts=None, method='tustin'):
+def pl1st(freq1, freq2, dt=None, method='tustin'):
     # 1st ordeer phase lead filter
     TFs = freq2/freq1 * matlab.tf([1.0, 2.0*np.pi*freq1],[1.0, 2.0*np.pi*freq2])
-    if Ts == None:
+    if dt == None:
         return TFs
     else:
         if method == 'matched':
-            TFz = c2d_matched(TFs, Ts)
+            TFz = c2d_matched(TFs, dt)
         else:
-            TFz = matlab.c2d(TFs, Ts, method=method)
+            TFz = matlab.c2d(TFs, dt, method=method)
         return TFz
 
 
-def pl2nd(zeta1, freq1, zeta2, freq2, Ts=None, method='tustin'):
+def pl2nd(zeta1, freq1, zeta2, freq2, dt=None, method='tustin'):
     # 2nd ordeer phase lead filter
     omega1 = 2.0*np.pi*freq1
     omega2 = 2.0*np.pi*freq2
     TFs = freq2/freq1 * matlab.tf([1.0, 2.0*zeta1*omega1, omega1**2],[1.0, 2.0*zeta2*omega2, omega2**2])
-    if Ts == None:
+    if dt == None:
         return TFs
     else:
         if method == 'matched':
-            TFz = c2d_matched(TFs, Ts)
+            TFz = c2d_matched(TFs, dt)
         else:
-            TFz = matlab.c2d(TFs, Ts, method=method)
+            TFz = matlab.c2d(TFs, dt, method=method)
         return TFz
 
 
-def lpf1st(freq, Ts=None, method='tustin'):
+def lpf1st(freq, dt=None, method='tustin'):
     # 1st order low pass filter
     omega = 2.0*np.pi*freq
     TFs = matlab.tf([omega],[1.0, omega])
-    if Ts == None:
+    if dt == None:
         return TFs
     else:
         if method == 'matched':
-            TFz = c2d_matched(TFs, Ts)
+            TFz = c2d_matched(TFs, dt)
         else:
-            TFz = matlab.c2d(TFs, Ts, method=method)
+            TFz = matlab.c2d(TFs, dt, method=method)
         return TFz
 
 
-def hpf1st(freq, Ts=None, method='tustin'):
+def hpf1st(freq, dt=None, method='tustin'):
     # 1st order high pass filter
     omega = 2.0*np.pi*freq
     TFs = matlab.tf([1.0, 0],[1.0, omega])
-    if Ts == None:
+    if dt == None:
         return TFs
     else:
         if method == 'matched':
-            TFz = c2d_matched(TFs, Ts)
+            TFz = c2d_matched(TFs, dt)
         else:
-            TFz = matlab.c2d(TFs, Ts, method=method)
+            TFz = matlab.c2d(TFs, dt, method=method)
         return TFz
 
 
-def lpf2nd(freq, zeta, Ts=None, method='tustin'):
+def lpf2nd(freq, zeta, dt=None, method='tustin'):
     # 2nd order low pass filter
     omega = 2.0*np.pi*freq
     TFs = matlab.tf([omega**2],[1.0, 2.0*zeta*omega, omega**2])
-    if Ts == None:
+    if dt == None:
         return TFs
     else:
         if method == 'matched':
-            TFz = c2d_matched(TFs, Ts)
+            TFz = c2d_matched(TFs, dt)
         else:
-            TFz = matlab.c2d(TFs, Ts, method=method)
+            TFz = matlab.c2d(TFs, dt, method=method)
         return TFz
 
 
-def hpf2nd(freq, zeta, Ts=None, method='tustin'):
+def hpf2nd(freq, zeta, dt=None, method='tustin'):
     # 2nd order high pass filter
     omega = 2.0*np.pi*freq
     TFs = matlab.tf([1.0, 2.0*zeta*omega, 0],[1.0, 2.0*zeta*omega, omega**2])
-    if Ts == None:
+    if dt == None:
         return TFs
     else:
         if method == 'matched':
-            TFz = c2d_matched(TFs, Ts)
+            TFz = c2d_matched(TFs, dt)
         else:
-            TFz = matlab.c2d(TFs, Ts, method=method)
+            TFz = matlab.c2d(TFs, dt, method=method)
         return TFz
 
 
-def nf(freq, zeta, depth, Ts=None, method='matched'):
+def nf(freq, zeta, depth, dt=None, method='matched'):
     # Notch filter
     if (len(freq)==len(zeta)==len(depth)) == False:
         print('Error: length of notch filter parameters is different!')
     omega = 2.0*np.pi*np.array(freq)
     TFs = np.array([matlab.tf([1.0],[1.0]) for i in range(len(freq))])
-    TFz = np.array([matlab.tf([1.0],[1.0], Ts) for i in range(len(freq))])
+    TFz = np.array([matlab.tf([1.0],[1.0], dt) for i in range(len(freq))])
     for i in range(len(freq)):
         TFs[i] = matlab.tf([1.0,2.0*depth[i]*zeta[i]*omega[i],omega[i]**2],[1.0,2.0*zeta[i]*omega[i],omega[i]**2])
-    if Ts == None:
+    if dt == None:
         return TFs
     else:
         for i in range(len(freq)):
             if method == 'matched':
-                TFz[i] = c2d_matched(TFs[i], Ts)
+                TFz[i] = c2d_matched(TFs[i], dt)
             else:
-                TFz[i] = matlab.c2d(TFs[i], Ts, method=method)
+                TFz[i] = matlab.c2d(TFs[i], dt, method=method)
         return TFz
 
 
-def pf(freq, zeta, k, phi, Ts=None, method='tustin'):
+def pf(freq, zeta, k, phi, dt=None, method='tustin'):
     # Peak filter
     if (len(freq)==len(zeta)==len(k)==len(phi)) == False:
         print('Error: length of peak filter parameters is different!')
     omega = 2.0*np.pi*np.array(freq)
     TFs = np.array([matlab.tf([0.0],[1.0]) for i in range(len(freq))])
-    TFz = np.array([matlab.tf([0.0],[1.0], Ts) for i in range(len(freq))])
+    TFz = np.array([matlab.tf([0.0],[1.0], dt) for i in range(len(freq))])
     for i in range(len(freq)):
         TFs[i] = matlab.tf([k[i], -k[i]*phi[i], 0],[1.0, 2.0*zeta[i]*omega[i], omega[i]**2])
-    if Ts == None:
+    if dt == None:
         return TFs
     else:
         for i in range(len(freq)):
             if method == 'matched':
-                TFz[i] = c2d_matched(TFs[i], Ts)
+                TFz[i] = c2d_matched(TFs[i], dt)
             else:
-                TFz[i] = matlab.c2d(TFs[i], Ts, method=method)
+                TFz[i] = matlab.c2d(TFs[i], dt, method=method)
         return TFz
 
 
-def pfopt(freq, zeta, depth, sysT, Ts=None, method='tustin'):
+def pfopt(freq, zeta, depth, sysT, dt=None, method='tustin'):
     # Optimized peak filter
-    if (len(freq)==len(zeta)==len(depth)) == False:
-        print('Error: length of peak filter parameters is different!')
-    omega = 2.0*np.pi*np.array(freq)
-    mag, phase, tmp = matlab.freqresp(1.0/sysT, omega)
-    re_invT = mag*np.cos(phase)
-    im_invT = mag*np.sin(phase)
-    norm_invT = np.sqrt(re_invT**2+im_invT**2)
-    phi = -omega*re_invT/im_invT
-    k = 2*np.array(zeta)*omega*(1.0/np.array(depth)-1.0)/np.sqrt(phi**2 + omega**2)*norm_invT
-    for i in range(len(freq)):
-        if (1-2.0*zeta[i]*2 <= 0):
-            print('Warning: Peak does not exit at the frequency.')
-        phaseT = math.atan2(im_invT[i], re_invT[i])
-        phaseF = math.atan2(omega[i], -phi[i])
-        if phaseT/phaseF < 0:
-            k[i] *= -1
-    if Ts == None:
+    freq, zeta, k, phi = pfoptparam(freq, zeta, depth, sysT, dt=dt, method=method)
+    if dt == None:
         TFs = pf(freq, zeta, k, phi)
         return TFs
     else:
-        TFz = pf(freq, zeta, k, phi, Ts=Ts, method=method)
+        TFz = pf(freq, zeta, k, phi, dt=dt, method=method)
         return TFz
 
-def pfoptparam(freq, zeta, depth, sysT, Ts=None, method='tustin'):
+
+def pfoptparam(freq, zeta, depth, sysT, dt=None, method='tustin'):
     # Optimized peak filter
     if (len(freq)==len(zeta)==len(depth)) == False:
         print('Error: length of peak filter parameters is different!')
@@ -545,4 +547,3 @@ def pfoptparam(freq, zeta, depth, sysT, Ts=None, method='tustin'):
         if phaseT/phaseF < 0:
             k[i] *= -1
     return freq, zeta, k, phi
-

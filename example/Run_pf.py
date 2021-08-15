@@ -43,8 +43,8 @@ Ds = matlab.tf(numDelay,denDelay)
 Dz = z**-4
 Pns = Pmechs * Ds
 Pnz = matlab.c2d(Pmechs, Ts, method='zoh') * Dz
-Pns_frd = ctrl.tf2frd(Pns, freq)
-Pnz_frd = ctrl.tf2frd(Pnz, freq)
+Pns_frd = ctrl.sys2frd(Pns, freq)
+Pnz_frd = ctrl.sys2frd(Pnz, freq)
 print('Plant model was set.')
 
 # Design PID controller
@@ -56,8 +56,8 @@ zeta2 = 1.0
 freq2 = 10.0
 Cs = ctrl.pid(zeta1, freq1, zeta2, freq2, M, C, K)
 Cz = ctrl.pid(zeta1, freq1, zeta2, freq2, M, C, K, Ts)
-Cs_frd = ctrl.tf2frd(Cs, freq)
-Cz_frd = ctrl.tf2frd(Cz, freq)
+Cs_frd = ctrl.sys2frd(Cs, freq)
+Cz_frd = ctrl.sys2frd(Cz, freq)
 print('PID controller was designed.')
 
 # Design peak filters
@@ -66,13 +66,13 @@ freqPF = [2, 3, 5, 10, 20, 30, 50, 100]
 zetaPF = [0.001, 0.001, 0.001, 0.001, 0.001, 0.001, 0.001, 0.001]
 depthPF = [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
 
-PFs = ctrl.pfopt(freqPF, zetaPF, depthPF, ctrl.tffeedback(Pnz, Cz, sys='T'))
-PFz = ctrl.pfopt(freqPF, zetaPF, depthPF, ctrl.tffeedback(Pnz, Cz, sys='T'), Ts)
+PFs = ctrl.pfopt(freqPF, zetaPF, depthPF, ctrl.feedback(Pnz, Cz, sys='T'))
+PFz = ctrl.pfopt(freqPF, zetaPF, depthPF, ctrl.feedback(Pnz, Cz, sys='T'), Ts)
 PFs_frd = 0.0
 PFz_frd = 0.0
 for i in range(len(PFz)):
-    PFs_frd += ctrl.tf2frd(PFs[i], freq)
-    PFz_frd += ctrl.tf2frd(PFz[i], freq)
+    PFs_frd += ctrl.sys2frd(PFs[i], freq)
+    PFz_frd += ctrl.sys2frd(PFz[i], freq)
 print('Peak filters were desinged.')
 
 # Design notch filters
@@ -84,8 +84,8 @@ NFz = ctrl.nf(freqNF, zetaNF, depthNF, Ts)
 NFs_frd = 1.0
 NFz_frd = 1.0
 for i in range(len(NFz)):
-    NFs_frd *= ctrl.tf2frd(NFs[i], freq)
-    NFz_frd *= ctrl.tf2frd(NFz[i], freq)
+    NFs_frd *= ctrl.sys2frd(NFs[i], freq)
+    NFz_frd *= ctrl.sys2frd(NFz[i], freq)
 print('Notch filters were desinged.')
 
 

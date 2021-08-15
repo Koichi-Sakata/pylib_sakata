@@ -47,7 +47,7 @@ Ds = matlab.tf(numDelay,denDelay)
 Dz = z**-4
 Pns = Pmechs * Ds
 Pnz = matlab.c2d(Pmechs, Tu, method='zoh') * Dz
-Pnz_frd = ctrl.tf2frd(Pnz, freq)
+Pnz_frd = ctrl.sys2frd(Pnz, freq)
 print('Plant model was set.')
 
 # Design PID controller
@@ -56,7 +56,7 @@ freq1 = 10.0
 zeta2 = 1.0
 freq2 = 10.0
 Cz = ctrl.pid(zeta1, freq1, zeta2, freq2, M, C, K, Tu)
-Cz_frd = ctrl.tf2frd(Cz, freq)
+Cz_frd = ctrl.sys2frd(Cz, freq)
 print('PID controller was designed.')
 
 # Design phase lead filter
@@ -65,7 +65,7 @@ freq1 = 60
 zeta2 = 0.7
 freq2 = 90
 PLz = ctrl.pl2nd(zeta1, freq1, zeta2, freq2, Tu)
-PLz_frd = ctrl.tf2frd(PLz, freq)
+PLz_frd = ctrl.sys2frd(PLz, freq)
 print('Phase lead filters were desinged.')
 
 # Design notch filters
@@ -78,12 +78,12 @@ depthNF = [0.01]
 NFz = ctrl.nf(freqNF, zetaNF, depthNF, Tu)
 NFz_frd = 1.0
 for i in range(len(NFz)):
-    NFz_frd *= ctrl.tf2frd(NFz[i], freq)
+    NFz_frd *= ctrl.sys2frd(NFz[i], freq)
 print('Notch filters were desinged.')
 
 print('System identification simulation is running...')
-Snz = ctrl.tffeedback(Pnz, Cz*PLz, sys='S')
-SPnz = ctrl.tffeedback(Pnz, Cz*PLz, sys='SP')
+Snz = ctrl.feedback(Pnz, Cz*PLz, sys='S')
+SPnz = ctrl.feedback(Pnz, Cz*PLz, sys='SP')
 t = np.linspace(0.0, 50, int(50/Tu))
 chirp = signal.chirp(t, f0=0.1, f1=2000, t1=50, method='logarithmic', phi=-90)
 u, tout, xout = matlab.lsim(matlab.tf2ss(Snz), chirp, t)

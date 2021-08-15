@@ -43,7 +43,7 @@ Ds = matlab.tf(numDelay,denDelay)
 Dz = z**-4
 Pns = Pmechs * Ds
 Pnz = matlab.c2d(Pmechs, Tu, method='zoh') * Dz
-Pnz_frd = ctrl.tf2frd(Pnz, freq)
+Pnz_frd = ctrl.sys2frd(Pnz, freq)
 print('Plant model was set.')
 
 # Design PID controller
@@ -52,22 +52,22 @@ freq1 = 10.0
 zeta2 = 1.0
 freq2 = 10.0
 Cz = ctrl.pid(zeta1, freq1, zeta2, freq2, M, C, K, Tu)
-Cz_frd = ctrl.tf2frd(Cz, freq)
+Cz_frd = ctrl.sys2frd(Cz, freq)
 print('PID controller was designed.')
 
 # Design peak filters
 freqPF = [5, 10, 50]
 zetaPF = [0.001, 0.001, 0.001]
 depthPF = [0.1, 0.1, 0.1]
-PFz = ctrl.pfopt(freqPF, zetaPF, depthPF, ctrl.tffeedback(Pnz, Cz, sys='T'), Tu)
+PFz = ctrl.pfopt(freqPF, zetaPF, depthPF, ctrl.feedback(Pnz, Cz, sys='T'), Tu)
 PFz_frd = 0.0
 for i in range(len(freqPF)):
-    PFz_frd += ctrl.tf2frd(PFz[i], freq)
+    PFz_frd += ctrl.sys2frd(PFz[i], freq)
 print('Peak filters were desinged.')
 
 print('System identification simulation is running...')
-Snz = ctrl.tffeedback(Pnz, Cz, sys='S')
-SPnz = ctrl.tffeedback(Pnz, Cz, sys='SP')
+Snz = ctrl.feedback(Pnz, Cz, sys='S')
+SPnz = ctrl.feedback(Pnz, Cz, sys='SP')
 t = np.linspace(0.0, 50, int(50/Tu))
 chirp = signal.chirp(t, f0=0.1, f1=2000, t1=50, method='logarithmic', phi=-90)
 u, tout, xout = matlab.lsim(matlab.tf2ss(Snz), chirp, t)
