@@ -21,12 +21,12 @@ figurefolderName = 'figure/'
 if os.path.exists(figurefolderName):
     shutil.rmtree(figurefolderName)
 os.makedirs(figurefolderName)
-Tu = 1/4000
+Ts = 1/4000
 dataNum = 10000
 freqrange = [1, 1000]
 freq = np.logspace(np.log10(freqrange[0]), np.log10(freqrange[1]), dataNum, base=10)
-s = matlab.tf([1, 0],[1])
-z = matlab.tf([1, 0],[1], Tu)
+s = ctrl.tf([1, 0],[1])
+z = ctrl.tf([1, 0],[1], Ts)
 print('Common parameters were set.')
 
 # Plant model
@@ -41,21 +41,21 @@ k1 = M2/(M1*(M1+M2))
 k2 = -1.0/(M1+M2)
 omegaPreso = np.sqrt(Kreso*(M1+M2)/(M1*M2))
 zetaPreso = 0.5*Creso*np.sqrt((M1+M2)/(Kreso*M1*M2))
-Pmechs = matlab.tf([1],[M, C, K]) + k1 * matlab.tf([1],[1, 2*zetaPreso*omegaPreso, omegaPreso**2])
-numDelay, denDelay = matlab.pade(Tu*4,n=4)
-Ds = matlab.tf(numDelay,denDelay)
+Pmechs = ctrl.tf([1],[M, C, K]) + k1 * ctrl.tf([1],[1, 2*zetaPreso*omegaPreso, omegaPreso**2])
+numDelay, denDelay = matlab.pade(Ts*4,n=4)
+Ds = ctrl.tf(numDelay,denDelay)
 Dz = z**-4
 Pns = Pmechs * Ds
-Pnz = matlab.c2d(Pmechs, Tu, method='zoh') * Dz
+Pnz = ctrl.c2d(Pmechs, Ts, method='zoh') * Dz
 Pnz_frd = ctrl.sys2frd(Pnz, freq)
 print('Plant model was set.')
 
 # Design PID controller
-zeta1 = 1.0
 freq1 = 10.0
-zeta2 = 1.0
+zeta1 = 1.0
 freq2 = 10.0
-Cz = ctrl.pid(zeta1, freq1, zeta2, freq2, M, C, K, Tu)
+zeta2 = 1.0
+Cz = ctrl.pid(freq1, zeta1, freq2, zeta2, M, C, K, Ts)
 Cz_frd = ctrl.sys2frd(Cz, freq)
 print('PID controller was designed.')
 
@@ -64,7 +64,7 @@ zeta1 = 0.7
 freq1 = 60
 zeta2 = 0.7
 freq2 = 90
-PLz = ctrl.pl2nd(zeta1, freq1, zeta2, freq2, Tu)
+PLz = ctrl.pl2nd(zeta1, freq1, zeta2, freq2, Ts)
 PLz_frd = ctrl.sys2frd(PLz, freq)
 print('Phase lead filters were desinged.')
 
@@ -75,27 +75,27 @@ print('Phase lead filters were desinged.')
 freqNF = [2000]
 zetaNF = [0.2]
 depthNF = [0.01]
-NFz = ctrl.nf(freqNF, zetaNF, depthNF, Tu)
+NFz = ctrl.nf(freqNF, zetaNF, depthNF, Ts)
 NFz_frd = 1.0
 for i in range(len(NFz)):
     NFz_frd *= ctrl.sys2frd(NFz[i], freq)
 print('Notch filters were desinged.')
 
 print('System identification simulation is running...')
-Snz = ctrl.feedback(Pnz, Cz*PLz, sys='S')
-SPnz = ctrl.feedback(Pnz, Cz*PLz, sys='SP')
-t = np.linspace(0.0, 50, int(50/Tu))
+Snz = ctrl.feedback(Pnz, Cz, sys='S')
+SPnz = ctrl.feedback(Pnz, Cz, sys='SP')
+t = np.linspace(0.0, 50, int(50/Ts))
 chirp = signal.chirp(t, f0=0.1, f1=2000, t1=50, method='logarithmic', phi=-90)
-u, tout, xout = matlab.lsim(matlab.tf2ss(Snz), chirp, t)
-y, tout, xout = matlab.lsim(matlab.tf2ss(SPnz), chirp, t)
+u, tout, xout = matlab.lsim(ctrl.tf2ss(Snz), chirp, t)
+y, tout, xout = matlab.lsim(ctrl.tf2ss(SPnz), chirp, t)
 u = np.delete(u, len(u)-1)
 y = np.delete(y, len(y)-1)
 
-fft_axis, chirp_fft = fft.fft(chirp, Tu)
-fft_axis, u_fft = fft.fft(u, Tu)
-fft_axis, y_fft = fft.fft(y, Tu)
+fft_axis, chirp_fft = fft.fft(chirp, Ts)
+fft_axis, u_fft = fft.fft(u, Ts)
+fft_axis, y_fft = fft.fft(y, Ts)
 
-Pmeas_frd, coh = fft.tfestimate(u, y, freq, Tu)
+Pmeas_frd, coh = fft.tfestimate(u, y, freq, Ts)
 
 print('Frequency respose alanysis is running...')
 # Model

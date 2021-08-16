@@ -13,18 +13,17 @@
 # frd = sys2frd(sys, freq)
 # sys = feedback(sysP, sysC, sys='S')
 # frdout = frdfeedback(frdP, frdC, sys='S')
-# sysD = c2d_matched(sysC, dt)
-# sys = pid(zeta1, freq1, zeta2, freq2, M, C, K, dt=None, method='tustin')
+# sysD = c2d(sysC, dt, method='tustin')
+# sys = pid(freq1, zeta1, freq2, zeta2, M, C, K, dt=None, method='tustin')
 # sys = pl1st(freq1, freq2, dt=None, method='tustin')
-# sys = pl2nd(zeta1, freq1, zeta2, freq2, dt=None, method='tustin')
+# sys = pl2nd(freq1, zeta1, freq2, zeta2, dt=None, method='tustin')
 # sys = lpf1st(freq, dt=None, method='tustin')
-# sys = hpf1st(freq, dt=None, method='tustin')
 # sys = lpf2nd(freq, zeta, dt=None, method='tustin')
+# sys = hpf1st(freq, dt=None, method='tustin')
 # sys = hpf2nd(freq, zeta, dt=None, method='tustin')
 # sys = nf(freq, zeta, depth, dt=None, method='matched')
 # sys = pf(freq, zeta, k, phi, dt=None, method='matched')
 # sys = pfopt(freq, zeta, kpdb, sysT, dt=None, method='matched')
-# freq, zeta, k, phi = pfoptparam(freq, zeta, depth, sysT, dt=None, method='tustin')
 
 
 import math
@@ -342,37 +341,40 @@ def frdfeedback(frdP, frdC, sys='S'):
     return frdout
 
 
-def c2d_matched(sysC, dt):
-    # Pole-zero match method of continuous to discrete time conversion
-    if type(sysC) == ZpkModel:
-        zpk = sysC
-    elif type(sysC) == matlab.TransferFunction:
-        zpk = tf2zpk(sysC)
-    else: # type(sysC) == matlab.StateSpace
-        zpk = ss2zpk(sysC)
-    szeros = zpk.z
-    spoles = zpk.p
-    sgain = abs(sys2frd(sysC, 0.01)[0])
-    zzeros = [0] * len(szeros)
-    zpoles = [0] * len(spoles)
-    for idx, s in enumerate(szeros):
-        z = np.exp(s * dt)
-        zzeros[idx] = z
-    for idx, s in enumerate(spoles):
-        z = np.exp(s * dt)
-        zpoles[idx] = z
-    sysDpre = ZpkModel(zzeros, zpoles, 1.0, dt)
-    zgain = abs(sys2frd(sysDpre, 0.01)[0])
-    sysD = sysDpre * sgain / zgain
-    if type(sysC) == ZpkModel:
-        return sysD
-    elif type(sysC) == matlab.TransferFunction:
-        return zpk2tf(sysD)
-    else: # type(sysC) == matlab.StateSpace
-        return zpk2ss(sysD)
+def c2d(sysC, dt, method='tustin'):
+    if method != 'matched':
+        return matlab.c2d(sysC, dt, method=method)
+    else:
+        # Pole-zero match method of continuous to discrete time conversion
+        if type(sysC) == ZpkModel:
+            zpk = sysC
+        elif type(sysC) == matlab.TransferFunction:
+            zpk = tf2zpk(sysC)
+        else: # type(sysC) == matlab.StateSpace
+            zpk = ss2zpk(sysC)
+        szeros = zpk.z
+        spoles = zpk.p
+        sgain = abs(sys2frd(sysC, 0.01)[0])
+        zzeros = [0] * len(szeros)
+        zpoles = [0] * len(spoles)
+        for idx, s in enumerate(szeros):
+            z = np.exp(s * dt)
+            zzeros[idx] = z
+        for idx, s in enumerate(spoles):
+            z = np.exp(s * dt)
+            zpoles[idx] = z
+        sysDpre = ZpkModel(zzeros, zpoles, 1.0, dt)
+        zgain = abs(sys2frd(sysDpre, 0.01)[0])
+        sysD = sysDpre * sgain / zgain
+        if type(sysC) == ZpkModel:
+            return sysD
+        elif type(sysC) == matlab.TransferFunction:
+            return zpk2tf(sysD)
+        else: # type(sysC) == matlab.StateSpace
+            return zpk2ss(sysD)
 
     
-def pid(zeta1, freq1, zeta2, freq2, M, C, K, dt=None, method='tustin'):
+def pid(freq1, zeta1, freq2, zeta2, M, C, K, dt=None, method='tustin'):
     # PID controller
     omega1 = 2.0*np.pi*freq1
     omega2 = 2.0*np.pi*freq2
@@ -386,10 +388,7 @@ def pid(zeta1, freq1, zeta2, freq2, M, C, K, dt=None, method='tustin'):
     if dt == None:
         return TFs
     else:
-        if method == 'matched':
-            TFz = c2d_matched(TFs, dt)
-        else:
-            TFz = matlab.c2d(TFs, dt, method=method)
+        TFz = c2d(TFs, dt, method=method)
         return TFz
 
 
@@ -399,25 +398,19 @@ def pl1st(freq1, freq2, dt=None, method='tustin'):
     if dt == None:
         return TFs
     else:
-        if method == 'matched':
-            TFz = c2d_matched(TFs, dt)
-        else:
-            TFz = matlab.c2d(TFs, dt, method=method)
+        TFz = c2d(TFs, dt, method=method)
         return TFz
 
 
-def pl2nd(zeta1, freq1, zeta2, freq2, dt=None, method='tustin'):
+def pl2nd(freq1, zeta1, freq2, zeta2, dt=None, method='tustin'):
     # 2nd ordeer phase lead filter
     omega1 = 2.0*np.pi*freq1
     omega2 = 2.0*np.pi*freq2
-    TFs = freq2/freq1 * matlab.tf([1.0, 2.0*zeta1*omega1, omega1**2],[1.0, 2.0*zeta2*omega2, omega2**2])
+    TFs = (freq2/freq1)**2 * matlab.tf([1.0, 2.0*zeta1*omega1, omega1**2],[1.0, 2.0*zeta2*omega2, omega2**2])
     if dt == None:
         return TFs
     else:
-        if method == 'matched':
-            TFz = c2d_matched(TFs, dt)
-        else:
-            TFz = matlab.c2d(TFs, dt, method=method)
+        TFz = c2d(TFs, dt, method=method)
         return TFz
 
 
@@ -428,24 +421,7 @@ def lpf1st(freq, dt=None, method='tustin'):
     if dt == None:
         return TFs
     else:
-        if method == 'matched':
-            TFz = c2d_matched(TFs, dt)
-        else:
-            TFz = matlab.c2d(TFs, dt, method=method)
-        return TFz
-
-
-def hpf1st(freq, dt=None, method='tustin'):
-    # 1st order high pass filter
-    omega = 2.0*np.pi*freq
-    TFs = matlab.tf([1.0, 0],[1.0, omega])
-    if dt == None:
-        return TFs
-    else:
-        if method == 'matched':
-            TFz = c2d_matched(TFs, dt)
-        else:
-            TFz = matlab.c2d(TFs, dt, method=method)
+        TFz = c2d(TFs, dt, method=method)
         return TFz
 
 
@@ -456,10 +432,18 @@ def lpf2nd(freq, zeta, dt=None, method='tustin'):
     if dt == None:
         return TFs
     else:
-        if method == 'matched':
-            TFz = c2d_matched(TFs, dt)
-        else:
-            TFz = matlab.c2d(TFs, dt, method=method)
+        TFz = c2d(TFs, dt, method=method)
+        return TFz
+
+
+def hpf1st(freq, dt=None, method='tustin'):
+    # 1st order high pass filter
+    omega = 2.0*np.pi*freq
+    TFs = matlab.tf([1.0, 0],[1.0, omega])
+    if dt == None:
+        return TFs
+    else:
+        TFz = c2d(TFs, dt, method=method)
         return TFz
 
 
@@ -470,10 +454,7 @@ def hpf2nd(freq, zeta, dt=None, method='tustin'):
     if dt == None:
         return TFs
     else:
-        if method == 'matched':
-            TFz = c2d_matched(TFs, dt)
-        else:
-            TFz = matlab.c2d(TFs, dt, method=method)
+        TFz = c2d(TFs, dt, method=method)
         return TFz
 
 
@@ -490,10 +471,7 @@ def nf(freq, zeta, depth, dt=None, method='matched'):
         return TFs
     else:
         for i in range(len(freq)):
-            if method == 'matched':
-                TFz[i] = c2d_matched(TFs[i], dt)
-            else:
-                TFz[i] = matlab.c2d(TFs[i], dt, method=method)
+            TFz[i] = c2d(TFs[i], dt, method=method)
         return TFz
 
 
@@ -510,16 +488,13 @@ def pf(freq, zeta, k, phi, dt=None, method='tustin'):
         return TFs
     else:
         for i in range(len(freq)):
-            if method == 'matched':
-                TFz[i] = c2d_matched(TFs[i], dt)
-            else:
-                TFz[i] = matlab.c2d(TFs[i], dt, method=method)
+            TFz[i] = c2d(TFs[i], dt, method=method)
         return TFz
 
 
 def pfopt(freq, zeta, depth, sysT, dt=None, method='tustin'):
     # Optimized peak filter
-    freq, zeta, k, phi = pfoptparam(freq, zeta, depth, sysT, dt=dt, method=method)
+    freq, zeta, k, phi = _pfoptparam(freq, zeta, depth, sysT)
     if dt == None:
         TFs = pf(freq, zeta, k, phi)
         return TFs
@@ -528,11 +503,13 @@ def pfopt(freq, zeta, depth, sysT, dt=None, method='tustin'):
         return TFz
 
 
-def pfoptparam(freq, zeta, depth, sysT, dt=None, method='tustin'):
+def _pfoptparam(freq, zeta, depth, sysT):
     # Optimized peak filter
     if (len(freq)==len(zeta)==len(depth)) == False:
         print('Error: length of peak filter parameters is different!')
     omega = 2.0*np.pi*np.array(freq)
+    if type(sysT) == ZpkModel:
+        sysT = zpk2tf(sysT)
     mag, phase, tmp = matlab.freqresp(1.0/sysT, omega)
     re_invT = mag*np.cos(phase)
     im_invT = mag*np.sin(phase)

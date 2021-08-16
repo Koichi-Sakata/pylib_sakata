@@ -23,8 +23,8 @@ Ts = 1/4000
 dataNum = 10000
 freqrange = [1, 1000]
 freq = np.logspace(np.log10(freqrange[0]), np.log10(freqrange[1]), dataNum, base=10)
-s = matlab.tf([1, 0],[1])
-z = matlab.tf([1, 0],[1], Ts)
+s = ctrl.tf([1, 0],[1])
+z = ctrl.tf([1, 0],[1], Ts)
 print('Common parameters were set.')
 
 # Plant model
@@ -35,14 +35,14 @@ C = M*2*zetaP*omegaP
 K = M*omegaP**2
 C = 0
 K = 0
-Pmechs = matlab.tf([1],[M, C, K])
+Pmechs = ctrl.tf([1],[M, C, K])
 numDelay, denDelay = matlab.pade(Ts*4,n=4)
 omegaD = 2.0*np.pi*500
-#Ds = matlab.tf([omegaD],[1, omegaD])**2
-Ds = matlab.tf(numDelay,denDelay)
+#Ds = ctrl.tf([omegaD],[1, omegaD])**2
+Ds = ctrl.tf(numDelay,denDelay)
 Dz = z**-4
 Pns = Pmechs * Ds
-Pnz = matlab.c2d(Pmechs, Ts, method='zoh') * Dz
+Pnz = ctrl.c2d(Pmechs, Ts, method='zoh') * Dz
 Pns_frd = ctrl.sys2frd(Pns, freq)
 Pnz_frd = ctrl.sys2frd(Pnz, freq)
 print('Plant model was set.')
@@ -50,12 +50,12 @@ print('Plant model was set.')
 # Design PID controller
 fd = 200
 fi = 30
-zeta1 = 1.0
 freq1 = 10
-zeta2 = 1.0
+zeta1 = 1.0
 freq2 = 10.0
-Cs = ctrl.pid(zeta1, freq1, zeta2, freq2, M, C, K)
-Cz = ctrl.pid(zeta1, freq1, zeta2, freq2, M, C, K, Ts)
+zeta2 = 1.0
+Cs = ctrl.pid(freq1, zeta1, freq2, zeta2, M, C, K)
+Cz = ctrl.pid(freq1, zeta1, freq2, zeta2, M, C, K, Ts)
 Cs_frd = ctrl.sys2frd(Cs, freq)
 Cz_frd = ctrl.sys2frd(Cz, freq)
 print('PID controller was designed.')
@@ -88,14 +88,13 @@ for i in range(len(NFz)):
     NFz_frd *= ctrl.sys2frd(NFz[i], freq)
 print('Notch filters were desinged.')
 
-
 print('Frequency respose alanysis is running...')
 # Model
-Gn_frd = Pnz_frd * Cz_frd
+Gn_frd = Pnz_frd * Cz_frd * NFz_frd
 Sn_frd = 1/(1 + Gn_frd)
 Tn_frd = 1 - Sn_frd
 # Model with peak filters
-G_frd = Pnz_frd * Cz_frd * (1.0+PFz_frd)
+G_frd = Pnz_frd * Cz_frd * NFz_frd * (1.0+PFz_frd)
 S_frd = 1/(1 + G_frd)
 T_frd = 1 - S_frd
 
@@ -105,14 +104,15 @@ fig = plot.makefig()
 ax_mag = fig.add_subplot(211)
 ax_phase = fig.add_subplot(212)
 plot.plot_tffrd(ax_mag, ax_phase, Pnz_frd, freq, '-', 'b', 1.5, 1.0, freqrange, title='Frequency response of plant')
-plot.plot_tffrd(ax_mag, ax_phase, Pns_frd, freq, '--', 'r', 1.5, 1.0, freqrange, title='Frequency response of plant')
+plot.plot_tffrd(ax_mag, ax_phase, Pns_frd, freq, '--', 'r', 1.5, 1.0, freqrange, legend=['Continuous','Discrete'])
 plot.savefig(figurefolderName+'/freq_P.png')
 
 # PID controller
 fig = plot.makefig()
 ax_mag = fig.add_subplot(211)
 ax_phase = fig.add_subplot(212)
-plot.plot_tffrd(ax_mag, ax_phase, Cz_frd, freq, '-', 'b', 1.5, 1.0, freqrange, title='Frequency response of PID controller')
+plot.plot_tffrd(ax_mag, ax_phase, Cs_frd, freq, '-', 'b', 1.5, 1.0, freqrange, title='Frequency response of PID controller')
+plot.plot_tffrd(ax_mag, ax_phase, Cz_frd, freq, '--', 'r', 1.5, 1.0, freqrange, legend=['Continuous','Discrete'])
 plot.savefig(figurefolderName+'/freq_C.png')
 
 # Peak filters
@@ -120,7 +120,7 @@ fig = plot.makefig()
 ax_mag = fig.add_subplot(211)
 ax_phase = fig.add_subplot(212)
 plot.plot_tffrd(ax_mag, ax_phase, PFs_frd, freq, '-', 'b', 1.5, 1.0, freqrange, title='Frequency response of peak filters')
-plot.plot_tffrd(ax_mag, ax_phase, PFz_frd, freq, '--', 'r', 1.5, 1.0, freqrange, title='Frequency response of peak filters')
+plot.plot_tffrd(ax_mag, ax_phase, PFz_frd, freq, '--', 'r', 1.5, 1.0, freqrange, legend=['Continuous','Discrete'])
 plot.savefig(figurefolderName+'/freq_PF.png')
 
 # Peak filters
@@ -128,7 +128,7 @@ fig = plot.makefig()
 ax_mag = fig.add_subplot(211)
 ax_phase = fig.add_subplot(212)
 plot.plot_tffrd(ax_mag, ax_phase, NFs_frd, freq, '-', 'b', 1.5, 1.0, freqrange, title='Frequency response of notch filters')
-plot.plot_tffrd(ax_mag, ax_phase, NFz_frd, freq, '--', 'r', 1.5, 1.0, freqrange, title='Frequency response of notch filters')
+plot.plot_tffrd(ax_mag, ax_phase, NFz_frd, freq, '--', 'r', 1.5, 1.0, freqrange, legend=['Continuous','Discrete'])
 plot.savefig(figurefolderName+'/freq_NF.png')
 
 # Open loop function

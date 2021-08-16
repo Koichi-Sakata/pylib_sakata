@@ -7,6 +7,7 @@
 # plot_nyquist_assistline(ax)
 # makefig()
 # savefig(figName)
+# showfig()
 
 
 import numpy as np
@@ -192,3 +193,6 @@ def makefig(dpi=100, popwin=False):
 def savefig(figName):
     plt.savefig(figName)
 
+
+def showfig():
+    plt.show()

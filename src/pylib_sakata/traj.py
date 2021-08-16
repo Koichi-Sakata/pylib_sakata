@@ -1,7 +1,7 @@
 # Copyright (c) 2021 Koichi Sakata
 
 # class TrajInf(time, pos, vel, acc, T, dt)
-# TrajInf = traj4th(posStart, posStep, velMax, accAve, dt)
+# TrajInf = traj4th(posStart, posStep, velMax, accAve, dt, Tstay=0)
 
 
 import numpy as np
@@ -16,7 +16,7 @@ class TrajInf():
         self.T = T
         self.dt = dt
 
-def traj4th(posStart, posStep, velMax, accAve, dt, Tstay=0.0):
+def traj4th(posStart, posStep, velMax, accAve, dt, Tstay=0):
     if velMax <= 0:
         print('Error: velMax should be more than 0.0')
 
