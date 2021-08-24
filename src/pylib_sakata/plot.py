@@ -2,7 +2,7 @@
 
 # plot_xy(ax, x, y, styl='-', col='b', width=1.5, alpha=1.0, xrange=None, yrange=None, xlabel=None, ylabel=None, legend=None, title=None, xscale='linear', yscale='linear', labelouter=True)
 # plot_tf(ax_mag, ax_phase, sys, freq, styl='-', col='b', width=1.5, alpha=1.0, freqrange=None, magrange=None, legend=None, title=None, labelouter=True)
-# plot_tffrd(ax_mag, ax_phase, freqresp, freq, styl='-', col='b', width=1.5, alpha=1.0, freqrange=None, magrange=None, legend=None, title=None, labelouter=True, ax_coh=None, coh=None)
+# plot_tffrd(ax_mag, ax_phase, freqresp, styl='-', col='b', width=1.5, alpha=1.0, freqrange=None, magrange=None, legend=None, title=None, labelouter=True, ax_coh=None, coh=None)
 # plot_nyquist(ax, freqresp, styl='-', col='b', width=1.5, alpha=1.0, xrange=None, yrange=None, legend=None, title=None, labelouter=True)
 # plot_nyquist_assistline(ax)
 # makefig()
@@ -46,6 +46,8 @@ def plot_xy(ax, x, y, styl='-', col='b', width=1.5, alpha=1.0, xrange=None, yran
 
 
 def plot_tf(ax_mag, ax_phase, sys, freq, styl='-', col='b', width=1.5, alpha=1.0, freqrange=None, magrange=None, legend=None, title=None, labelouter=True):
+    if type(freq) == list:
+        freq = np.array(freq)
     mag, phase, omega = matlab.freqresp(sys, freq*2.0*np.pi)
     magdb = 20.0*np.log10(mag)
     phasedeg = phase*180.0/np.pi

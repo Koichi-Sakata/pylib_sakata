@@ -300,6 +300,8 @@ def zpk2ss(zpk, form='reachable'):
 def sys2frd(sys, freq):
     if type(sys) == ZpkModel:
         sys = zpk2tf(sys)
+    if type(freq) == list:
+        freq = np.array(freq)
     mag, phase, omega = matlab.freqresp(sys, freq*2.0*np.pi)
     real = mag*np.cos(phase)
     imag = mag*np.sin(phase)
@@ -513,20 +515,15 @@ def _pfoptparam(freq, zeta, depth, sysT):
     if (len(freq)==len(zeta)==len(depth)) == False:
         print('Error: length of peak filter parameters is different!')
     omega = 2.0*np.pi*np.array(freq)
-    if type(sysT) == FreqResp:
-        re_invT = np.array([])
-        im_invT = np.array([])
-        invsysT = 1.0/sysT
-        for i in range(len(freq)):
-            idx = np.argmin(np.abs(invsysT.freq - freq[i]))
-            re_invT = np.append(re_invT, np.real(invsysT.resp[idx]))
-            im_invT = np.append(im_invT, np.imag(invsysT.resp[idx]))
-    else:
-        if type(sysT) == ZpkModel:
-            sysT = zpk2tf(sysT)
-        mag, phase, tmp = matlab.freqresp(1.0 / sysT, omega)
-        re_invT = mag * np.cos(phase)
-        im_invT = mag * np.sin(phase)
+    invsysT = 1.0 / sysT
+    if type(invsysT) != FreqResp:
+        invsysT = sys2frd(invsysT, np.array(freq))
+    re_invT = np.array([])
+    im_invT = np.array([])
+    for i in range(len(freq)):
+        idx = np.argmin(np.abs(invsysT.freq - freq[i]))
+        re_invT = np.append(re_invT, np.real(invsysT.resp[idx]))
+        im_invT = np.append(im_invT, np.imag(invsysT.resp[idx]))
 
     norm_invT = np.sqrt(re_invT**2+im_invT**2)
     phi = -omega*re_invT/im_invT
