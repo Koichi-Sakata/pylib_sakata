@@ -1,5 +1,6 @@
 # Copyright (c) 2021 Koichi Sakata
 
+# class ZpkModel(freq, resp, dt=0)
 # fft_axis, fft = fft(data, dt)
 # fft_axis, fft_mean = fft_ave(data, dt, windivnum=4, overlap=0.5)
 # freqresp, coh = tfestimate(x, y, freq, dt, windivnum=4, overlap=0.5)

@@ -1,11 +1,11 @@
-pylib-sakata User's Manual version-0.0.3
+pylib-sakata User's Manual version-0.0.7
 ===
 
 <!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
 
 <!-- code_chunk_output -->
 
-- [pylib-sakata User's Manual version-0.0.3](#pylib-sakata-users-manual-version-003)
+- [pylib-sakata User's Manual version-0.0.7](#pylib-sakata-users-manual-version-007)
 - [1. Introduction](#1-introduction)
 - [2. Environment Setup](#2-environment-setup)
   - [2.1. Installation of Python](#21-installation-of-python)
@@ -49,9 +49,10 @@ pylib-sakata User's Manual version-0.0.3
   - [3.23. pf](#323-pf)
   - [3.24. pfopt](#324-pfopt)
 - [4. pylib_sakata.fft](#4-pylib_sakatafft)
-  - [4.1. fft](#41-fft)
-  - [4.2. fft_ave](#42-fft_ave)
-  - [4.3. tfestimate](#43-tfestimate)
+  - [4.1. FreqResp](#41-freqresp)
+  - [4.2. fft](#42-fft)
+  - [4.3. fft_ave](#43-fft_ave)
+  - [4.4. tfestimate](#44-tfestimate)
 - [5. pylib_sakta.meas](#5-pylib_saktameas)
   - [5.1. MeasData](#51-measdata)
   - [5.2. getcsvdata](#52-getcsvdata)
@@ -476,27 +477,30 @@ pylib_sakata.ctrl.**sys2frd**(*sys, freq*)
   - sys: LTI model (StateSpace or TransferFunction or ZpkModel)
   - freq: 1-D array frequency data [Hz]
 - Returns:
-  - freqresp: 1-D array complex data of frequency response
+  - freqresp: instance of FreqResp class (Refer [4.1. FreqResp](#41-freqresp).)
 
 **Examples**
 ```python
 >>> import numpy as np
->>> dataNum = 10000
->>> freqrange = [1, 1000]
->>> freq = np.logspace(np.log10(freqrange[0]), np.log10(freqrange[1]), dataNum, base=10)
+>>> freq = np.logspace(np.log10(1.), np.log10(1000.), 10000, base=10)
 >>> Sys_tf = ctrl.tf([1., 2.], [3., 4., 5.])
->>> ctrl.tf2frd(Sys_tf, freq)
-array([-5.10821217e-03-5.65218353e-02j, -5.10191815e-03-5.64779702e-02j,
-       -5.09563061e-03-5.64341455e-02j, ...,
-       -5.64453060e-09-5.31250027e-05j, -5.63673700e-09-5.30883142e-05j,
-       -5.62895416e-09-5.30516511e-05j])
+>>> ctrl.sys2frd(Sys_tf, freq)
+
+freq = array([   1.            1.00069108    1.00138264 ...  998.61926487  999.30939397
+ 1000.        ])
+resp = array([-5.10821217e-03-5.65218353e-02j -5.10191815e-03-5.64779702e-02j
+ -5.09563061e-03-5.64341455e-02j ... -5.64453060e-09-5.31250027e-05j
+ -5.63673700e-09-5.30883142e-05j -5.62895416e-09-5.30516511e-05j])
 ```
 ```python
 >>> Sys_zpk = ctrl.zpk([-1., -2.], [-3., -4., -5.], 2.)
->>> ctrl.zpk2frd(Sys_zpk, freq)
-array([1.89109027e-01-0.06951671j, 1.89033162e-01-0.06962001j,
-       1.88957165e-01-0.0697232j , ..., 4.57206511e-07-0.00031875j,
-       4.56575231e-07-0.00031853j, 4.55944822e-07-0.00031831j])
+>>> ctrl.sys2frd(Sys_zpk, freq)
+
+freq = array([   1.            1.00069108    1.00138264 ...  998.61926487  999.30939397
+ 1000.        ])
+resp = array([1.89109027e-01-0.06951671j 1.89033162e-01-0.06962001j
+ 1.88957165e-01-0.0697232j  ... 4.57206511e-07-0.00031875j
+ 4.56575231e-07-0.00031853j 4.55944822e-07-0.00031831j])
 ```
 
 ## 3.12. feedback
@@ -925,7 +929,7 @@ This function is for design of optimized peak filters ([resonant filters](https:
   - freq: array of frequency[Hz] of the peak filters
   - zeta: array of damping of the peak filters
   - depth: array of depth of the peak filters (0 < depth < 1)
-  - sysT: LTI model (StateSpace or TransferFunction or ZpkModel) of complementary sensitivity function of the previous feedback system
+  - sysT: LTI model (StateSpace or TransferFunction or ZpkModel or FreqResp) of complementary sensitivity function of the previous feedback system
   - dt: sampling time of the LTI model (Optional), Default: 0, set the value >= 0. If dt = 0, the system is continuous time system.
   - method: discretized method (Optional), Default: 'tustin', set a method if dt > 0
 - Returns:
@@ -953,7 +957,50 @@ array([TransferFunction(array([ 0.0049857 , -0.00972818,  0.00474248]), array([ 
 
 # 4. pylib_sakata.fft
 
-## 4.1. fft
+## 4.1. FreqResp
+
+class pylib_sakata.fft.**FreqResp**(*freq, resp, dt=0*)
+
+- Parameters:
+  - freq: 1-D array frequency data [Hz]
+  - resp: 1-D array frequency response data [complex data]
+  - dt: sampling time (Optional), Default: 0, set the value >= 0. If dt = 0, the system is continuous time system.
+
+**Examples**
+Refer examples of [3.11. sys2frd](#311-sys2frd).
+
+**Methods**
+- \__**neg**__()
+	Negate a FRD.
+
+- \__**add**__(*other*)
+	Add two FRDs (parallel connection).
+
+- \__**radd**__(*other*)
+	Right add two FRDs (parallel connection).
+
+- \__**sub**__(*other*)
+	Subtract two FRDs.
+
+- \__**rsub**__(*other*)
+	Right subtract two FRDs.
+
+- \__**mul**__(*other*)
+	Multiply two FRDs (serial connection).
+
+- \__**rmul**__(*other*)
+	Right multiply two FRDs (serial connection).
+
+- \__**truediv**__(*other*)
+	Divide two FRDs.
+
+- \__**rtruediv**__(*other*)
+	Right divide two FRDs.
+
+- \__**pow**__(*other*)
+	A FRD to the power of x.
+
+## 4.2. fft
 
 pylib_sakata.fft.**fft**(*data, dt*)
 
@@ -978,7 +1025,7 @@ import numpy as np
        7.19286425e-06, 4.79322523e-06, 2.39600781e-06]))
 ```
 
-## 4.2. fft_ave
+## 4.3. fft_ave
 
 pylib_sakata.fft.**fft_ave**(*data, dt, windivnum=4, overlap=0.5*)
 
@@ -1006,7 +1053,7 @@ import numpy as np
        6.53498409e-05, 5.85999322e-05, 5.46444944e-05]))
 ```
 
-## 4.3. tfestimate
+## 4.4. tfestimate
 
 pylib_sakata.fft.**tfestimate**(*x, y, freq, dt, windivnum=4, overlap=0.5*)
 
@@ -1280,14 +1327,14 @@ plot.plot_tf(ax_mag, ax_phase, Tn, freq, '--', 'b', 1.5, 1.0, [1, 1000], [-60, 1
 
 ## 7.3. plot_tffrd
 
-pylib_sakata.plot.**plot_tffrd**(*ax_mag, ax_phase, freqresp, freq, styl='-', col='b', width=1.5, alpha=1.0, freqrange=None, magrange=None, legend=None, title=None, labelouter=True, ax_coh=None, coh=None*)
+pylib_sakata.plot.**plot_tffrd**(*ax_mag, ax_phase, freqresp, styl='-', col='b', width=1.5, alpha=1.0, freqrange=None, magrange=None, legend=None, title=None, labelouter=True, ax_coh=None, coh=None*)
 
 This function is for drawing a Bode diagram from a frequency response data.
 
 - Parameters:
   - ax_mag: handle of magnitude axis
   - ax_phase: handle of phase axis, if you set as None, phase axis is skipped.
-  - freqresp: 1-D array complex data of the frequency response
+  - freqresp: instance of FreqResp class
   - freq: 1-D array frequency data [Hz]
   - styl: line style (Optional), Default: '-', Select in '-' (solid), '--' (dashed), '.' (dotted), '-.' (dashdot)
   - col: line color (Optional), Default: 'b' (blue)
@@ -1310,22 +1357,22 @@ fig1 = plot.makefig()
 ax_mag = fig.add_subplot(311)
 ax_phase = fig.add_subplot(312)
 ax_coh = fig.add_subplot(313)
-plot.plot_tffrd(ax_mag, ax_phase, Pmeas_frd, freq, '-', 'm', 1.5, 1.0, ax_coh=ax_coh, coh=coh, title='Frequency response of plant')
-plot.plot_tffrd(ax_mag, ax_phase, Pnz_frd, freq, '--', 'b', 1.5, 1.0, freqrange, legend=['Measurement','Model'])
+plot.plot_tffrd(ax_mag, ax_phase, Pmeas_frd, '-', 'm', 1.5, 1.0, ax_coh=ax_coh, coh=coh, title='Frequency response of plant')
+plot.plot_tffrd(ax_mag, ax_phase, Pnz_frd, '--', 'b', 1.5, 1.0, freqrange, legend=['Measurement','Model'])
 
 # Sensitivity function
 fig2 = plot.makefig()
 ax_mag = fig1.add_subplot(111)
 ax_phase = None
-plot.plot_tffrd(ax_mag, ax_phase, S_frd, freq, '-', 'm', 1.5, 1.0, title='Frequency response of sensitivity function')
-plot.plot_tffrd(ax_mag, ax_phase, Sn_frd, freq, '--', 'b', 1.5, 1.0, [1, 1000], [-60, 10], legend=['Measurement','Model'])
+plot.plot_tffrd(ax_mag, ax_phase, S_frd, '-', 'm', 1.5, 1.0, title='Frequency response of sensitivity function')
+plot.plot_tffrd(ax_mag, ax_phase, Sn_frd, '--', 'b', 1.5, 1.0, [1, 1000], [-60, 10], legend=['Measurement','Model'])
 
 # Complementary sensitivity function
 fig3 = plot.makefig()
 ax_mag = fig2.add_subplot(211)
 ax_phase = fig2.add_subplot(212)
-plot.plot_tffrd(ax_mag, ax_phase, T_frd, freq, '-', 'm', 1.5, 1.0, title='Frequency response of complementary sensitivity function')
-plot.plot_tffrd(ax_mag, ax_phase, Tn_frd, freq, '--', 'b', 1.5, 1.0, [1, 1000], [-60, 10], legend=['Measurement','Model'])
+plot.plot_tffrd(ax_mag, ax_phase, T_frd, '-', 'm', 1.5, 1.0, title='Frequency response of complementary sensitivity function')
+plot.plot_tffrd(ax_mag, ax_phase, Tn_frd, '--', 'b', 1.5, 1.0, [1, 1000], [-60, 10], legend=['Measurement','Model'])
 ```
 
 ## 7.4. plot_nyquist
@@ -1336,7 +1383,7 @@ This function is for drawing a Nyquist diagram from a frequency response data of
 
 - Parameters:
   - ax: handle of axis
-  - freqresp: 1-D array complex data of the frequency response
+  - freqresp: instance of FreqResp class
   - styl: line style (Optional), Default: '-', Select in '-' (solid), '--' (dashed), '.' (dotted), '-.' (dashdot)
   - col: line color (Optional), Default: 'b' (blue)
   - width: line width (Optional), Default: 1.5

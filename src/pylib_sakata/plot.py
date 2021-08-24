@@ -14,6 +14,7 @@ import numpy as np
 import matplotlib
 from control import matlab
 from matplotlib import pyplot as plt
+from .fft import FreqResp
 
 def plot_xy(ax, x, y, styl='-', col='b', width=1.5, alpha=1.0, xrange=None, yrange=None, xlabel=None, ylabel=None, legend=None, title=None, xscale='linear', yscale='linear', labelouter=True):
     ax.set_xscale(xscale)
@@ -88,16 +89,16 @@ def plot_tf(ax_mag, ax_phase, sys, freq, styl='-', col='b', width=1.5, alpha=1.0
             ax_phase.label_outer()  
 
 
-def plot_tffrd(ax_mag, ax_phase, freqresp, freq, styl='-', col='b', width=1.5, alpha=1.0, freqrange=None, magrange=None, legend=None, title=None, labelouter=True, ax_coh=None, coh=None):
-    mag = np.absolute(freqresp)
-    phase = np.angle(freqresp)
+def plot_tffrd(ax_mag, ax_phase, freqresp, styl='-', col='b', width=1.5, alpha=1.0, freqrange=None, magrange=None, legend=None, title=None, labelouter=True, ax_coh=None, coh=None):
+    mag = np.absolute(freqresp.resp)
+    phase = np.angle(freqresp.resp)
     magdb = 20.0*np.log10(mag)
     phasedeg = phase*180.0/np.pi
 
     ax_mag.set_xscale('log')
     if freqrange == None:
-        freqmin = min(freq)
-        freqmax = max(freq)
+        freqmin = min(freqresp.freq)
+        freqmax = max(freqresp.freq)
         freqrange = [freqmin, freqmax]
     if magrange == None:
         magmin = min(magdb)
@@ -110,7 +111,7 @@ def plot_tffrd(ax_mag, ax_phase, freqresp, freq, styl='-', col='b', width=1.5, a
     ax_mag.set_ylabel('Magnitude [dB]')
     ax_mag.grid(b=True, which='both', axis='both')
     # mag plot
-    ax_mag.plot(freq, magdb, linestyle=styl, color=col, linewidth=width, alpha=alpha)
+    ax_mag.plot(freqresp.freq, magdb, linestyle=styl, color=col, linewidth=width, alpha=alpha)
     # legend and title
     if legend != None:
         ax_mag.legend(legend, loc='best')
@@ -129,7 +130,7 @@ def plot_tffrd(ax_mag, ax_phase, freqresp, freq, styl='-', col='b', width=1.5, a
         ax_phase.set_yticks([-180, -90, 0, 90, 180])
         ax_phase.grid(b=True, which='both', axis='both')
         # phase plot
-        ax_phase.plot(freq, phasedeg, linestyle=styl, color=col, linewidth=width, alpha=alpha)
+        ax_phase.plot(freqresp.freq, phasedeg, linestyle=styl, color=col, linewidth=width, alpha=alpha)
         if labelouter == True:
             ax_phase.label_outer()
         
@@ -141,14 +142,14 @@ def plot_tffrd(ax_mag, ax_phase, freqresp, freq, styl='-', col='b', width=1.5, a
         ax_coh.set_ylabel('Coherence [.]')
         ax_coh.grid(b=True, which='both', axis='both')
         # coherence plot
-        ax_coh.plot(freq, coh, linestyle=styl, color=col, linewidth=width, alpha=alpha)
+        ax_coh.plot(freqresp.freq, coh, linestyle=styl, color=col, linewidth=width, alpha=alpha)
         if labelouter == True:
             ax_phase.label_outer()
 
 
 def plot_nyquist(ax, freqresp, styl='-', col='b', width=1.5, alpha=1.0, xrange=None, yrange=None, legend=None, title=None, labelouter=True):
-    x = np.real(freqresp)
-    y = np.imag(freqresp)
+    x = np.real(freqresp.resp)
+    y = np.imag(freqresp.resp)
 
     if xrange == None:
         xrange = [-2, 1]
