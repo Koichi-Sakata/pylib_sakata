@@ -6,6 +6,7 @@
 
 import numpy as np
 
+
 class TrajInf():
  
     def __init__(self, time, pos, vel, acc, T, dt):
@@ -15,6 +16,7 @@ class TrajInf():
         self.acc = acc
         self.T = T
         self.dt = dt
+
 
 def traj4th(posStart, posStep, velMax, accAve, dt, Tstay=0):
     if velMax <= 0:
@@ -56,16 +58,16 @@ def traj4th(posStart, posStep, velMax, accAve, dt, Tstay=0):
             pos[i] = 0.0
             vel[i] = 0.0
             acc[i] = 0.0
-        elif t > 0.0 and t < Tacc:
+        elif 0.0 < t < Tacc:
             pos[i] = -(1.0/12.0)*A*t**4 + (1.0/6.0)*A*Tacc*t**3
             vel[i] = -(1.0/3.0)*A*t**3 + 0.5*A*Tacc*t**2
             acc[i] = -A*t**2 + A*Tacc*t
-        elif Tcon > 0.0 and t >= Tacc and t <= Tacc + Tcon:
+        elif Tcon > 0.0 and Tacc <= t <= Tacc + Tcon:
             t = t - Tacc
             pos[i] = 0.5*Tacc*velCon + velCon*t
             vel[i] = velCon
             acc[i] = 0.0
-        elif t > Tacc + Tcon and t < Tmove:
+        elif Tacc + Tcon < t < Tmove:
             t = t - Tacc - Tcon
             pos[i] = 0.5*Tacc*velCon + velCon*Tcon + velCon*t + (1.0/12.0)*A*t**4 - (1.0/6.0)*A*Tacc*t**3
             vel[i] = velCon + (1.0/3.0)*A*t**3 - 0.5*A*Tacc*t**2
@@ -75,7 +77,7 @@ def traj4th(posStart, posStep, velMax, accAve, dt, Tstay=0):
             vel[i] = 0.0
             acc[i] = 0.0
         
-        if direction == False:
+        if not direction:
             # Move to minus direction
             pos[i] *= -1
             vel[i] *= -1

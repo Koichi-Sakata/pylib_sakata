@@ -10,72 +10,177 @@ from matplotlib import mlab
 from scipy import signal, interpolate
 
 
+class FreqResp:
+
+    def __init__(self, freq, resp, dt=0):
+        if type(freq) == list:
+            freq = np.array(freq)
+        if type(resp) == list:
+            resp = np.array(resp)
+
+        self.freq = freq
+        self.resp = resp
+        self.dt = dt
+
+    def __repr__(self):
+        outstr = ""
+        outstr += "\n" + "freq = array(" + str(self.freq) + ")"
+        outstr += "\n" + "resp = array(" + str(self.resp) + ")" + "\n"
+        # See if this is a discrete time system with specific sampling time
+        if not (self.dt is None) and type(self.dt) != bool and self.dt > 0:
+            # TODO: replace with standard calls to lti functions
+            outstr += "\ndt = " + self.dt.__str__() + "\n"
+        return outstr
+
+    def __neg__(self):
+        """Negate a FRD."""
+        return FreqResp(self.freq, -1.0 * self.resp, self.dt)
+
+    def __add__(self, other):
+        """Add two FRDs (parallel connection)."""
+        if isinstance(other, (int, float, complex, np.number)):
+            other = FreqResp(self.freq, np.array([other]*len(self.resp)), self.dt)
+        else:
+            if self.dt != other.dt:
+                print('Error: frequency range of zpk systems is different.')
+            if self.dt != other.dt:
+                print('Warning: sampling time of FRDs is different.')
+        return FreqResp(self.freq, self.resp + other.resp, self.dt)
+
+    def __radd__(self, other):
+        """Right add two FRDs (parallel connection)."""
+        return self + other
+
+    def __sub__(self, other):
+        """Subtract two FRDs."""
+        return self + (-other)
+
+    def __rsub__(self, other):
+        """Right subtract two FRDs."""
+        return other + (-self)
+
+    def __mul__(self, other):
+        """Multiply two zpk models (serial connection)."""
+        if isinstance(other, (int, float, complex, np.number)):
+            other = FreqResp(self.freq, np.array([other]*len(self.resp)), self.dt)
+        else:
+            if self.dt != other.dt:
+                print('Error: frequency range of zpk systems is different.')
+            if self.dt != other.dt:
+                print('Warning: sampling time of FRDs is different.')
+        return FreqResp(self.freq, self.resp * other.resp, self.dt)
+
+    def __rmul__(self, other):
+        """Right multiply two zpk models (serial connection)."""
+        if isinstance(other, (int, float, complex, np.number)):
+            other = FreqResp(self.freq, np.array([other]*len(self.resp)), self.dt)
+        else:
+            if self.dt != other.dt:
+                print('Error: frequency range of zpk systems is different.')
+            if self.dt != other.dt:
+                print('Warning: sampling time of FRDs is different.')
+        return other * self
+
+    def __truediv__(self, other):
+        """Divide two FRDs."""
+        if isinstance(other, (int, float, complex, np.number)):
+            other = FreqResp(self.freq, np.array([other]*len(self.resp)), self.dt)
+        else:
+            if self.dt != other.dt:
+                print('Error: frequency range of zpk systems is different.')
+            if self.dt != other.dt:
+                print('Warning: sampling time of FRDs is different.')
+        return FreqResp(self.freq, self.resp / other.resp, self.dt)
+
+    def __rtruediv__(self, other):
+        """Right divide two FRDs."""
+        if isinstance(other, (int, float, complex, np.number)):
+            other = FreqResp(self.freq, np.array([other]*len(self.resp)), self.dt)
+        else:
+            if self.dt != other.dt:
+                print('Error: frequency range of zpk systems is different.')
+            if self.dt != other.dt:
+                print('Warning: sampling time of FRDs is different.')
+        return other / self
+
+    def __pow__(self, other):
+        if not type(other) == int:
+            raise ValueError("Exponent must be an integer")
+        if other == 0:
+            return FreqResp(self.freq, np.array([1.0]*len(self.resp)), self.dt)  # unity
+        if other > 0:
+            return self * (self ** (other - 1))
+        if other < 0:
+            return (1.0 / self) * (self ** (other + 1))
+
+
 def fft(data, dt):
     framesize = len(data)
-    fft = np.abs(np.fft.fft(data)/(framesize/2))
-    fft_axis = np.linspace(0, 1/dt, framesize)
+    fft = np.abs(np.fft.fft(data) / (framesize / 2))
+    fft_axis = np.linspace(0, 1 / dt, framesize)
     return fft_axis, fft
 
 
 def fft_ave(data, dt, windivnum=4, overlap=0.5):
-    framesize = int(_floorpow2(len(data))/windivnum)
+    framesize = int(_floorpow2(len(data)) / windivnum)
 
     # Overlaping
-    Tlen = len(data) * dt                       # Time of data length
-    Tfc = framesize * dt                        # Time of frame length
-    x_ol = framesize * (1 - overlap)            # オーバーラップ時のフレームずらし幅
-    N_ave = int( (Tlen - (Tfc * overlap)) / (Tfc * (1-overlap)) ) # data number for average
+    Tlen = len(data) * dt  # Time of data length
+    Tfc = framesize * dt  # Time of frame length
+    x_ol = framesize * (1 - overlap)  # オーバーラップ時のフレームずらし幅
+    N_ave = int((Tlen - (Tfc * overlap)) / (Tfc * (1 - overlap)))  # data number for average
     data_array = []
     for i in range(N_ave):
-        ps = int(x_ol * i)                      # 切り出し位置をループ毎に更新
-        data_array.append(data[ps:ps+framesize:1])  # 切り出し位置psからフレームサイズ分抽出して配列に追加
+        ps = int(x_ol * i)  # 切り出し位置をループ毎に更新
+        data_array.append(data[ps:ps + framesize:1])  # 切り出し位置psからフレームサイズ分抽出して配列に追加
 
     # Hanning Window
     han = signal.hanning(framesize)
-    acf = 1 / (sum(han) / framesize)            # Amplitude Correction Factor
+    acf = 1 / (sum(han) / framesize)  # Amplitude Correction Factor
     for i in range(N_ave):
         data_array[i] = data_array[i] * han
 
     # FFT average
     fft_array = []
     for i in range(N_ave):
-        fft_array.append(acf*np.abs(np.fft.fft(data_array[i])/(framesize/2)))
-    fft_axis = np.linspace(0, 1/dt, framesize)
-    fft_mean = np.sqrt(np.mean(np.array(fft_array)**2, axis=0))
+        fft_array.append(acf * np.abs(np.fft.fft(data_array[i]) / (framesize / 2)))
+    fft_axis = np.linspace(0, 1 / dt, framesize)
+    fft_mean = np.sqrt(np.mean(np.array(fft_array) ** 2, axis=0))
     return fft_axis, fft_mean
 
 
 def tfestimate(x, y, freq, dt, windivnum=4, overlap=0.5):
     x = signal.detrend(x, type='constant')
     y = signal.detrend(y, type='constant')
-    NFFT = int(_floorpow2(len(x))/windivnum)
-    Pxy, freq_tmp = mlab.csd(x, y, NFFT=NFFT, Fs=int(1/dt), window=mlab.window_hanning, noverlap=int(NFFT*overlap))
-    Pxx, freq_tmp = mlab.psd(x, NFFT=NFFT, Fs=int(1/dt), window=mlab.window_hanning, noverlap=int(NFFT*overlap))
-    coh_tmp, freq_tmp = mlab.cohere(x, y, NFFT=NFFT, Fs=int(1/dt), window=mlab.window_hanning, noverlap=int(NFFT*overlap))
-    frd = Pxy/Pxx
+    NFFT = int(_floorpow2(len(x)) / windivnum)
+    Pxy, freq_tmp = mlab.csd(x, y, NFFT=NFFT, Fs=int(1 / dt), window=mlab.window_hanning, noverlap=int(NFFT * overlap))
+    Pxx, freq_tmp = mlab.psd(x, NFFT=NFFT, Fs=int(1 / dt), window=mlab.window_hanning, noverlap=int(NFFT * overlap))
+    coh_tmp, freq_tmp = mlab.cohere(x, y, NFFT=NFFT, Fs=int(1 / dt), window=mlab.window_hanning,
+                                    noverlap=int(NFFT * overlap))
+    frd = Pxy / Pxx
     mag_tmp = np.abs(frd)
-    phase_tmp = np.angle(frd)    
-    real_tmp = mag_tmp*np.cos(phase_tmp)
-    imag_tmp = mag_tmp*np.sin(phase_tmp)
-    
+    phase_tmp = np.angle(frd)
+    real_tmp = mag_tmp * np.cos(phase_tmp)
+    imag_tmp = mag_tmp * np.sin(phase_tmp)
+
     # Interpolation
     f_real = interpolate.interp1d(freq_tmp, real_tmp)
     real = f_real(freq)
     f_imag = interpolate.interp1d(freq_tmp, imag_tmp)
     imag = f_imag(freq)
-    freqresp = real+imag*1.j
-    
+    resp = real + imag * 1.j
+
     f_coh = interpolate.interp1d(freq_tmp, coh_tmp)
     coh = f_coh(freq)
-    
-    return freqresp, coh
 
-    
+    return FreqResp(freq, resp, dt), coh
+
+
 def _floorpow2(x):
-    #2のべき乗に切り下げて丸め込み x>1
-    return int(bin(1)+'0'*(len(bin(int(x)))-3), base=2)
+    # 2のべき乗に切り下げて丸め込み x>1
+    return int(bin(1) + '0' * (len(bin(int(x))) - 3), base=2)
 
 
 def _ceilpow2(x):
-    #2のべき乗に切り上げて丸め込み x>1
-    return int(bin(1)+'0'*(len(bin(int(x)))-2), base=2)
+    # 2のべき乗に切り上げて丸め込み x>1
+    return int(bin(1) + '0' * (len(bin(int(x))) - 2), base=2)

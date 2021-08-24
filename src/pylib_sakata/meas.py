@@ -12,7 +12,7 @@ import numpy as np
 import pandas as pd
 from .fft import tfestimate
 
-class MeasData():
+class MeasData:
  
     def __init__(self, list, value, time, dt):
         self.list = list

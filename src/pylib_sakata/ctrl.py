@@ -31,8 +31,10 @@ import numpy as np
 from numpy.polynomial import polynomial
 import control
 from control import matlab
+from .fft import FreqResp
 
-class ZpkModel():
+
+class ZpkModel:
  
     def __init__(self, zeros, poles, gain, dt=0):
         # gain: not system dc gain but coefficient of monic polynomials!
@@ -175,6 +177,7 @@ class ZpkModel():
         else: # sys == 'SP':
             return self/(1+self*other)
 
+
 def _list_com(list1, list2):
     list1 = list(list1)
     list2 = list(list2)
@@ -193,6 +196,7 @@ def _list_com(list1, list2):
                 out.append(value)
     return out
 
+
 def _list_dif(list1, list2):
     list1 = list(list1)
     list2 = list(list2)
@@ -205,6 +209,7 @@ def _list_dif(list1, list2):
         if value in out:
             out.remove(value)
     return out
+
 
 def _zpk_polynomial_to_string(zp, var='s'):
     """Convert a pole or zero pair to a string"""
@@ -298,8 +303,8 @@ def sys2frd(sys, freq):
     mag, phase, omega = matlab.freqresp(sys, freq*2.0*np.pi)
     real = mag*np.cos(phase)
     imag = mag*np.sin(phase)
-    frd = real+imag*1.j
-    return frd
+    resp = real+imag*1.j
+    return FreqResp(freq, resp, sys.dt)
 
 
 def feedback(sysP, sysC, sys='S'):
@@ -354,7 +359,7 @@ def c2d(sysC, dt, method='tustin'):
             zpk = ss2zpk(sysC)
         szeros = zpk.z
         spoles = zpk.p
-        sgain = abs(sys2frd(sysC, 0.01)[0])
+        sgain = abs(sys2frd(sysC, 0.01).resp[0])
         zzeros = [0] * len(szeros)
         zpoles = [0] * len(spoles)
         for idx, s in enumerate(szeros):
@@ -364,7 +369,7 @@ def c2d(sysC, dt, method='tustin'):
             z = np.exp(s * dt)
             zpoles[idx] = z
         sysDpre = ZpkModel(zzeros, zpoles, 1.0, dt)
-        zgain = abs(sys2frd(sysDpre, 0.01)[0])
+        zgain = abs(sys2frd(sysDpre, 0.01).resp[0])
         sysD = sysDpre * sgain / zgain
         if type(sysC) == ZpkModel:
             return sysD
@@ -508,17 +513,27 @@ def _pfoptparam(freq, zeta, depth, sysT):
     if (len(freq)==len(zeta)==len(depth)) == False:
         print('Error: length of peak filter parameters is different!')
     omega = 2.0*np.pi*np.array(freq)
-    if type(sysT) == ZpkModel:
-        sysT = zpk2tf(sysT)
-    mag, phase, tmp = matlab.freqresp(1.0/sysT, omega)
-    re_invT = mag*np.cos(phase)
-    im_invT = mag*np.sin(phase)
+    if type(sysT) == FreqResp:
+        re_invT = np.array([])
+        im_invT = np.array([])
+        invsysT = 1.0/sysT
+        for i in range(len(freq)):
+            idx = np.argmin(np.abs(invsysT.freq - freq[i]))
+            re_invT = np.append(re_invT, np.real(invsysT.resp[idx]))
+            im_invT = np.append(im_invT, np.imag(invsysT.resp[idx]))
+    else:
+        if type(sysT) == ZpkModel:
+            sysT = zpk2tf(sysT)
+        mag, phase, tmp = matlab.freqresp(1.0 / sysT, omega)
+        re_invT = mag * np.cos(phase)
+        im_invT = mag * np.sin(phase)
+
     norm_invT = np.sqrt(re_invT**2+im_invT**2)
     phi = -omega*re_invT/im_invT
     k = 2*np.array(zeta)*omega*(1.0/np.array(depth)-1.0)/np.sqrt(phi**2 + omega**2)*norm_invT
     for i in range(len(freq)):
         if (1-2.0*zeta[i]*2 <= 0):
-            print('Warning: Peak does not exit at the frequency.')
+            print('Warning: peak does not exit at the frequency.')
         phaseT = math.atan2(im_invT[i], re_invT[i])
         phaseF = math.atan2(omega[i], -phi[i])
         if phaseT/phaseF < 0:
