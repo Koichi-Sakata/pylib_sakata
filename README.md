@@ -1,11 +1,11 @@
-pylib-sakata User's Manual version-0.0.7
+pylib-sakata User's Manual version-0.0.8
 ===
 
 <!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
 
 <!-- code_chunk_output -->
 
-- [pylib-sakata User's Manual version-0.0.7](#pylib-sakata-users-manual-version-007)
+- [pylib-sakata User's Manual version-0.0.8](#pylib-sakata-users-manual-version-008)
 - [1. Introduction](#1-introduction)
 - [2. Environment Setup](#2-environment-setup)
   - [2.1. Installation of Python](#21-installation-of-python)
@@ -48,6 +48,7 @@ pylib-sakata User's Manual version-0.0.7
   - [3.22. nf](#322-nf)
   - [3.23. pf](#323-pf)
   - [3.24. pfopt](#324-pfopt)
+  - [3.25. dob](#325-dob)
 - [4. pylib_sakata.fft](#4-pylib_sakatafft)
   - [4.1. FreqResp](#41-freqresp)
   - [4.2. fft](#42-fft)
@@ -309,7 +310,7 @@ This function calls **ss** function in control library.
 
 **Examples**
 ```python
->>> print(ctrl.ss("1. -2; 3. -4", "5.; 7", "6. 8", "9."))
+>>> print(ctrl.ss("1. -2.; 3. -4.", "5.; 7.", "6. 8.", "9."))
 A = [[ 1. -2.]
      [ 3. -4.]]
 
@@ -396,7 +397,7 @@ pylib_sakata.ctrl.**ss2tf**(*ss*)
 
 **Examples**
 ```python
->>> Sys_ss = ctrl.ss("1. -2; 3. -4", "5.; 7", "6. 8.", "9.")
+>>> Sys_ss = ctrl.ss("1. -2.; 3. -4.", "5.; 7.", "6. 8.", "9.")
 >>> print(ctrl.ss2tf(Sys_ss))
 
 9 s^2 + 113 s + 118
@@ -415,7 +416,7 @@ pylib_sakata.ctrl.**ss2zpk**(*ss*)
 
 **Examples**
 ```python
->>> Sys_ss = ctrl.ss("1. -2; 3. -4", "5.; 7", "6. 8.", "9.")
+>>> Sys_ss = ctrl.ss("1. -2.; 3. -4.", "5.; 7.", "6. 8.", "9.")
 >>> ctrl.ss2zpk(Sys_ss)
 
     (s+11.41)(s+1.149)
@@ -921,7 +922,7 @@ array([TransferFunction(array([-0.00014643,  0.00051387, -0.00036745]), array([ 
 
 ## 3.24. pfopt
 
-**pfopt**(*freq, zeta, depth, sysT, dt=None, method='tustin'*)
+pylib_sakata.ctrl.**pfopt**(*freq, zeta, depth, sysT, dt=None, method='tustin'*)
 
 This function is for design of optimized peak filters ([resonant filters](https://ieeexplore.ieee.org/document/4291569)).
 
@@ -953,6 +954,47 @@ array([TransferFunction(array([ 0.0049857 , -0.00972818,  0.00474248]), array([ 
        TransferFunction(array([ 0.00740923, -0.01446026,  0.00705103]), array([ 1.        , -1.99960704,  0.9999623 ]), 0.001),
        TransferFunction(array([ 0.01227286, -0.02398427,  0.01171141]), array([ 1.        , -1.9989505 ,  0.99993719]), 0.001)],
       dtype=object)
+```
+
+## 3.25. dob
+pylib_sakata.ctrl.**dob**(*freq, zeta, M, C, K, dt, nd = 0*)
+
+This function is for design of a discrete-time disturbance observer (DOB).
+$$
+\hat{d} = -z^{n_d} Q[z] u + Q[z] P^{-1}[z] y
+$$
+Here, it is defined that disturbance $d$ is injected in the system as plus sign.
+
+- Parameters:
+  - freq: frequency[Hz] of the pole pair of the DOB
+  - zeta: damping of the pole pair of the DOB
+  - M: mass[kg] of the plant
+  - C: viscosity[N/(m/s)] of the plant
+  - K: stiffness[N/m] of the plant
+  - dt: sampling time of the system
+  - nd: sampling number of the dead-time of the system
+- Returns:
+  - DOBu: $z^{n_d} Q[z]$
+  - DOBy: $Q[z] P^{-1}[z]$
+
+**Examples**
+```python
+>>> DOBu, DOBy = dob(5., 0.7, 1., 10., 0., 0.001, 1)
+>>> print(DOBu)
+
+ 0.0004836 z + 0.0004819
+-------------------------
+z^3 - 1.956 z^2 + 0.957 z
+
+dt = 0.001
+
+>>> print(DOBy)
+
+970.3 z^2 - 1931 z + 960.7
+--------------------------
+  z^2 - 1.956 z + 0.957
+
+dt = 0.001
 ```
 
 # 4. pylib_sakata.fft

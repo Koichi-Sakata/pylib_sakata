@@ -48,8 +48,6 @@ Pnz_frd = ctrl.sys2frd(Pnz, freq)
 print('Plant model was set.')
 
 # Design PID controller
-fd = 200
-fi = 30
 freq1 = 10
 zeta1 = 1.0
 freq2 = 10.0

@@ -24,6 +24,7 @@
 # sys = nf(freq, zeta, depth, dt=None, method='matched')
 # sys = pf(freq, zeta, k, phi, dt=None, method='matched')
 # sys = pfopt(freq, zeta, kpdb, sysT, dt=None, method='matched')
+# DOBu, DOBy = dob(freq, zeta, M, C, K, dt, nd = 0)
 
 
 import math
@@ -536,3 +537,69 @@ def _pfoptparam(freq, zeta, depth, sysT):
         if phaseT/phaseF < 0:
             k[i] *= -1
     return freq, zeta, k, phi
+
+
+def dob(freq, zeta, M, C, K, dt, nd = 0):
+    # d_hat = -Q[z] * u + Q[z]*P[z]**-1 * y
+    # DOBu = Q[z], DOBy = Q[z]*P[z]
+
+    # continuous-time plant model
+    Acp = np.matrix([[0.0, 1.0], [-K/M, -C/M]])
+    bcp = np.matrix([[0.0], [1/M]])
+    ccp = np.matrix([[1.0, 0.0]])
+    Pc = ss(Acp, bcp, ccp, 0)
+    # discrete-time plant model
+    Ps = c2d(Pc, dt, method='zoh')
+    Asp = Ps.A
+    bsp = Ps.B
+    csp = Ps.C
+
+    # discrete-time disturbance model
+    Asd = np.matrix([[1.0]])
+    csd = np.matrix([[1.0]])
+
+    # augumented-discrete time plant model
+    As = np.append(np.append(Asp, bsp*csd, 1), [np.append(np.zeros([1, 2]), Asd)], 0)
+    bs = np.append(bsp, np.zeros([1, 1]), 0)
+
+    # Min-order observer
+    Aob11 = As[0, 0]
+    Aob12 = As[0,1:3]
+    Aob21 = As[1:3, 0]
+    Aob22 = As[1:3, 1:3]
+    bob1 = bs[0]
+    bob2 = bs[1:3]
+
+    # pole placement
+    if zeta >= 1.0:
+        w1 = -2.0 * np.pi * freq * (zeta + np.sqrt(zeta ** 2 - 1))
+        w2 = -2.0 * np.pi * freq * (zeta - np.sqrt(zeta ** 2 - 1))
+    else:
+        w1 = -2.0 * np.pi * freq * (zeta + np.sqrt(-zeta ** 2 + 1) * 1.j)
+        w2 = -2.0 * np.pi * freq * (zeta - np.sqrt(-zeta ** 2 + 1) * 1.j)
+    pole_obs = np.array([np.exp(w1*dt), np.exp(w2*dt)])
+    K = matlab.acker(Aob22.T, Aob12.T, pole_obs).T
+
+    # observer matrices
+    Ahat = Aob22 - K * Aob12
+    bhat = Aob21 + Aob22 * K - K * Aob11 - K * Aob12 * K
+    Jhat = bob2 - K * bob1
+    Chat = np.append(np.zeros([1, 2]), np.eye(2), 0)
+    dhat = np.append(np.array([[1.0]]), K, 0)
+
+    # DOB
+    Adob = Ahat
+    Bdob = np.append(bhat, Jhat, 1)
+    Cdob = np.append(np.zeros([1, 2]), csd, 1) * Chat
+    Ddob = np.append(np.append(np.zeros([1, 2]), csd, 1) * dhat, np.zeros([1, 1]), 1)
+    # TransferFunction
+    DOBy = ss2tf(ss(Adob, Bdob[:, 0], Cdob, Ddob[:, 0], dt))
+    DOBu = -ss2tf(ss(Adob, Bdob[:, 1], Cdob, Ddob[:, 1], dt))
+
+    if nd > 0:
+        DOBu_num, DOBu_den = matlab.tfdata(DOBu)
+        DOBu_den = np.append(DOBu_den[0], np.zeros([1, int(nd)]), 1)
+        DOBu = tf(DOBu_num[0][0], DOBu_den[0], dt)
+
+    return DOBu, DOBy
+
