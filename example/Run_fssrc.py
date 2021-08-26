@@ -16,7 +16,7 @@ from pylib_sakata import plot
 print('Start simulation!')
 
 # Common parameters
-figurefolderName = 'figure_2mass_pl'
+figurefolderName = 'figure_fssrc'
 if os.path.exists(figurefolderName):
     shutil.rmtree(figurefolderName)
 os.makedirs(figurefolderName)
@@ -62,16 +62,13 @@ Cz = ctrl.pid(freq1, zeta1, freq2, zeta2, M, C, K, Ts)
 Cz_frd = ctrl.sys2frd(Cz, freq)
 print('PID controller was designed.')
 
-# Design phase lead filter
-zeta1 = 0.7
-freq1 = 40
-zeta2 = 0.7
-freq2 = 60
-PLz1 = ctrl.pl2nd(freq1, zeta1, freq2, zeta2, Ts)
-PLz1_frd = ctrl.sys2frd(PLz1, freq)
-PLz2 = ctrl.pl2nd(freq2, zeta2, freq1, zeta1, Ts)
-PLz2_frd = ctrl.sys2frd(PLz2, freq)
-print('Phase lead filters were desinged.')
+# Design FS-SRC
+# https://www.jstage.jst.go.jp/article/ieejjia/3/6/3_455/_pdf
+alpha = 0.4
+freq_lpf = 20
+LPFz = ctrl.lpf1st(freq_lpf, Ts)
+LPFz_frd = ctrl.sys2frd(LPFz, freq)
+print('FS-SRC was desinged.')
 
 print('Frequency respose alanysis is running...')
 # Motor side
@@ -79,18 +76,15 @@ Gn1_frd = Pnz1_frd * Cz_frd
 Sn1_frd = 1/(1 + Gn1_frd)
 Tn1_frd = 1 - Sn1_frd
 
-Gn1_pl_frd = Pnz1_frd * Cz_frd * PLz1_frd
-Sn1_pl_frd = 1/(1 + Gn1_pl_frd)
-Tn1_pl_frd = 1 - Sn1_pl_frd
-
 # Load side
 Gn2_frd = Pnz2_frd * Cz_frd
 Sn2_frd = 1/(1 + Gn2_frd)
 Tn2_frd = 1 - Sn2_frd
 
-Gn2_pl_frd = Pnz2_frd * Cz_frd * PLz2_frd
-Sn2_pl_frd = 1/(1 + Gn2_pl_frd)
-Tn2_pl_frd = 1 - Sn2_pl_frd
+# FS-SRC
+Gn_fssrc_frd = (LPFz_frd * Pnz2_frd + (1.0 - LPFz_frd) * ((1.0 - alpha) * Pnz1_frd + alpha * Pnz2_frd)) * Cz_frd
+Sn_fssrc_frd = 1/(1 + Gn_fssrc_frd)
+Tn_fssrc_frd = 1 - Sn_fssrc_frd
 
 print('Plotting figures...')
 # Plant
@@ -108,14 +102,6 @@ ax_phase = fig.add_subplot(212)
 plot.plot_tffrd(ax_mag, ax_phase, Cz_frd, '-', 'b', 1.5, 1.0, freqrange, title='Frequency response of PID controller')
 plot.savefig(figurefolderName+'/freq_C.png')
 
-# Phase lead filters
-fig = plot.makefig()
-ax_mag = fig.add_subplot(211)
-ax_phase = fig.add_subplot(212)
-plot.plot_tffrd(ax_mag, ax_phase, PLz1_frd, '-', 'b', 1.5, 1.0, title='Frequency response of filters')
-plot.plot_tffrd(ax_mag, ax_phase, PLz2_frd, '-', 'r', 1.5, 1.0, freqrange, [-10, 10], legend=['PL for motor side', 'PL for load side'])
-plot.savefig(figurefolderName+'/freq_PL.png')
-
 # Open loop function
 fig = plot.makefig()
 ax_mag = fig.add_subplot(211)
@@ -130,8 +116,7 @@ ax_mag = fig.add_subplot(111)
 ax_phase = None
 plot.plot_tffrd(ax_mag, ax_phase, Sn1_frd, '-', 'b', 1.5, 1.0, title='Frequency response of sensitivity function')
 plot.plot_tffrd(ax_mag, ax_phase, Sn2_frd, '-', 'r', 1.5, 1.0)
-plot.plot_tffrd(ax_mag, ax_phase, Sn1_pl_frd, '-', 'c', 1.5, 1.0)
-plot.plot_tffrd(ax_mag, ax_phase, Sn2_pl_frd, '-', 'm', 1.5, 1.0, freqrange, [-60, 20], legend=['Motor side', 'Load side', 'Motor side with NF', 'Load side with NF'])
+plot.plot_tffrd(ax_mag, ax_phase, Sn_fssrc_frd, '-', 'm', 1.5, 1.0, freqrange, [-60, 20], legend=['Motor side', 'Load side', 'FS-SRC'])
 plot.savefig(figurefolderName+'/freq_S.png')
 
 # Complementary sensitivity function
@@ -140,8 +125,7 @@ ax_mag = fig.add_subplot(211)
 ax_phase = fig.add_subplot(212)
 plot.plot_tffrd(ax_mag, ax_phase, Tn1_frd, '-', 'b', 1.5, 1.0, title='Frequency response of complementary sensitivity function')
 plot.plot_tffrd(ax_mag, ax_phase, Tn2_frd, '-', 'r', 1.5, 1.0)
-plot.plot_tffrd(ax_mag, ax_phase, Tn1_pl_frd, '-', 'c', 1.5, 1.0)
-plot.plot_tffrd(ax_mag, ax_phase, Tn2_pl_frd, '-', 'm', 1.5, 1.0, freqrange, [-60, 20], legend=['Motor side', 'Load side', 'Motor side with NF', 'Load side with NF'])
+plot.plot_tffrd(ax_mag, ax_phase, Tn_fssrc_frd, '-', 'm', 1.5, 1.0, freqrange, [-60, 20], legend=['Motor side', 'Load side', 'FS-SRC'])
 plot.savefig(figurefolderName+'/freq_T.png')
 
 # Nyquist
@@ -149,8 +133,7 @@ fig = plot.makefig()
 ax = fig.add_subplot(111)
 plot.plot_nyquist(ax, Gn1_frd, '-', 'b', 1.5, 1.0, title='Nyquist Diagram')
 plot.plot_nyquist(ax, Gn2_frd, '-', 'r', 1.5, 1.0)
-plot.plot_nyquist(ax, Gn1_pl_frd, '-', 'c', 1.5, 1.0)
-plot.plot_nyquist(ax, Gn2_pl_frd, '-', 'm', 1.5, 1.0, legend=['Motor side', 'Load side', 'Motor side with NF', 'Load side with NF'])
+plot.plot_nyquist(ax, Gn_fssrc_frd, '-', 'm', 1.5, 1.0, legend=['Motor side', 'Load side', 'FS-SRC'])
 plot.plot_nyquist_assistline(ax)
 plot.savefig(figurefolderName+'/nyquist.png')
 
@@ -158,8 +141,7 @@ fig = plot.makefig()
 ax = fig.add_subplot(111)
 plot.plot_nyquist(ax, Gn1_frd, '-', 'b', 1.5, 1.0, title='Nyquist Diagram')
 plot.plot_nyquist(ax, Gn2_frd, '-', 'r', 1.5, 1.0)
-plot.plot_nyquist(ax, Gn1_pl_frd, '-', 'c', 1.5, 1.0)
-plot.plot_nyquist(ax, Gn2_pl_frd, '-', 'm', 1.5, 1.0, xrange=[-5, 5], yrange=[-5, 5], legend=['Motor side', 'Load side', 'Motor side with NF', 'Load side with NF'])
+plot.plot_nyquist(ax, Gn_fssrc_frd, '-', 'm', 1.5, 1.0, xrange=[-5, 5], yrange=[-5, 5], legend=['Motor side', 'Load side', 'FS-SRC'])
 plot.plot_nyquist_assistline(ax)
 plot.savefig(figurefolderName+'/nyquist_.png')
 

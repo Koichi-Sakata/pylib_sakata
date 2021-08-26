@@ -109,7 +109,7 @@ ax_phase = fig.add_subplot(212)
 plot.plot_tffrd(ax_mag, ax_phase, Cz_frd, '-', 'b', 1.5, 1.0, freqrange, title='Frequency response of PID controller')
 plot.savefig(figurefolderName+'/freq_C.png')
 
-# Notch and phase lead filters
+# Notch filters
 fig = plot.makefig()
 ax_mag = fig.add_subplot(211)
 ax_phase = fig.add_subplot(212)
