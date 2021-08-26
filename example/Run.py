@@ -2,6 +2,7 @@
 
 
 from pylib_sakata import init as init
+# uncomment the follows when the file is executed in a Python console.
 # init.close_all()
 # init.clear_all()
 
@@ -17,7 +18,7 @@ from pylib_sakata import fft
 print('Start simulation!')
 
 # Common parameters
-figurefolderName = 'figure/'
+figurefolderName = 'figure'
 if os.path.exists(figurefolderName):
     shutil.rmtree(figurefolderName)
 os.makedirs(figurefolderName)
@@ -25,25 +26,25 @@ Ts = 1/4000
 dataNum = 10000
 freqrange = [1, 1000]
 freq = np.logspace(np.log10(freqrange[0]), np.log10(freqrange[1]), dataNum, base=10)
-s = ctrl.tf([1, 0],[1])
-z = ctrl.tf([1, 0],[1], Ts)
+s = ctrl.tf([1, 0], [1])
+z = ctrl.tf([1, 0], [1], Ts)
 print('Common parameters were set.')
 
 # Plant model
 M1 = 1.0
 M2 = 1.0
-M = M1+M2
+M = M1 + M2
 C = 10.0
 K = 0.0
 Creso = 10.0
 Kreso = 100000.0
-k1 = M2/(M1*(M1+M2))
-k2 = -1.0/(M1+M2)
-omegaPreso = np.sqrt(Kreso*(M1+M2)/(M1*M2))
-zetaPreso = 0.5*Creso*np.sqrt((M1+M2)/(Kreso*M1*M2))
-Pmechs = ctrl.tf([1],[M, C, K]) + k1 * ctrl.tf([1],[1, 2*zetaPreso*omegaPreso, omegaPreso**2])
-numDelay, denDelay = matlab.pade(Ts*4,n=4)
-Ds = ctrl.tf(numDelay,denDelay)
+k1 = M2/(M1 * (M1 + M2))
+k2 = -1.0/(M1 + M2)
+omegaPreso = np.sqrt(Kreso * (M1 + M2)/(M1 * M2))
+zetaPreso = 0.5 * Creso*np.sqrt((M1 + M2)/(Kreso * M1 * M2))
+Pmechs = ctrl.tf([1],[M, C, K]) + k1 * ctrl.tf([1], [1, 2*zetaPreso*omegaPreso, omegaPreso**2])
+numDelay, denDelay = matlab.pade(Ts*4, n=4)
+Ds = ctrl.tf(numDelay, denDelay)
 Dz = z**-4
 Pns = Pmechs * Ds
 Pnz = ctrl.c2d(Pmechs, Ts, method='zoh') * Dz

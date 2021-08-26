@@ -18,7 +18,7 @@ from pylib_sakata import fft
 print('Start simulation!')
 
 # Common parameters
-figurefolderName = 'figure_rigid'
+figurefolderName = 'figure_sysid'
 if os.path.exists(figurefolderName):
     shutil.rmtree(figurefolderName)
 os.makedirs(figurefolderName)
@@ -32,11 +32,7 @@ print('Common parameters were set.')
 
 # Plant model
 M = 2.0
-zetaP = 0.7
-omegaP = 2*np.pi*10
-C = M*2*zetaP*omegaP
-K = M*omegaP**2
-C = 0
+C = 10.0
 K = 0
 Pmechs = ctrl.tf([1], [M, C, K])
 numDelay, denDelay = matlab.pade(Ts*4, n=4)
@@ -56,16 +52,6 @@ Cz = ctrl.pid(freq1, zeta1, freq2, zeta2, M, C, K, Ts)
 Cz_frd = ctrl.sys2frd(Cz, freq)
 print('PID controller was designed.')
 
-# Design peak filters
-freqPF = [5, 10, 50]
-zetaPF = [0.001, 0.001, 0.001]
-depthPF = [0.1, 0.1, 0.1]
-PFz = ctrl.pfopt(freqPF, zetaPF, depthPF, ctrl.feedback(Pnz, Cz, sys='T'), Ts)
-PFz_frd = 0.0
-for i in range(len(freqPF)):
-    PFz_frd += ctrl.sys2frd(PFz[i], freq)
-print('Peak filters were desinged.')
-
 print('System identification simulation is running...')
 Snz = ctrl.feedback(Pnz, Cz, sys='S')
 SPnz = ctrl.feedback(Pnz, Cz, sys='SP')
@@ -84,11 +70,11 @@ Pmeas_frd, coh = fft.tfestimate(u, y, freq, Ts)
 
 print('Frequency respose alanysis is running...')
 # Model
-Gn_frd = Pnz_frd * Cz_frd * (1+PFz_frd)
+Gn_frd = Pnz_frd * Cz_frd
 Sn_frd = 1/(1 + Gn_frd)
 Tn_frd = 1 - Sn_frd
 # Measurement
-G_frd = Pmeas_frd * Cz_frd * (1+PFz_frd)
+G_frd = Pmeas_frd * Cz_frd
 S_frd = 1/(1 + G_frd)
 T_frd = 1 - S_frd
 
@@ -127,13 +113,6 @@ ax_mag = fig.add_subplot(211)
 ax_phase = fig.add_subplot(212)
 plot.plot_tffrd(ax_mag, ax_phase, Cz_frd, '-', 'b', 1.5, 1.0, freqrange, title='Frequency response of PID controller')
 plot.savefig(figurefolderName+'/freq_C.png')
-
-# Peak filters
-fig = plot.makefig()
-ax_mag = fig.add_subplot(211)
-ax_phase = fig.add_subplot(212)
-plot.plot_tffrd(ax_mag, ax_phase, PFz_frd, '-', 'b', 1.5, 1.0, freqrange, title='Frequency response of filters')
-plot.savefig(figurefolderName+'/freq_PF.png')
 
 # Open loop function
 fig = plot.makefig()

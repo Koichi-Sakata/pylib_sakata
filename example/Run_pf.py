@@ -2,6 +2,7 @@
 
 
 from pylib_sakata import init as init
+# uncomment the follows when the file is executed in a Python console.
 # init.close_all()
 # init.clear_all()
 
@@ -9,8 +10,8 @@ import os
 import shutil
 import numpy as np
 from control import matlab
-from pylib_sakata import plot
 from pylib_sakata import ctrl
+from pylib_sakata import plot
 
 print('Start simulation!')
 
@@ -23,8 +24,8 @@ Ts = 1/4000
 dataNum = 10000
 freqrange = [1, 1000]
 freq = np.logspace(np.log10(freqrange[0]), np.log10(freqrange[1]), dataNum, base=10)
-s = ctrl.tf([1, 0],[1])
-z = ctrl.tf([1, 0],[1], Ts)
+s = ctrl.tf([1, 0], [1])
+z = ctrl.tf([1, 0], [1], Ts)
 print('Common parameters were set.')
 
 # Plant model
@@ -35,11 +36,9 @@ C = M*2*zetaP*omegaP
 K = M*omegaP**2
 C = 0
 K = 0
-Pmechs = ctrl.tf([1],[M, C, K])
-numDelay, denDelay = matlab.pade(Ts*4,n=4)
-omegaD = 2.0*np.pi*500
-#Ds = ctrl.tf([omegaD],[1, omegaD])**2
-Ds = ctrl.tf(numDelay,denDelay)
+Pmechs = ctrl.tf([1], [M, C, K])
+numDelay, denDelay = matlab.pade(Ts*4, n=4)
+Ds = ctrl.tf(numDelay, denDelay)
 Dz = z**-4
 Pns = Pmechs * Ds
 Pnz = ctrl.c2d(Pmechs, Ts, method='zoh') * Dz
@@ -102,7 +101,7 @@ fig = plot.makefig()
 ax_mag = fig.add_subplot(211)
 ax_phase = fig.add_subplot(212)
 plot.plot_tffrd(ax_mag, ax_phase, Pnz_frd, '-', 'b', 1.5, 1.0, freqrange, title='Frequency response of plant')
-plot.plot_tffrd(ax_mag, ax_phase, Pns_frd, '--', 'r', 1.5, 1.0, freqrange, legend=['Continuous','Discrete'])
+plot.plot_tffrd(ax_mag, ax_phase, Pns_frd, '--', 'r', 1.5, 1.0, freqrange, legend=['Continuous', 'Discrete'])
 plot.savefig(figurefolderName+'/freq_P.png')
 
 # PID controller
@@ -110,7 +109,7 @@ fig = plot.makefig()
 ax_mag = fig.add_subplot(211)
 ax_phase = fig.add_subplot(212)
 plot.plot_tffrd(ax_mag, ax_phase, Cs_frd, '-', 'b', 1.5, 1.0, freqrange, title='Frequency response of PID controller')
-plot.plot_tffrd(ax_mag, ax_phase, Cz_frd, '--', 'r', 1.5, 1.0, freqrange, legend=['Continuous','Discrete'])
+plot.plot_tffrd(ax_mag, ax_phase, Cz_frd, '--', 'r', 1.5, 1.0, freqrange, legend=['Continuous', 'Discrete'])
 plot.savefig(figurefolderName+'/freq_C.png')
 
 # Peak filters
@@ -118,7 +117,7 @@ fig = plot.makefig()
 ax_mag = fig.add_subplot(211)
 ax_phase = fig.add_subplot(212)
 plot.plot_tffrd(ax_mag, ax_phase, PFs_frd, '-', 'b', 1.5, 1.0, freqrange, title='Frequency response of peak filters')
-plot.plot_tffrd(ax_mag, ax_phase, PFz_frd, '--', 'r', 1.5, 1.0, freqrange, legend=['Continuous','Discrete'])
+plot.plot_tffrd(ax_mag, ax_phase, PFz_frd, '--', 'r', 1.5, 1.0, freqrange, legend=['Continuous', 'Discrete'])
 plot.savefig(figurefolderName+'/freq_PF.png')
 
 # Peak filters
@@ -126,7 +125,7 @@ fig = plot.makefig()
 ax_mag = fig.add_subplot(211)
 ax_phase = fig.add_subplot(212)
 plot.plot_tffrd(ax_mag, ax_phase, NFs_frd, '-', 'b', 1.5, 1.0, freqrange, title='Frequency response of notch filters')
-plot.plot_tffrd(ax_mag, ax_phase, NFz_frd, '--', 'r', 1.5, 1.0, freqrange, legend=['Continuous','Discrete'])
+plot.plot_tffrd(ax_mag, ax_phase, NFz_frd, '--', 'r', 1.5, 1.0, freqrange, legend=['Continuous', 'Discrete'])
 plot.savefig(figurefolderName+'/freq_NF.png')
 
 # Open loop function
@@ -134,7 +133,7 @@ fig = plot.makefig()
 ax_mag = fig.add_subplot(211)
 ax_phase = fig.add_subplot(212)
 plot.plot_tffrd(ax_mag, ax_phase, Gn_frd, '-', 'b', 1.5, 1.0, title='Frequency response of open loop transfer function')
-plot.plot_tffrd(ax_mag, ax_phase, G_frd, '-', 'm', 1.5, 1.0, freqrange, legend=['w/o PF','with PF'])
+plot.plot_tffrd(ax_mag, ax_phase, G_frd, '-', 'm', 1.5, 1.0, freqrange, legend=['w/o PF', 'with PF'])
 plot.savefig(figurefolderName+'/freq_G.png')
 
 # Sensitivity function
@@ -143,7 +142,7 @@ ax_mag = fig.add_subplot(111)
 ax_phase = None
 plot.plot_tffrd(ax_mag, ax_phase, Sn_frd, '-', 'b', 1.5, 1.0, title='Frequency response of sensitivity function')
 plot.plot_tffrd(ax_mag, ax_phase, S_frd, '-', 'm', 1.5, 1.0)
-plot.plot_tffrd(ax_mag, ax_phase, Sn_frd*0.1, '--', 'k', 0.5, 1.0, freqrange, [-60, 10], legend=['w/o PF','with PF'])
+plot.plot_tffrd(ax_mag, ax_phase, Sn_frd*0.1, '--', 'k', 0.5, 1.0, freqrange, [-60, 10], legend=['w/o PF', 'with PF'])
 plot.savefig(figurefolderName+'/freq_S.png')
 
 # Complementary sensitivity function
@@ -151,14 +150,14 @@ fig = plot.makefig()
 ax_mag = fig.add_subplot(211)
 ax_phase = fig.add_subplot(212)
 plot.plot_tffrd(ax_mag, ax_phase, Tn_frd, '-', 'b', 1.5, 1.0, title='Frequency response of complementary sensitivity function')
-plot.plot_tffrd(ax_mag, ax_phase, T_frd, '-', 'm', 1.5, 1.0, freqrange, [-60, 10], legend=['w/o PF','with PF'])
+plot.plot_tffrd(ax_mag, ax_phase, T_frd, '-', 'm', 1.5, 1.0, freqrange, [-60, 10], legend=['w/o PF', 'with PF'])
 plot.savefig(figurefolderName+'/freq_T.png')
 
 # Nyquist
 fig = plot.makefig()
 ax = fig.add_subplot(111)
 plot.plot_nyquist(ax, Gn_frd, '-', 'b', 1.5, 1.0, title='Nyquist Diagram')
-plot.plot_nyquist(ax, G_frd, '-', 'm', 1.5, 1.0, [-20, 10], [-15, 15], legend=['w/o PF','with PF'])
+plot.plot_nyquist(ax, G_frd, '-', 'm', 1.5, 1.0, [-20, 10], [-15, 15], legend=['w/o PF', 'with PF'])
 plot.plot_nyquist_assistline(ax)
 plot.savefig(figurefolderName+'/nyquist.png')
 
