@@ -1,11 +1,11 @@
-pylib-sakata User's Manual version-0.0.8
+pylib-sakata User's Manual version-0.0.9
 ===
 
 <!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
 
 <!-- code_chunk_output -->
 
-- [pylib-sakata User's Manual version-0.0.8](#pylib-sakata-users-manual-version-008)
+- [pylib-sakata User's Manual version-0.0.9](#pylib-sakata-users-manual-version-009)
 - [1. Introduction](#1-introduction)
 - [2. Environment Setup](#2-environment-setup)
   - [2.1. Installation of Python](#21-installation-of-python)
@@ -49,6 +49,9 @@ pylib-sakata User's Manual version-0.0.8
   - [3.23. pf](#323-pf)
   - [3.24. pfopt](#324-pfopt)
   - [3.25. dob](#325-dob)
+  - [3.26. zpetc](#326-zpetc)
+  - [3.27. filt](#327-filt)
+  - [3.28. minreal](#328-minreal)
 - [4. pylib_sakata.fft](#4-pylib_sakatafft)
   - [4.1. FreqResp](#41-freqresp)
   - [4.2. fft](#42-fft)
@@ -979,7 +982,7 @@ Here, it is defined that disturbance $d$ is injected in the system as plus sign.
 
 **Examples**
 ```python
->>> DOBu, DOBy = dob(5., 0.7, 1., 10., 0., 0.001, 1)
+>>> DOBu, DOBy = ctrl.dob(5., 0.7, 1., 10., 0., 0.001, 1)
 >>> print(DOBu)
 
  0.0004836 z + 0.0004819
@@ -996,6 +999,66 @@ dt = 0.001
 
 dt = 0.001
 ```
+
+## 3.26. zpetc
+pylib_sakata.ctrl.**zpetc**(*Pz, dt, zerothr=0.99*)
+
+This function is for design of a zero phase error tracking controller ([ZPETC](https://engineering.purdue.edu/ME576/ZPETC_Tomizuka.pdf)).
+
+- Parameters:
+  - Pz: instance of TransferFunction class of discrete-time LTI system
+  - dt: sampling time of the system
+  - zerothr: threshold to recognize unstable zeros (Optional), Default: 0.99
+- Returns:
+  - Czpetc: instance of TransferFunction class of ZPETC
+  - Nzpetc: number of forward samples
+
+```python
+>>> Ps = ctrl.tf([1.],[1., 10., 0.])
+>>> Pz = ctrl.c2d(Ps, 0.001)
+>>> print(Pz)
+
+2.488e-07 z^2 + 4.975e-07 z + 2.488e-07
+---------------------------------------
+          z^2 - 1.99 z + 0.99
+
+dt = 0.001
+
+>>> Czpetc, Nzpetc = ctrl.zpetc(Pz)
+The common pole-zeros of the zpk model have been deleted.
+>>> print(Czpetc)
+
+2.512e+05 z^4 + 2500 z^3 - 5e+05 z^2 - 2500 z + 2.487e+05
+---------------------------------------------------------
+                           z^4
+
+dt = 0.001
+
+>>> Nzpetc
+2
+```
+
+## 3.27. filt
+pylib_sakata.ctrl.**filt**(*num, den, dt*)
+
+This function is to create transfer functions as rational expressions in $z^{−1}$ and to order the numerator and denominator terms in ascending powers of $z^{−1}$.
+
+- Parameters:
+  - num: polynomial coefficients of the numerator of the discrete-time LTI model
+  - den: polynomial coefficients of the denominator of the discrete-time LTI model
+  - dt: sampling time of the discrete-time LTI model
+- Returns:
+  - out: instance of TransferFunction class of ZPETC
+
+## 3.28. minreal
+pylib_sakata.ctrl.**minreal**(*sys*)
+
+This function is to delete the common pole-zeros of the system.
+
+- Parameters:
+  - sys: LTI model (StateSpace or TransferFunction or ZpkModel)
+- Returns:
+  - out: LTI model whose the common pole-zeros were deleted
 
 # 4. pylib_sakata.fft
 

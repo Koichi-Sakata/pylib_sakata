@@ -50,19 +50,19 @@ def traj4th(posStart, posStep, velMax, accAve, dt, Tstay=0):
     datalength = int((Tstay+Tmove)/dt+1)
 
     time = np.array(range(datalength))*dt
-    pos = np.array([0] * datalength)
-    vel = np.array([0] * datalength)
-    acc = np.array([0] * datalength)
+    pos = np.array([0.0] * datalength)
+    vel = np.array([0.0] * datalength)
+    acc = np.array([0.0] * datalength)
     for i, t in enumerate(time):
         if t <= 0.0:
             pos[i] = 0.0
             vel[i] = 0.0
             acc[i] = 0.0
-        elif 0.0 < t < Tacc:
+        elif 0.0 < t <= Tacc:
             pos[i] = -(1.0/12.0)*A*t**4 + (1.0/6.0)*A*Tacc*t**3
             vel[i] = -(1.0/3.0)*A*t**3 + 0.5*A*Tacc*t**2
             acc[i] = -A*t**2 + A*Tacc*t
-        elif Tcon > 0.0 and Tacc <= t <= Tacc + Tcon:
+        elif Tcon > 0.0 and Tacc < t <= Tacc + Tcon:
             t = t - Tacc
             pos[i] = 0.5*Tacc*velCon + velCon*t
             vel[i] = velCon

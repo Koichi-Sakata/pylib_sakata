@@ -25,6 +25,9 @@
 # sys = pf(freq, zeta, k, phi, dt=None, method='matched')
 # sys = pfopt(freq, zeta, kpdb, sysT, dt=None, method='matched')
 # DOBu, DOBy = dob(freq, zeta, M, C, K, dt, nd = 0)
+# Czpetc, Nzpetc = zpetc(Pz, zerothr=0.99)
+# sys = filt(num, den, dt)
+# sys = minreal(sys)
 
 
 import math
@@ -603,3 +606,58 @@ def dob(freq, zeta, M, C, K, dt, nd = 0):
 
     return DOBu, DOBy
 
+
+def zpetc(Pz, zerothr=0.99):
+    denz = Pz.den[0][0]
+    B_zero = tf2zpk(Pz).z
+    A_pole = tf2zpk(Pz).p
+    B_gain = tf2zpk(Pz).k
+
+    mNbr = len(B_zero)          # Number of zeros
+    nNbr = len(A_pole)          # Number of poles
+    dNbr = nNbr - mNbr          # z^(-d) for b0 not to be zero
+
+    B_UnSt_zero = []
+    B_St_zero = []
+    for i in range(mNbr):
+        if abs(B_zero[i]) >= zerothr:
+            B_UnSt_zero.append(B_zero[i])
+        else:
+            B_St_zero.append(B_zero[i])
+    sNbr = len(B_UnSt_zero)     # Number of unstable zeros
+
+    # Polynomial of unstable zeros
+    B_UnSt_z1 = polynomial.polyfromroots(B_UnSt_zero) * B_gain
+    # Polynomial of stable zeros
+    B_St_z1 = polynomial.polyfromroots(B_St_zero)
+    B_UnStAs_z1 = np.flip(B_UnSt_z1)
+    # DC gain of polynomial of unstable zeros
+    B_UnSt_1 = np.sum(B_UnSt_z1)
+    # Number of forward samples
+    Nzpetc = dNbr + sNbr
+
+    # Transfer function of ZPETC
+    nz_z = np.convolve(denz, B_UnStAs_z1)
+    dz_z = np.convolve(B_St_z1, B_UnSt_1**2)
+    Czpetc = filt(nz_z, dz_z, Pz.dt)
+    return Czpetc, Nzpetc
+
+
+def filt(num, den, dt):
+    zinv = tf([1], [1, 0], dt)
+    numpoly = 0
+    for i in range(len(num)):
+        numpoly += num[i] * zinv**i
+    denpoly = 0
+    for i in range(len(den)):
+        denpoly += den[i] * zinv**i
+    return minreal(numpoly/denpoly)
+
+
+def minreal(sys):
+    if type(sys) == matlab.TransferFunction:
+        return zpk2tf(tf2zpk(sys))
+    elif type(sys) == matlab.StateSpace:
+        return zpk2ss(ss2zpk(sys))
+    else:
+        return sys
