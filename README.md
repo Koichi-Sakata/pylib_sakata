@@ -1041,7 +1041,7 @@ dt = 0.001
 ## 3.27. filt
 pylib_sakata.ctrl.**filt**(*num, den, dt*)
 
-This function is to create transfer functions as rational expressions in $z^{−1}$ and to order the numerator and denominator terms in ascending powers of $z^{−1}$.
+This function is to create transfer functions as rational expressions in $z^{-1}$ and to order the numerator and denominator terms in ascending powers of $z^{-1}$.
 
 - Parameters:
   - num: polynomial coefficients of the numerator of the discrete-time LTI model
