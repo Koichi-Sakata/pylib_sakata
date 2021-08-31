@@ -130,7 +130,7 @@ Although VSCode is actually an editor, it is available as Python IDE due to exte
 <img src="figure\vscode_disp.png" alt="vscode_disp" style="zoom: 33%;" />
 
 #### 2.4.1.1. Installation of VSCode
-The latest version of VSCode installation exe file can be downloaded [Here](https://code.visualstudio.com/) for Windows OS.
+The latest version of VSCode installation exe file can be downloaded [HERE](https://code.visualstudio.com/) for Windows OS.
 For Linux OS, VSCode can be installed by the following command on the shell.
 ```shell
 $ sudo apt update 
@@ -148,7 +148,7 @@ Spyder is an IDE like MATLAB. If you are used to MATLAB, this IDE is recommended
 <img src="figure\spyder_disp.png" alt="spyder_disp" style="zoom: 33%;" />
 
 #### 2.4.2.1. Installation of Spyder
-The latest version of Spyder installation exe file can be downloaded [Here](https://www.spyder-ide.org/) for Windows OS.
+The latest version of Spyder installation exe file can be downloaded [HERE](https://www.spyder-ide.org/) for Windows OS.
 For Linux OS, Spyder can be installed by the following command on the shell.
 
 ```shell
@@ -169,7 +169,7 @@ Professional version is charged. Community version is free. Community version is
 <img src="figure\pycharm_disp.png" alt="spyder_disp" style="zoom: 33%;" />
 
 #### 2.4.3.1. Installation of PyCharm
-The latest version of PyCharm installation exe file can be downloaded [Here](https://www.jetbrains.com/pycharm/download/). 
+The latest version of PyCharm installation exe file can be downloaded [HERE](https://www.jetbrains.com/pycharm/download/). 
 
 #### 2.4.3.2. Initial setting of PyCharm
 It is not necessary.
