@@ -179,12 +179,12 @@ It is not necessary.
 |                    |        VSCode       |      Spyder       |     PyCharm       |
 | ------------------ | :-----------------: | :---------------: | :---------------: |
 | Cost               |        Free         |       Free        |    Free/Paid      |
-| Boot time          |        Fast         |       Slow        |       Slow        |
+| Boot time          |        Fast         |       Slow        |       Normal      |
 | Processing speed   |        Fast         |       Normal      |       Normal      |
 | REPL mode          | need to switch REPL terminal  | Available | Available |
 | Variable Explorer  | Available on Jupyter terminal | Available (Class variables are invisible.) | Available |
 
-Spyder or PyCharm is more suitable than VSCode for early debugging. On the other hand, VSCode is more stress-free  than Spyder or PyCharm for late debugging you do not need to check inter states of variables.
+Spyder is more suitable than VSCode for early debugging. On the other hand, VSCode is stress-free than Spyder for late debugging you do not need to check inter states of variables. PyCharm is generally well-balanced. My recommendation is PyCharm.
 
 ## 2.5. Getting started
 The pylib-sakata package can be imported as follows.
@@ -209,6 +209,7 @@ These modules can be imported individually as follows.
 >>> from pylib_sakata import init
 ```
 
+Example codes are [HERE](https://github.com/Koichi-Sakata/pylib_sakata/tree/main/example).
 
 # 3. pylib_sakata.ctrl
 
