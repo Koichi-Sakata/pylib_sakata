@@ -38,20 +38,21 @@ pylib-sakata User's Manual version-0.0.9
   - [3.12. feedback](#312-feedback)
   - [3.13. frdfeedback](#313-frdfeedback)
   - [3.14. c2d](#314-c2d)
-  - [3.15. pid](#315-pid)
-  - [3.16. pl1st](#316-pl1st)
-  - [3.17. pl2nd](#317-pl2nd)
-  - [3.18. lpf1st](#318-lpf1st)
-  - [3.19. lpf2nd](#319-lpf2nd)
-  - [3.20. hpf1st](#320-hpf1st)
-  - [3.21. hpf2nd](#321-hpf2nd)
-  - [3.22. nf](#322-nf)
-  - [3.23. pf](#323-pf)
-  - [3.24. pfopt](#324-pfopt)
-  - [3.25. dob](#325-dob)
-  - [3.26. zpetc](#326-zpetc)
-  - [3.27. filt](#327-filt)
-  - [3.28. minreal](#328-minreal)
+  - [3.15. pi](#315-pi)
+  - [3.16. pid](#316-pid)
+  - [3.17. pl1st](#317-pl1st)
+  - [3.18. pl2nd](#318-pl2nd)
+  - [3.19. lpf1st](#319-lpf1st)
+  - [3.20. lpf2nd](#320-lpf2nd)
+  - [3.21. hpf1st](#321-hpf1st)
+  - [3.22. hpf2nd](#322-hpf2nd)
+  - [3.23. nf](#323-nf)
+  - [3.24. pf](#324-pf)
+  - [3.25. pfopt](#325-pfopt)
+  - [3.26. dob](#326-dob)
+  - [3.27. zpetc](#327-zpetc)
+  - [3.28. filt](#328-filt)
+  - [3.29. minreal](#329-minreal)
 - [4. pylib_sakata.fft](#4-pylib_sakatafft)
   - [4.1. FreqResp](#41-freqresp)
   - [4.2. fft](#42-fft)
@@ -604,7 +605,44 @@ dt = 0.001
 dt = 0.001
 ```
 
-## 3.15. pid
+## 3.15. pi
+
+pylib_sakata.ctrl.**pi**(*freq, zeta, L, R, dt=None, method='tustin'*)
+
+This function is for design of a PI controller.
+$$
+C_{PI}(s) = \frac{b_1s+b_0}{s}
+$$
+
+- Parameters:
+  - freq: frequency[Hz] of the pole pair of the feedback system with the PI controller
+  - zeta: damping of the pole pair of the feedback system with the PI controller
+  - L: inductance[H] of the plant
+  - R: resistance[$\Omega$] of the plant
+  - dt: sampling time of the LTI model (Optional), Default: 0, set the value >= 0. If dt = 0, the system is continuous time system.
+  - method: discretized method (Optional), Default: 'tustin', set a method if dt > 0
+- Returns:
+  - out: instance of TransferFunction class of the PI controller
+
+**Examples**
+```python
+>>> print(ctrl.pi(1000., 0.7, 0.1, 10.))
+
+869.6 s + 3.948e+06
+-------------------
+         s
+```
+```python
+>>> print(ctrl.pi(1000., 0.7, 0.1, 10., 0.001))
+
+2844 z + 1104
+-------------
+    z - 1
+
+dt = 0.001
+```
+
+## 3.16. pid
 
 pylib_sakata.ctrl.**pid**(*freq1, zeta1, freq2, zeta2, M, C, K, dt=None, method='tustin'*)
 
@@ -644,7 +682,7 @@ $$
 dt = 0.001
 ```
 
-## 3.16. pl1st
+## 3.17. pl1st
 
 pylib_sakata.ctrl.**pl1st**(*freq1, freq2, dt=None, method='tustin'*)
 
@@ -679,7 +717,7 @@ $$
 dt = 0.001
 ```
 
-## 3.17. pl2nd
+## 3.18. pl2nd
 
 pylib_sakata.ctrl.**pl2nd**(*freq1, zeta1, freq2, zeta2, dt=None, method='tustin'*)
 
@@ -716,7 +754,7 @@ $$
 dt = 0.001
 ```
 
-## 3.18. lpf1st
+## 3.19. lpf1st
 
 pylib_sakata.ctrl.**lpf1st**(*freq, dt=None, method='tustin'*)
 
@@ -750,7 +788,7 @@ s + 628.3
 dt = 0.001
 ```
 
-## 3.19. lpf2nd
+## 3.20. lpf2nd
 
 pylib_sakata.ctrl.**lpf2nd**(*freq, zeta, dt=None, method='tustin'*)
 
@@ -785,7 +823,7 @@ s^2 + 879.6 s + 3.948e+05
 dt = 0.001
 ```
 
-## 3.20. hpf1st
+## 3.21. hpf1st
 
 pylib_sakata.ctrl.**hpf1st**(*freq, dt=None, method='tustin'*)
 
@@ -819,7 +857,7 @@ s + 628.3
 dt = 0.001
 ```
 
-## 3.21. hpf2nd
+## 3.22. hpf2nd
 
 pylib_sakata.ctrl.**hpf2nd**(*freq, zeta, dt=None, method='tustin'*)
 
@@ -854,7 +892,7 @@ s^2 + 879.6 s + 3.948e+05
 dt = 0.001
 ```
 
-## 3.22. nf
+## 3.23. nf
 
 pylib_sakata.ctrl.**nf**(*freq, zeta, depth, dt=None, method='matched'*)
 
@@ -888,7 +926,7 @@ array([TransferFunction(array([ 0.9876627 , -1.59787102,  0.9874145 ]), array([ 
       dtype=object)
 ```
 
-## 3.23. pf
+## 3.24. pf
 
 pylib_sakata.ctrl.**pf**(*freq, zeta, k, phi, dt=None, method='tustin'*)
 
@@ -924,7 +962,7 @@ array([TransferFunction(array([-0.00014643,  0.00051387, -0.00036745]), array([ 
       dtype=object)
 ```
 
-## 3.24. pfopt
+## 3.25. pfopt
 
 pylib_sakata.ctrl.**pfopt**(*freq, zeta, depth, sysT, dt=None, method='tustin'*)
 
@@ -960,7 +998,7 @@ array([TransferFunction(array([ 0.0049857 , -0.00972818,  0.00474248]), array([ 
       dtype=object)
 ```
 
-## 3.25. dob
+## 3.26. dob
 pylib_sakata.ctrl.**dob**(*freq, zeta, M, C, K, dt, nd = 0*)
 
 This function is for design of a discrete-time disturbance observer (DOB).
@@ -1001,7 +1039,7 @@ dt = 0.001
 dt = 0.001
 ```
 
-## 3.26. zpetc
+## 3.27. zpetc
 pylib_sakata.ctrl.**zpetc**(*Pz, dt, zerothr=0.99*)
 
 This function is for design of a zero phase error tracking controller ([ZPETC](https://engineering.purdue.edu/ME576/ZPETC_Tomizuka.pdf)).
@@ -1039,7 +1077,7 @@ dt = 0.001
 2
 ```
 
-## 3.27. filt
+## 3.28. filt
 pylib_sakata.ctrl.**filt**(*num, den, dt*)
 
 This function is to create transfer functions as rational expressions in $z^{-1}$ and to order the numerator and denominator terms in ascending powers of $z^{-1}$.
@@ -1051,7 +1089,7 @@ This function is to create transfer functions as rational expressions in $z^{-1}
 - Returns:
   - out: instance of TransferFunction class of ZPETC
 
-## 3.28. minreal
+## 3.29. minreal
 pylib_sakata.ctrl.**minreal**(*sys*)
 
 This function is to delete the common pole-zeros of the system.

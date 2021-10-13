@@ -14,6 +14,7 @@
 # sys = feedback(sysP, sysC, sys='S')
 # frdout = frdfeedback(frdP, frdC, sys='S')
 # sysD = c2d(sysC, dt, method='tustin')
+# sys = pi(freq, zeta, L, R, dt=None, method='tustin')
 # sys = pid(freq1, zeta1, freq2, zeta2, M, C, K, dt=None, method='tustin')
 # sys = pl1st(freq1, freq2, dt=None, method='tustin')
 # sys = pl2nd(freq1, zeta1, freq2, zeta2, dt=None, method='tustin')
@@ -383,6 +384,21 @@ def c2d(sysC, dt, method='tustin'):
             return zpk2tf(sysD)
         else: # type(sysC) == matlab.StateSpace
             return zpk2ss(sysD)
+
+
+def pi(freq, zeta, L, R, dt=None, method='tustin'):
+    # PI controller
+    omega = 2.0*np.pi*freq
+    bc1 = L*(2*zeta*omega)-R
+    bc0 = L*omega**2
+    num = [bc1, bc0]
+    den = [1, 0]
+    TFs = matlab.tf(num, den)
+    if dt == None:
+        return TFs
+    else:
+        TFz = c2d(TFs, dt, method=method)
+        return TFz
 
     
 def pid(freq1, zeta1, freq2, zeta2, M, C, K, dt=None, method='tustin'):
