@@ -70,7 +70,7 @@ PFz_frd = 0.0
 for i in range(len(PFz)):
     PFs_frd += ctrl.sys2frd(PFs[i], freq)
     PFz_frd += ctrl.sys2frd(PFz[i], freq)
-print('Peak filters were desinged.')
+print('Peak filters were designed.')
 
 # Design notch filters
 freqNF = [200, 300, 400, 500, 600, 700, 800, 900, 1000, 1500, 2000]
@@ -83,9 +83,9 @@ NFz_frd = 1.0
 for i in range(len(NFz)):
     NFs_frd *= ctrl.sys2frd(NFs[i], freq)
     NFz_frd *= ctrl.sys2frd(NFz[i], freq)
-print('Notch filters were desinged.')
+print('Notch filters were designed.')
 
-print('Frequency respose alanysis is running...')
+print('Frequency response analysis is running...')
 # Model
 Gn_frd = Pnz_frd * Cz_frd * NFz_frd
 Sn_frd = 1/(1 + Gn_frd)

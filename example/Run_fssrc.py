@@ -70,7 +70,7 @@ LPFz = ctrl.lpf1st(freq_lpf, Ts)
 LPFz_frd = ctrl.sys2frd(LPFz, freq)
 print('FS-SRC was desinged.')
 
-print('Frequency respose alanysis is running...')
+print('Frequency response analysis is running...')
 # Motor side
 Gn1_frd = Pnz1_frd * Cz_frd
 Sn1_frd = 1/(1 + Gn1_frd)

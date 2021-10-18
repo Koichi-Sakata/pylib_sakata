@@ -71,9 +71,9 @@ PLz1 = ctrl.pl2nd(freq1, zeta1, freq2, zeta2, Ts)
 PLz1_frd = ctrl.sys2frd(PLz1, freq)
 PLz2 = ctrl.pl2nd(freq2, zeta2, freq1, zeta1, Ts)
 PLz2_frd = ctrl.sys2frd(PLz2, freq)
-print('Phase lead filters were desinged.')
+print('Phase lead filters were designed.')
 
-print('Frequency respose alanysis is running...')
+print('Frequency response analysis is running...')
 # Motor side
 Gn1_frd = Pnz1_frd * Cz_frd
 Sn1_frd = 1/(1 + Gn1_frd)

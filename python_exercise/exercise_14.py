@@ -11,12 +11,13 @@ import shutil
 import numpy as np
 from control import matlab
 from pylib_sakata import ctrl
+from pylib_sakata import traj
 from pylib_sakata import plot
 
 print('Start simulation!')
 
 # Common parameters
-figurefolderName = 'figure_basic'
+figurefolderName = 'figure_exercise_14'
 if os.path.exists(figurefolderName):
     shutil.rmtree(figurefolderName)
 os.makedirs(figurefolderName)
@@ -33,10 +34,7 @@ M = 2.0
 C = 10.0
 K = 0
 Pmechs = ctrl.tf([1], [M, C, K])
-numDelay, denDelay = matlab.pade(Ts*4, n=4)
-Ds = ctrl.tf(numDelay, denDelay)
 Dz = z**-4
-Pns = Pmechs * Ds
 Pnz = ctrl.c2d(Pmechs, Ts, method='zoh') * Dz
 Pnz_frd = ctrl.sys2frd(Pnz, freq)
 print('Plant model was set.')
@@ -55,7 +53,34 @@ Gn_frd = Pnz_frd * Cz_frd
 Sn_frd = 1/(1 + Gn_frd)
 Tn_frd = 1 - Sn_frd
 
+print('Time response analysis is running...')
+Snz = ctrl.feedback(Pnz, Cz, sys='S')
+traj = traj.traj4th(0, 1.0, 0.5, 1.0, 0.0005, 0.5)
+t_4th = traj.time
+r_4th = traj.pos
+v_4th = traj.vel
+a_4th = traj.acc
+e1, tout, xout = matlab.lsim(Snz, r_4th, t_4th)
+uff = M * a_4th + C * v_4th + K * r_4th
+y2, tout, xout = matlab.lsim(Pnz, uff, t_4th)
+e2, tout, xout = matlab.lsim(Snz, r_4th - y2, t_4th)
+u1, tout, xout = matlab.lsim(Cz, e1, t_4th)
+u2, tout, xout = matlab.lsim(Cz, e2, t_4th)
+
+
 print('Plotting figures...')
+# Time response
+fig = plot.makefig()
+ax1 = fig.add_subplot(311)
+ax2 = fig.add_subplot(312)
+ax3 = fig.add_subplot(313)
+plot.plot_xy(ax1, t_4th, r_4th, '-', 'b', 1.5, 1.0, ylabel='Ref Pos [m]', title='Time response')
+plot.plot_xy(ax2, t_4th, e1*1.0e3, '-', 'b', 1.5, 1.0)
+plot.plot_xy(ax2, t_4th, e2*1.0e3, '-', 'r', 1.5, 1.0, yrange=[-0.3, 0.3], xlabel='Time [s]', ylabel='Error Pos [mm]', legend=['w/o Continuous FF', 'with Continuous FF'])
+plot.plot_xy(ax3, t_4th, u1, '-', 'b', 1.5, 1.0)
+plot.plot_xy(ax3, t_4th, u2, '-', 'r', 1.5, 1.0, yrange=[-4.0, 8.0], xlabel='Time [s]', ylabel='FB Out [N]', legend=['w/o Continuous FF', 'with Continuous FF'])
+plot.savefig(figurefolderName+'/time_resp_4th.png')
+
 # Plant
 fig = plot.makefig()
 ax_mag = fig.add_subplot(211)

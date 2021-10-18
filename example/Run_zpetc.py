@@ -57,12 +57,12 @@ Czpetc_frd = ctrl.sys2frd(Czpetc, freq)
 lead_frd = ctrl.sys2frd(z**Nzpetc, freq)
 print('ZPETC was designed.')
 
-print('Frequency respose alanysis is running...')
+print('Frequency response analysis is running...')
 Gn_frd = Pnz_frd * Cz_frd
 Sn_frd = 1/(1 + Gn_frd)
 Tn_frd = 1 - Sn_frd
 
-print('Time respose alanysis is running...')
+print('Time response analysis is running...')
 Snz = ctrl.feedback(Pnz, Cz, sys='S')
 traj = traj.traj4th(0, 500, 500, 1000, Ts, 0.5)
 e1, tout, xout = matlab.lsim(ctrl.tf2ss(Snz), traj.pos, traj.time)

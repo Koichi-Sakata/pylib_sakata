@@ -68,7 +68,7 @@ fft_axis, y_fft = fft.fft(y, Ts)
 
 Pmeas_frd, coh = fft.tfestimate(u, y, freq, Ts)
 
-print('Frequency respose alanysis is running...')
+print('Frequency response analysis is running...')
 # Model
 Gn_frd = Pnz_frd * Cz_frd
 Sn_frd = 1/(1 + Gn_frd)

@@ -58,7 +58,7 @@ DOBu_frd = ctrl.sys2frd(DOBu, freq)
 DOBy_frd = ctrl.sys2frd(DOBy, freq)
 print('DOB was designed.')
 
-print('Frequency respose alanysis is running...')
+print('Frequency response analysis is running...')
 # w/o DOB
 Gn_frd = Pnz_frd * Cz_frd
 Sn_frd = 1/(1 + Gn_frd)

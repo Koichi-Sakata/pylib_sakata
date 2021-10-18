@@ -64,7 +64,7 @@ PFz = ctrl.pfopt(freqPF, zetaPF, depthPF, ctrl.feedback(Pnz, Cz, sys='T'), Ts)
 PFz_frd = 0.0
 for i in range(len(freqPF)):
     PFz_frd += ctrl.sys2frd(PFz[i], freq)
-print('Peak filters were desinged.')
+print('Peak filters were designed.')
 
 print('System identification simulation is running...')
 Snz = ctrl.feedback(Pnz, Cz, sys='S')
@@ -82,7 +82,7 @@ fft_axis, y_fft = fft.fft(y, Ts)
 
 Pmeas_frd, coh = fft.tfestimate(u, y, freq, Ts)
 
-print('Frequency respose alanysis is running...')
+print('Frequency response analysis is running...')
 # Model
 Gn_frd = Pnz_frd * Cz_frd * (1+PFz_frd)
 Sn_frd = 1/(1 + Gn_frd)
