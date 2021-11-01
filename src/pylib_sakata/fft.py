@@ -42,8 +42,8 @@ class FreqResp:
         if isinstance(other, (int, float, complex, np.number)):
             other = FreqResp(self.freq, np.array([other]*len(self.resp)), self.dt)
         else:
-            if self.dt != other.dt:
-                print('Error: frequency range of zpk systems is different.')
+            if not np.array_equal(self.freq, other.freq):
+                print('Error: frequency range of FRDs is different.')
             if self.dt != other.dt:
                 print('Warning: sampling time of FRDs is different.')
         return FreqResp(self.freq, self.resp + other.resp, self.dt)
@@ -65,8 +65,8 @@ class FreqResp:
         if isinstance(other, (int, float, complex, np.number)):
             other = FreqResp(self.freq, np.array([other]*len(self.resp)), self.dt)
         else:
-            if self.dt != other.dt:
-                print('Error: frequency range of zpk systems is different.')
+            if not np.array_equal(self.freq, other.freq):
+                print('Error: frequency range of FRDs is different.')
             if self.dt != other.dt:
                 print('Warning: sampling time of FRDs is different.')
         return FreqResp(self.freq, self.resp * other.resp, self.dt)
@@ -76,8 +76,8 @@ class FreqResp:
         if isinstance(other, (int, float, complex, np.number)):
             other = FreqResp(self.freq, np.array([other]*len(self.resp)), self.dt)
         else:
-            if self.dt != other.dt:
-                print('Error: frequency range of zpk systems is different.')
+            if not np.array_equal(self.freq, other.freq):
+                print('Error: frequency range of FRDs is different.')
             if self.dt != other.dt:
                 print('Warning: sampling time of FRDs is different.')
         return other * self
@@ -87,8 +87,8 @@ class FreqResp:
         if isinstance(other, (int, float, complex, np.number)):
             other = FreqResp(self.freq, np.array([other]*len(self.resp)), self.dt)
         else:
-            if self.dt != other.dt:
-                print('Error: frequency range of zpk systems is different.')
+            if not np.array_equal(self.freq, other.freq):
+                print('Error: frequency range of FRDs is different.')
             if self.dt != other.dt:
                 print('Warning: sampling time of FRDs is different.')
         return FreqResp(self.freq, self.resp / other.resp, self.dt)
@@ -98,8 +98,8 @@ class FreqResp:
         if isinstance(other, (int, float, complex, np.number)):
             other = FreqResp(self.freq, np.array([other]*len(self.resp)), self.dt)
         else:
-            if self.dt != other.dt:
-                print('Error: frequency range of zpk systems is different.')
+            if not np.array_equal(self.freq, other.freq):
+                print('Error: frequency range of FRDs is different.')
             if self.dt != other.dt:
                 print('Warning: sampling time of FRDs is different.')
         return other / self

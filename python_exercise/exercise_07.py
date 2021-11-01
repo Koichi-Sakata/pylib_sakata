@@ -21,10 +21,8 @@ if os.path.exists(figurefolderName):
     shutil.rmtree(figurefolderName)
 os.makedirs(figurefolderName)
 dataNum = 10000
-freqrange_i = [10, 10000]
-freq_i = np.logspace(np.log10(freqrange_i[0]), np.log10(freqrange_i[1]), dataNum, base=10)
-freqrange_p = [0.1, 1000]
-freq_p = np.logspace(np.log10(freqrange_p[0]), np.log10(freqrange_p[1]), dataNum, base=10)
+freqrange = [10, 10000]
+freq = np.logspace(np.log10(freqrange[0]), np.log10(freqrange[1]), dataNum, base=10)
 print('Common parameters were set.')
 
 # Plant model
@@ -36,24 +34,24 @@ K = 0
 Kt = 1.0
 Pi = ctrl.tf([1], [L, R])
 Ps = ctrl.tf([1], [M, C, K])
-Pi_frd = ctrl.sys2frd(Pi, freq_i)
-Ps_frd = ctrl.sys2frd(Ps, freq_p)
+Pi_frd = ctrl.sys2frd(Pi, freq)
+Ps_frd = ctrl.sys2frd(Ps, freq)
 print('Plant model was set.')
 
 # Design current PI controller
-freqC = 1000.0
+freqC = 500.0
 zetaC = 1.0
 Ci = ctrl.pi(freqC, zetaC, L, R)
-Ci_frd = ctrl.sys2frd(Ci, freq_i)
+Ci_frd = ctrl.sys2frd(Ci, freq)
 print('Current PI controller was designed.')
 
 # Design position PID controller
-freq1 = 10.0
+freq1 = 100.0
 zeta1 = 1.0
-freq2 = 10.0
+freq2 = 100.0
 zeta2 = 1.0
 Cs = ctrl.pid(freq1, zeta1, freq2, zeta2, M, C, K)
-Cs_frd = ctrl.sys2frd(Cs, freq_p)
+Cs_frd = ctrl.sys2frd(Cs, freq)
 print('Position PID controller was designed.')
 
 print('Frequency response analysis is running...')
@@ -67,7 +65,7 @@ Gi_frd = Pi_frd * Ci_frd
 Si_frd = 1/(1 + Gi_frd)
 Ti_frd = 1 - Si_frd
 
-Gs_frd = Ps_frd * Cs_frd
+Gs_frd = Ps_frd * Cs_frd * Ti_frd
 Ss_frd = 1/(1 + Gs_frd)
 Ts_frd = 1 - Ss_frd
 
@@ -78,7 +76,7 @@ yi, touti, xout = matlab.lsim(Ti, ri, ti)
 ei, touti, xout = matlab.lsim(Si, ri, ti)
 ui, touti, xout = matlab.lsim(Ci, ei, ti)
 
-tp = np.linspace(0.0, 0.5, dataNum)
+tp = np.linspace(0.0, 0.05, dataNum)
 rp = np.ones(len(tp))
 yp, toutp, xout = matlab.lsim(Ts, rp, tp)
 ep, toutp, xout = matlab.lsim(Ss, rp, tp)
@@ -105,17 +103,17 @@ plot.savefig(figurefolderName+'/time_resp_p.png')
 fig = plot.makefig()
 ax_mag = fig.add_subplot(211)
 ax_phase = fig.add_subplot(212)
-plot.plot_tffrd(ax_mag, ax_phase, Si_frd, '-', 'b', 1.5, 1.0, freqrange_i, title='Bode diagram of current loop')
-plot.plot_tffrd(ax_mag, ax_phase, Ti_frd, '-', 'r', 1.5, 1.0, freqrange_i, magrange=[-50, 10], legend=['S', 'T'])
-plot.savefig(figurefolderName+'/freq_ST_p.png')
+plot.plot_tffrd(ax_mag, ax_phase, Si_frd, '-', 'b', 1.5, 1.0, freqrange, title='Bode diagram of current loop')
+plot.plot_tffrd(ax_mag, ax_phase, Ti_frd, '-', 'r', 1.5, 1.0, freqrange, magrange=[-50, 10], legend=['S', 'T'])
+plot.savefig(figurefolderName+'/freq_ST_i.png')
 
 # Sensitivity function of position
 fig = plot.makefig()
 ax_mag = fig.add_subplot(211)
 ax_phase = fig.add_subplot(212)
-plot.plot_tffrd(ax_mag, ax_phase, Ss_frd, '-', 'b', 1.5, 1.0, freqrange_p, title='Bode diagram of position loop')
-plot.plot_tffrd(ax_mag, ax_phase, Ts_frd, '-', 'r', 1.5, 1.0, freqrange_p, magrange=[-50, 10], legend=['S', 'T'])
-plot.savefig(figurefolderName+'/freq_ST_i.png')
+plot.plot_tffrd(ax_mag, ax_phase, Ss_frd, '-', 'b', 1.5, 1.0, freqrange, title='Bode diagram of position loop')
+plot.plot_tffrd(ax_mag, ax_phase, Ts_frd, '-', 'r', 1.5, 1.0, freqrange, magrange=[-50, 10], legend=['S', 'T'])
+plot.savefig(figurefolderName+'/freq_ST_p.png')
 
 # Nyquist of current
 fig = plot.makefig()
