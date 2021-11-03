@@ -70,9 +70,9 @@ NFs_all = 1.0
 for i in range(len(NFs)):
     NFs_frd *= ctrl.sys2frd(NFs[i], freq)
     NFs_all *= NFs[i]
-print('Notch filters were desinged.')
+print('Notch filters were designed.')
 
-print('Frequency respose alanysis is running...')
+print('Frequency respose analysis is running...')
 # Motor side
 Gn1_frd = Pns1_frd * Cs_frd
 Sn1_frd = 1/(1 + Gn1_frd)

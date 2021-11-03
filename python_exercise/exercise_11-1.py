@@ -60,7 +60,7 @@ Cs = ctrl.pid(freq1, zeta1, freq2, zeta2, M, C, K)
 Cs_frd = ctrl.sys2frd(Cs, freq)
 print('PID controller was designed.')
 
-print('Frequency respose alanysis is running...')
+print('Frequency respose analysis is running...')
 # Rigid
 Gn0_frd = Pns0_frd * Cs_frd
 Sn0_frd = 1/(1 + Gn0_frd)
