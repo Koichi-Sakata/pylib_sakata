@@ -15,6 +15,7 @@
 # frdout = frdfeedback(frdP, frdC, sys='S')
 # sysD = c2d(sysC, dt, method='tustin')
 # sys = pi(freq, zeta, L, R, dt=None, method='tustin')
+# sys = pd(freq1, freq2, zeta2, M, C, K, dt=None, method='tustin')
 # sys = pid(freq1, zeta1, freq2, zeta2, M, C, K, dt=None, method='tustin')
 # sys = pl1st(freq1, freq2, dt=None, method='tustin')
 # sys = pl2nd(freq1, zeta1, freq2, zeta2, dt=None, method='tustin')
@@ -400,7 +401,24 @@ def pi(freq, zeta, L, R, dt=None, method='tustin'):
         TFz = c2d(TFs, dt, method=method)
         return TFz
 
-    
+
+def pd(freq1, freq2, zeta2, M, C, K, dt=None, method='tustin'):
+    # PID controller
+    omega1 = 2.0*np.pi*freq1
+    omega2 = 2.0*np.pi*freq2
+    ac1 = 2.0*zeta2*omega2+omega1-C/M
+    bc1 = M*(omega2**2+2.0*zeta2*omega2*omega1)-C*ac1-K
+    bc0 = M*omega1 * omega2**2-K*ac1
+    num = [bc1, bc0]
+    den = [1, ac1]
+    TFs = matlab.tf(num, den)
+    if dt == None:
+        return TFs
+    else:
+        TFz = c2d(TFs, dt, method=method)
+        return TFz
+
+
 def pid(freq1, zeta1, freq2, zeta2, M, C, K, dt=None, method='tustin'):
     # PID controller
     omega1 = 2.0*np.pi*freq1
