@@ -1,8 +1,9 @@
 # Copyright (c) 2021 Koichi Sakata
 
-# dataList, dataValue, t, dt = getcsvdata(filePath)
-# dataList, dataValue, t, dt = gettxtdata(filePath)
-# dataList, dataValue, t, dt = getmatdata(filePath)
+# MeasData = getcsvdata(filePath)
+# MeasData = gettxtdata(filePath)
+# MeasData = getmatdata(filePath)
+# MeasData = getdata(filePath)
 # index = getdataindex(measdata, dataName)
 # freqresp, coh = measdata2frd(filePath, inputName, outputName, flagName, freq, inputGain=1.0, outputGain=1.0, windivnum=4, overlap=0.5)
 
@@ -61,6 +62,18 @@ def getmatdata(filePath):
         dataValue[k] = matdata['dataY'][0][k][1][0]
     t = np.linspace(0.0, len(dataValue[0]) * dt, int(len(dataValue[0])))
     return MeasData(dataList, dataValue, t, dt)
+
+
+def getdata(filePath):
+    if filePath[-3:] == 'csv':
+        measdata = getcsvdata(filePath)
+    elif filePath[-3:] == 'txt':
+        measdata = gettxtdata(filePath)
+    elif filePath[-3:] == 'mat':
+        measdata = getmatdata(filePath)
+    else:
+        raise Exception('Error: This file type is not supported.')
+    return measdata
 
 
 def getdataindex(measdata, dataName):

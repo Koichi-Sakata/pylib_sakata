@@ -25,6 +25,7 @@
 # sys = hpf2nd(freq, zeta, dt=None, method='tustin')
 # sys = nf(freq, zeta, depth, dt=None, method='matched')
 # sys = pf(freq, zeta, k, phi, dt=None, method='matched')
+# freq, zeta, kpdb = pfoptparam(freq, zeta, depth, sysT)
 # sys = pfopt(freq, zeta, kpdb, sysT, dt=None, method='matched')
 # DOBu, DOBy = dob(freq, zeta, M, C, K, dt, nd = 0)
 # Czpetc, Nzpetc = zpetc(Pz, zerothr=0.99)
@@ -537,18 +538,7 @@ def pf(freq, zeta, k, phi, dt=None, method='tustin'):
         return TFz
 
 
-def pfopt(freq, zeta, depth, sysT, dt=None, method='tustin'):
-    # Optimized peak filter
-    freq, zeta, k, phi = _pfoptparam(freq, zeta, depth, sysT)
-    if dt == None:
-        TFs = pf(freq, zeta, k, phi)
-        return TFs
-    else:
-        TFz = pf(freq, zeta, k, phi, dt=dt, method=method)
-        return TFz
-
-
-def _pfoptparam(freq, zeta, depth, sysT):
+def pfoptparam(freq, zeta, depth, sysT):
     # Optimized peak filter
     if (len(freq)==len(zeta)==len(depth)) == False:
         print('Error: length of peak filter parameters is different!')
@@ -574,6 +564,17 @@ def _pfoptparam(freq, zeta, depth, sysT):
         if phaseT/phaseF < 0:
             k[i] *= -1
     return freq, zeta, k, phi
+
+
+def pfopt(freq, zeta, depth, sysT, dt=None, method='tustin'):
+    # Optimized peak filter
+    freq, zeta, k, phi = pfoptparam(freq, zeta, depth, sysT)
+    if dt == None:
+        TFs = pf(freq, zeta, k, phi)
+        return TFs
+    else:
+        TFz = pf(freq, zeta, k, phi, dt=dt, method=method)
+        return TFz
 
 
 def dob(freq, zeta, M, C, K, dt, nd = 0):

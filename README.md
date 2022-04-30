@@ -1,4 +1,4 @@
-pylib-sakata User's Manual version-0.1.3
+pylib-sakata User's Manual version-0.1.4
 ===
 
 <!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
@@ -1011,7 +1011,23 @@ array([TransferFunction(array([-0.00014643,  0.00051387, -0.00036745]), array([ 
       dtype=object)
 ```
 
-## 3.26. pfopt
+## 3.26. pfoptparam
+pylib_sakata.ctrl.**pfoptparam**(freq, zeta, depth, sysT)
+
+This function is for getting parameters of optimized peak filters ([resonant filters](https://ieeexplore.ieee.org/document/4291569)).
+
+- Parameters:
+  - freq: array of frequency[Hz] of the peak filters
+  - zeta: array of damping of the peak filters
+  - depth: array of depth of the peak filters (0 < depth < 1)
+  - sysT: LTI model (StateSpace or TransferFunction or ZpkModel or FreqResp) of complementary sensitivity function of the previous feedback system
+- Returns:
+  - freq: array of frequency[Hz] of the peak filters
+  - zeta: array of damping of the peak filters
+  - k: array of peak width of the peak filters
+  - phi: array of phase lead of the peak filter
+
+## 3.27. pfopt
 
 pylib_sakata.ctrl.**pfopt**(*freq, zeta, depth, sysT, dt=None, method='tustin'*)
 
@@ -1047,7 +1063,7 @@ array([TransferFunction(array([ 0.0049857 , -0.00972818,  0.00474248]), array([ 
       dtype=object)
 ```
 
-## 3.27. dob
+## 3.28. dob
 pylib_sakata.ctrl.**dob**(*freq, zeta, M, C, K, dt, nd = 0*)
 
 This function is for design of a discrete-time disturbance observer (DOB).
@@ -1088,7 +1104,7 @@ dt = 0.001
 dt = 0.001
 ```
 
-## 3.28. zpetc
+## 3.29. zpetc
 pylib_sakata.ctrl.**zpetc**(*Pz, dt, zerothr=0.99*)
 
 This function is for design of a zero phase error tracking controller ([ZPETC](https://engineering.purdue.edu/ME576/ZPETC_Tomizuka.pdf)).
@@ -1126,7 +1142,7 @@ dt = 0.001
 2
 ```
 
-## 3.29. filt
+## 3.30. filt
 pylib_sakata.ctrl.**filt**(*num, den, dt*)
 
 This function is to create transfer functions as rational expressions in $z^{-1}$ and to order the numerator and denominator terms in ascending powers of $z^{-1}$.
@@ -1138,7 +1154,7 @@ This function is to create transfer functions as rational expressions in $z^{-1}
 - Returns:
   - out: instance of TransferFunction class of ZPETC
 
-## 3.30. minreal
+## 3.31. minreal
 pylib_sakata.ctrl.**minreal**(*sys*)
 
 This function is to delete the common pole-zeros of the system.
@@ -1344,7 +1360,29 @@ This function is for getting measurement data from a mat file.
 measdata = meas.getmatdata('data\001-inject.mat')
 ```
 
-## 5.5. getdataindex
+## 5.5. getdata
+
+pylib_sakata.meas.**getdata**(*filePath*)
+
+This function is for getting measurement data from a file.
+
+- Parameters:
+  - filePath: file path of measurement file (.csv, .txt, and .mat are supported.)
+- Returns:
+  - instance of MeasData class
+
+**Examples**
+```python
+measdata = meas.getmatdata('data\001-inject.csv')
+```
+```python
+measdata = meas.getmatdata('data\001-inject.txt')
+```
+```python
+measdata = meas.getmatdata('data\001-inject.mat')
+```
+
+## 5.6. getdataindex
 
 pylib_sakata.meas.**getdataindex**(*measdata, dataName*)
 
@@ -1359,7 +1397,7 @@ pylib_sakata.meas.**getdataindex**(*measdata, dataName*)
 index = meas.getdataindex(measdata, 'ServoOut')
 ```
 
-## 5.6. measdata2frd
+## 5.7. measdata2frd
 
 pylib_sakata.meas.**measdata2frd**(*filePath, inputName, outputName, flagName, freq, inputGain=1.0, outputGain=1.0, windivnum=4, overlap=0.5*)
 
