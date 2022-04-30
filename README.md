@@ -5,7 +5,7 @@ pylib-sakata User's Manual version-0.1.4
 
 <!-- code_chunk_output -->
 
-- [pylib-sakata User's Manual version-0.1.2](#pylib-sakata-users-manual-version-012)
+- [pylib-sakata User's Manual version-0.1.4](#pylib-sakata-users-manual-version-014)
 - [1. Introduction](#1-introduction)
 - [2. Environment Setup](#2-environment-setup)
   - [2.1. Installation of Python](#21-installation-of-python)
@@ -49,11 +49,12 @@ pylib-sakata User's Manual version-0.1.4
   - [3.23. hpf2nd](#323-hpf2nd)
   - [3.24. nf](#324-nf)
   - [3.25. pf](#325-pf)
-  - [3.26. pfopt](#326-pfopt)
-  - [3.27. dob](#327-dob)
-  - [3.28. zpetc](#328-zpetc)
-  - [3.29. filt](#329-filt)
-  - [3.30. minreal](#330-minreal)
+  - [3.26. pfoptparam](#326-pfoptparam)
+  - [3.27. pfopt](#327-pfopt)
+  - [3.28. dob](#328-dob)
+  - [3.29. zpetc](#329-zpetc)
+  - [3.30. filt](#330-filt)
+  - [3.31. minreal](#331-minreal)
 - [4. pylib_sakata.fft](#4-pylib_sakatafft)
   - [4.1. FreqResp](#41-freqresp)
   - [4.2. fft](#42-fft)
@@ -64,8 +65,9 @@ pylib-sakata User's Manual version-0.1.4
   - [5.2. getcsvdata](#52-getcsvdata)
   - [5.3. gettxtdata](#53-gettxtdata)
   - [5.4. getmatdata](#54-getmatdata)
-  - [5.5. getdataindex](#55-getdataindex)
-  - [5.6. measdata2frd](#56-measdata2frd)
+  - [5.5. getdata](#55-getdata)
+  - [5.6. getdataindex](#56-getdataindex)
+  - [5.7. measdata2frd](#57-measdata2frd)
 - [6. pylib_sakata.traj](#6-pylib_sakatatraj)
   - [6.1. TrajInf](#61-trajinf)
   - [6.2. traj4th](#62-traj4th)
@@ -1026,6 +1028,15 @@ This function is for getting parameters of optimized peak filters ([resonant fil
   - zeta: array of damping of the peak filters
   - k: array of peak width of the peak filters
   - phi: array of phase lead of the peak filter
+
+**Examples**
+```python
+>>> Ps = ctrl.tf([1.], [2., 10., 0.])
+>>> Cs = ctrl.pid(10., 1., 10., 0.7, 2., 10., 0.)
+>>> ctrl.pfoptparam([2., 3., 5.], [0.001, 0.001, 0.001], [0.1, 0.1, 0.1], ctrl.feedback(Ps, Cs, sys='T'))
+The common pole-zeros of the zpk model have been deleted.
+([2.0, 3.0, 5.0], [0.001, 0.001, 0.001], array([-0.00025695, -0.00049616,  0.0003898 ]), array([  860.21053991,   633.22924516, -1090.49879949]))
+```
 
 ## 3.27. pfopt
 
