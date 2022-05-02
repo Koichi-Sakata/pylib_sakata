@@ -24,9 +24,9 @@ class MeasData:
 
 def getcsvdata(filePath):
     """For example, data measured by TwinCAT"""
-    df = pd.read_csv(filePath, header=4)
+    df = pd.read_csv(filePath, skiprows=range(5), dtype=object)
     dataList = df.columns.values
-    dataValue = df.values.T
+    dataValue = df[:-1].values.T.astype(float)
     dt = (dataValue[0][1] - dataValue[0][0]) * 1.0e-3
     t = np.linspace(0.0, len(dataValue[0]) * dt, int(len(dataValue[0])))
     return MeasData(dataList, dataValue, t, dt)
@@ -87,14 +87,7 @@ def getdataindex(measdata, dataName):
 
 
 def measdata2frd(filePath, inputName, outputName, flagName, freq, inputGain=1.0, outputGain=1.0, windivnum=4, overlap=0.5):
-    if filePath[-3:] == 'csv':
-        measdata = getcsvdata(filePath)
-    elif filePath[-3:] == 'txt':
-        measdata = gettxtdata(filePath)
-    elif filePath[-3:] == 'mat':
-        measdata = getmatdata(filePath)
-    else:
-        raise Exception('Error: This file type is not supported.')
+    measdata = getdata(filePath)
     flagdata = measdata.value[getdataindex(measdata, flagName)]
     inputdata_tmp = measdata.value[getdataindex(measdata, inputName)]
     outputdata_tmp = measdata.value[getdataindex(measdata, outputName)]
