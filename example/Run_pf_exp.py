@@ -33,7 +33,7 @@ print('Common parameters were set.')
 
 # Plant model
 M = 0.022
-C = 1.4
+C = 1.0
 K = 0.0
 Pmechs = ctrl.tf([1], [M, C, K])
 numDelay, denDelay = matlab.pade(Ts*4, n=4)
@@ -74,13 +74,19 @@ ServoOutN_pf = measdata_pf.value[meas.getdataindex(measdata_pf, 'ServoOutN[1]')]
 # FFT
 freq_fft_pf, ErrPosUm_fft_pf = fft.fft(ErrPosUm_pf[4000:36000], Ts)
 
+print('Frequency response analysis is running...')
+# Measurement w/o PF
+Gn_frd = Pmeas_frd * Cz_frd
+Sn_frd = 1/(1 + Gn_frd)
+Tn_frd = 1 - Sn_frd
+
 # Design peak filters
 freqPF = [10.0, 20.0, 30.0, 50.0, 60.0, 70.0, 90.0]
 zetaPF = [0.001, 0.001, 0.001, 0.001, 0.001, 0.001, 0.001]
 depthPF = [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
 
-PFs = ctrl.pfopt(freqPF, zetaPF, depthPF, ctrl.feedback(Pnz, Cz, sys='T'))
-PFz = ctrl.pfopt(freqPF, zetaPF, depthPF, ctrl.feedback(Pnz, Cz, sys='T'), Ts)
+PFs = ctrl.pfopt(freqPF, zetaPF, depthPF, Tn_frd)
+PFz = ctrl.pfopt(freqPF, zetaPF, depthPF, Tn_frd , Ts)
 PFs_frd = 0.0
 PFz_frd = 0.0
 for i in range(len(PFz)):
@@ -91,10 +97,6 @@ freqPF, zetaPF, kPF, phiPF = ctrl.pfoptparam(freqPF, zetaPF, depthPF, ctrl.feedb
 print('Peak filters were designed.')
 
 print('Frequency response analysis is running...')
-# Measurement w/o PF
-Gn_frd = Pmeas_frd * Cz_frd
-Sn_frd = 1/(1 + Gn_frd)
-Tn_frd = 1 - Sn_frd
 # Measurement with PF
 G_frd = Pmeas_frd * Cz_frd * (1.0+PFz_frd)
 S_frd = 1/(1 + G_frd)
