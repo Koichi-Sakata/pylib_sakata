@@ -1,4 +1,4 @@
-# Copyright (c) 2021 Koichi Sakata
+# Copyright (c) 2022 Koichi Sakata
 
 import setuptools
 
@@ -16,5 +16,5 @@ setuptools.setup(
     url="https://github.com/Koichi-Sakata/pylib_sakata",
     package_dir={"": "src"},
     packages=setuptools.find_packages(where="src"),
-    python_requires=">=3.6",
+    python_requires=">=3.8",
 )
