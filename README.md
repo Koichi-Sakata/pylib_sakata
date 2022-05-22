@@ -1,11 +1,11 @@
-pylib-sakata User's Manual version-0.1.5
+pylib-sakata User's Manual version-0.1.6
 ===
 
 <!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
 
 <!-- code_chunk_output -->
 
-- [pylib-sakata User's Manual version-0.1.5](#pylib-sakata-users-manual-version-015)
+- [pylib-sakata User's Manual version-0.1.6](#pylib-sakata-users-manual-version-016)
 - [1. Introduction](#1-introduction)
 - [2. Environment Setup](#2-environment-setup)
   - [2.1. Installation of Python](#21-installation-of-python)
@@ -60,6 +60,8 @@ pylib-sakata User's Manual version-0.1.5
   - [4.2. fft](#42-fft)
   - [4.3. fft_ave](#43-fft_ave)
   - [4.4. tfestimate](#44-tfestimate)
+  - [4.5. frdresize](#45-frdresize)
+  - [4.6. frdsim](#46-frdsim)
 - [5. pylib_sakta.meas](#5-pylib_saktameas)
   - [5.1. MeasData](#51-measdata)
   - [5.2. getcsvdata](#52-getcsvdata)
@@ -1266,7 +1268,6 @@ import numpy as np
 >>> dt = 0.001
 >>> t = np.linspace(0.0, 10., int(10./dt))
 >>> x = np.sin(2*np.pi*10.0*t) + np.sin(2*np.pi*50.0*t)
->>> x = np.sin(2*np.pi*10.0*t) + np.sin(2*np.pi*50.0*t)
 >>> fft.fft_ave(x, dt, 4, 0.5)
 (array([0.00000000e+00, 4.88519785e-01, 9.77039570e-01, ...,
        9.99022960e+02, 9.99511480e+02, 1.00000000e+03]), array([5.33388114e-05, 5.46444944e-05, 5.85999322e-05, ...,
@@ -1309,6 +1310,64 @@ The common pole-zeros of the zpk model have been deleted.
        -0.11594446-1.49079611e-01j, ..., -0.13155661-1.45847229e-01j,
        -0.14201211-1.03211830e-01j, -0.15745492-1.88460358e-14j]), array([0.77271576, 0.77244166, 0.7721674 , ..., 0.23080322, 0.32843388,
        0.43848208]))
+```
+
+## 4.5. frdresize
+
+pylib_sakata.fft.**frdresize**(*freqresp, freq*)
+
+This function is for resizing a frequency response data.
+
+- Parameters:
+  - freqresp: instance of FreqResp class
+  - freq: new 1-D array frequency data [Hz] for resize
+- Returns:
+  - freqresp: resized instance of FreqResp class based on new frequency data array
+
+**Examples**
+```python
+>>> import numpy as np
+>>> freq = np.logspace(np.log10(1.), np.log10(1000.), 100, base=10)
+>>> Sys_tf = ctrl.tf([1., 2.], [3., 4., 5.])
+>>> freqresp = ctrl.sys2frd(Sys_tf, freq)
+>>> freq_resize = np.logspace(np.log10(1.), np.log10(1000.), 10000, base=10)
+>>> fft.frdresize(freqresp, freq_resize)
+
+freq = array([   1.            1.00069108    1.00138264 ...  998.61926487  999.30939397
+ 1000.        ])
+resp = array([-5.10821217e-03-5.65218353e-02j -5.10244172e-03-5.64813436e-02j
+ -5.09666728e-03-5.64408239e-02j ... -5.64622394e-09-5.31301950e-05j
+ -5.63759203e-09-5.30909366e-05j -5.62895416e-09-5.30516511e-05j])
+```
+
+## 4.6. frdsim
+
+pylib_sakata.fft.**frdsim**(*freqresp, x, dt*)
+
+This function is for simulation steady time response data when a time-domain data is input to a system written by frequency response data.
+$$
+y(t) = \text{ifft}(\text{FreqResp}(\omega)\times\text{fft}(u(t)))
+$$
+
+- Parameters:
+  - freqresp: instance of FreqResp class
+  - x: 1-D array time response data of input
+  - dt: sampling time of the time response data
+- Returns:
+  - y: 1-D array time response data of output
+
+**Examples**
+```python
+>>> import numpy as np
+>>> freq = np.logspace(np.log10(1.), np.log10(1000.), 100, base=10)
+>>> Sys_tf = ctrl.tf([1., 2.], [3., 4., 5.])
+>>> freqresp = ctrl.sys2frd(Sys_tf, freq)
+>>> dt = 0.001
+>>> t = np.linspace(0.0, 10., int(10./dt))
+>>> x = np.sin(2*np.pi*10.0*t) + np.sin(2*np.pi*50.0*t)
+>>> fft.frdsim(freqresp, x, dt)
+array([-0.00635301, -0.00630568, -0.00612106, ..., -0.00610225,
+       -0.0062943 , -0.00634922])
 ```
 
 # 5. pylib_sakta.meas

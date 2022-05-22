@@ -4,6 +4,8 @@
 # fft_axis, fft = fft(data, dt)
 # fft_axis, fft_mean = fft_ave(data, dt, windivnum=4, overlap=0.5)
 # freqresp, coh = tfestimate(x, y, freq, dt, windivnum=4, overlap=0.5)
+# freqresp = frdresize(freqresp, freq)
+# y = frdsim(freqresp, u, dt)
 
 
 import numpy as np
@@ -175,6 +177,38 @@ def tfestimate(x, y, freq, dt, windivnum=4, overlap=0.5):
     coh = f_coh(freq)
 
     return FreqResp(freq, resp, dt), coh
+
+
+def frdresize(freqresp, freq):
+    f_real = interpolate.interp1d(freqresp.freq, np.real(freqresp.resp), kind='linear', bounds_error=False, fill_value=1.)
+    real = f_real(freq)
+    f_imag = interpolate.interp1d(freqresp.freq, np.imag(freqresp.resp), kind='linear', bounds_error=False, fill_value=0.)
+    imag = f_imag(freq)
+    resp = real + imag * 1.j
+    return FreqResp(freq, resp, freqresp.dt)
+
+
+def frdsim(freqresp, x, dt):
+    # Resie freqresp
+    lenInput = len(x)
+    lenInputHalf = round((lenInput + 1)/2)
+    freq_tmp = np.arange(lenInput)/lenInput/dt
+    freq = freq_tmp[0:lenInputHalf]
+    freqresp_resize = frdresize(freqresp, freq)
+
+    # Multiplication at frequency domain for first-half part
+    x_fft = np.fft.fft(x)
+    y_fft = x_fft[0:lenInputHalf] * freqresp_resize.resp
+    y_fft[0] = np.real(y_fft[0])    # Change zero-frequency-point real
+
+    # Mirror second-half part
+    y_fft_flip = np.flip(np.conj(y_fft[1:len(y_fft)]))
+    # Combine two parts
+    y_fft_full = np.concatenate([y_fft, y_fft_flip])
+
+    # Calculate time response of output
+    y = np.real(np.fft.ifft(y_fft_full))
+    return y
 
 
 def _floorpow2(x):
