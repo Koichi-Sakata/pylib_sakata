@@ -16,16 +16,16 @@ for k in range(8):
     else:
         uLink.append(kinema.Link(-1, k + 1, k - 1))
 
-offsetX = 50.0
+offsetX = 0.0
 offsetY = 0.0
 offsetZ = 100.0
-uLink[1].p = np.matrix([[0.0], [0.0], [126.0]])
-uLink[2].p = np.matrix([[0.0], [-154.0], [126.0]])
-uLink[3].p = np.matrix([[0.0], [0.0], [536.0]])
-uLink[4].p = np.matrix([[0.0], [0.0], [916.0]])
-uLink[5].p = np.matrix([[0.0], [-130.0], [916.0]])
-uLink[6].p = np.matrix([[0.0], [-130.0], [1046.0]])
-uLink[7].p = np.matrix([[offsetZ], [-130.0 + offsetY], [1046.0 + offsetX]])
+uLink[1].p = np.matrix([[0.0], [0.0], [120.0]])
+uLink[2].p = np.matrix([[0.0], [-150.0], [120.0]])
+uLink[3].p = np.matrix([[0.0], [0.0], [540.0]])
+uLink[4].p = np.matrix([[0.0], [0.0], [900.0]])
+uLink[5].p = np.matrix([[0.0], [-130.0], [900.0]])
+uLink[6].p = np.matrix([[0.0], [-130.0], [1000.0]])
+uLink[7].p = np.matrix([[offsetZ], [-130.0 + offsetY], [1000.0 + offsetX]])
 
 uLink[2].q = -0.2 * np.pi
 uLink[3].q = 0.7 * np.pi
@@ -61,8 +61,8 @@ rol_ref = 0.0
 pitch_ref = 0.0
 yaw_ref = 0.0
 
-dataNum = 150
-Ts = 100 * 1.e-3
+dataNum = 300
+Ts = 50 * 1.e-3
 t = np.array(range(dataNum)) * Ts
 
 # Move joints
@@ -105,20 +105,21 @@ def update(t):
         y_ref = y_ref
         z_ref = z_ref + 200.0 * Ts
     elif 8.0 < t <= 9.0:
-        rol_ref = rol_ref + 0.5 * Ts
-    elif 9.0 < t <= 13.0:
-        rol_ref = 0.5 * np.cos(2.0 * np.pi * (t - 9.0))
-        pitch_ref = 0.5 * np.sin(2.0 * np.pi * (t - 9.0))
-        yaw_ref = 0.0
-    elif 13.0 < t <= 14.0:
-        rol_ref = rol_ref - 0.5 * Ts
+        yaw_ref = 0.5 * np.pi * np.sin(2.0 * np.pi * (t - 8.0))
+    elif 9.0 < t <= 10.0:
+        pitch_ref = pitch_ref + 0.25 * np.pi * Ts
+    elif 10.0 < t <= 14.0:
+        rol_ref = 0.25 * np.pi * np.sin(2.0 * np.pi * (t - 10.0))
+        pitch_ref = 0.25 * np.pi * np.cos(2.0 * np.pi * (t - 10.0))
+    elif 14.0 < t <= 15.0:
+        pitch_ref = pitch_ref - 0.25 * np.pi * Ts
 
     ref = kinema.calcref(x_ref, y_ref, z_ref, rol_ref, pitch_ref, yaw_ref, target_init.R)
     kinema.inversekinematics(uLink, 0, 6, ref)
     kinema.drawalljoints(ax, uLink, 0)
 
 
-movie = animation.FuncAnimation(fig, update, frames=t, interval=100)
+movie = animation.FuncAnimation(fig, update, frames=t, interval=50)
 
 plt.show()
 

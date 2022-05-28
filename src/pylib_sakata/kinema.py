@@ -6,6 +6,7 @@
 # forwardkinematics(uLink, j)
 # ref = calcref(x, y, z, rol, pitch, yaw, R_init)
 # inversekinematics(uLink, i, j, ref)
+# inversekinematics_LM(uLink, i, j, ref)
 # drawalljoints(ax, uLink, j, cradius=60.0, clen=40.0, styl='-', col='b', width=1.5, alpha=1.0, xrange=[-800, 800],
 #                   yrange=[-800, 800], zrange=[0, 800], xlabel='X', ylabel='Y', zlabel='Z',
 #                   legend=None, loc='best', title=None, xscale='linear', yscale='linear', zscale='linear',
@@ -16,6 +17,7 @@
 
 import numpy as np
 import cmath
+from matplotlib import colors
 
 DBL_EPSILON = 2.2204460492503131E-16
 
@@ -63,12 +65,33 @@ def calcref(x, y, z, rol, pitch, yaw, R_init):
 
 
 def inversekinematics(uLink, i, j, ref):
+    lamb = 0.9
     forwardkinematics(uLink, i)
-    for n in range(20):
-        jac = _calcjacobian(uLink, i, j)
+    for n in range(10):
         err = _calcvwerr(uLink, ref, uLink[j])
-        dq = np.linalg.inv(jac) * err
-        _movejoints(uLink, i, j, 0.5 * dq)
+        if np.linalg.norm(err) < 1.0e-6:
+            break
+        jac = _calcjacobian(uLink, i, j)
+        dq = lamb * np.linalg.inv(jac) * err
+        _movejoints(uLink, i, j, dq)
+        forwardkinematics(uLink, i)
+
+
+def inversekinematics_LM(uLink, i, j, ref):
+    idx = _findroute(uLink, i, j)
+    wn_pos = 1.0/0.3
+    wn_ang = 1/(2.0 * np.pi)
+    We = np.matrix(np.diag([wn_pos, wn_pos, wn_pos, wn_ang, wn_ang, wn_ang]))
+    Wn = np.matrix(np.eye(len(idx)))
+    forwardkinematics(uLink, i)
+    for n in range(10):
+        err = _calcvwerr(uLink, ref, uLink[j])
+        ek = err.T * We * err
+        jac = _calcjacobian(uLink, i, j)
+        jac_h = jac.T * We * jac + Wn * (ek[0, 0])    # Hk + wn
+        gerr = jac.T * We * err     # gk
+        dq = np.linalg.inv(jac_h) * gerr
+        _movejoints(uLink, i, j, dq)
         forwardkinematics(uLink, i)
 
 
@@ -136,27 +159,32 @@ def _rot2omega(R):
     return w
 
 
-def drawalljoints(ax, uLink, j, cradius=60.0, clen=40.0, styl='-', col='b', width=1.5, alpha=1.0, xrange=[-800, 800],
+def drawalljoints(ax, uLink, j, cradius=60.0, clen=40.0, styl='-', col='k', width=1.5, alpha=1.0, xrange=[-800, 800],
                   yrange=[-800, 800], zrange=[0, 800], xlabel='X', ylabel='Y', zlabel='Z',
                   legend=None, loc='best', title=None, xscale='linear', yscale='linear', zscale='linear',
                   labelouter=True):
-    joint_col = 0
+    col_list = list(colors.TABLEAU_COLORS.items())
+    joint_col = col_list[j - 1][1]
 
     if int(j) != -1:
+        if int(j) == 0:
+            drawpolygon(ax, uLink[j].p, uLink[j].R, 10, 100, 100, 'k')
+        elif int(j) == 7:
+            drawpolygon(ax, uLink[j].p, uLink[j].R, 150, 60, 30, joint_col)
+        else:
+            drawcylinder(ax, uLink[j].p, uLink[j].R * uLink[j].a, cradius, clen, joint_col)
         i = int(uLink[j].mother)
-
         if i != -1:
             _connect3d(ax, uLink[i].p, uLink[j].p, styl=styl, col=col, width=width, alpha=alpha,
                       xrange=xrange, yrange=yrange, zrange=zrange, xlabel=xlabel, ylabel=ylabel, zlabel=zlabel,
                       legend=legend, loc=loc, title=title, xscale=xscale, yscale=yscale, zscale=zscale,
                       labelouter=labelouter)
-        drawcylinder(ax, uLink[j].p, uLink[j].R * uLink[j].a, cradius, clen, joint_col)
 
         drawalljoints(ax, uLink, uLink[j].child, cradius, clen)
         drawalljoints(ax, uLink, uLink[j].sister, cradius, clen)
 
 
-def _connect3d(ax, p1, p2, styl='-', col='b', width=1.5, alpha=1.0,
+def _connect3d(ax, p1, p2, styl='-', col='k', width=1.5, alpha=1.0,
               xrange=[-800, 800], yrange=[-800, 800], zrange=[0, 800], xlabel='X', ylabel='Y', zlabel='Z',
               legend=None, loc='best', title=None, xscale='linear', yscale='linear', zscale='linear', labelouter=True):
     plot_xyz(ax, [p1[0, 0], p2[0, 0]], [p1[1, 0], p2[1, 0]], [p1[2, 0], p2[2, 0]],
@@ -218,12 +246,11 @@ def drawcylinder(ax, pos, a_z, radius, length, col):
         a_y = a_y / np.linalg.norm(a_y)
         rot = np.concatenate((a_x, a_y, a_z), 1)
 
-    a = 20  # Number of side faces
+    a = 40  # Number of side faces
     theta = np.array(range(a + 1)) / a * 2.0 * np.pi
     x = np.matrix([[radius], [radius]]) * np.matrix(np.cos(theta))
     y = np.matrix([[radius], [radius]]) * np.matrix(np.sin(theta))
     z = np.matrix([[0.5 * length], [-0.5 * length]]) * np.matrix(np.ones([1, a + 1]))
-    cc = col * np.matrix(np.ones(x.shape))
 
     x2 = [[], []]
     y2 = [[], []]
@@ -231,9 +258,50 @@ def drawcylinder(ax, pos, a_z, radius, length, col):
     for n in range(len(x)):
         xyz = np.concatenate((x[n], y[n], z[n]), 0)
         xyz2 = rot * xyz
-        x2[n] = np.array(xyz2[0])[0]
-        y2[n] = np.array(xyz2[1])[0]
-        z2[n] = np.array(xyz2[2])[0]
+        x2[n] = np.array(xyz2[0])[0] + pos[0, 0]
+        y2[n] = np.array(xyz2[1])[0] + pos[1, 0]
+        z2[n] = np.array(xyz2[2])[0] + pos[2, 0]
 
     # Tube
-    ax.plot_surface(np.array(x2) + pos[0], np.array(y2) + pos[1], np.array(z2) + pos[2])
+    ax.plot_surface(np.array(x2), np.array(y2), np.array(z2), color=col)
+
+    # Top
+    ax.plot_surface(np.array([x2[0], np.zeros(len(x2[0])) + np.average(x2[0])]),
+                    np.array([y2[0], np.zeros(len(y2[0])) + np.average(y2[0])]),
+                    np.array([z2[0], np.zeros(len(z2[0])) + np.average(z2[0])]), color=col)
+
+    # Bottom
+    ax.plot_surface(np.array([x2[1], np.zeros(len(x2[1])) + np.average(x2[1])]),
+                    np.array([y2[1], np.zeros(len(y2[1])) + np.average(y2[1])]),
+                    np.array([z2[1], np.zeros(len(z2[1])) + np.average(z2[1])]), color=col)
+
+
+def drawpolygon(ax, pos, R, l, w, h, col):
+    a = 4  # Number of side faces
+    theta = np.array(range(a + 1)) / a * 2.0 * np.pi
+    x = np.matrix([[h], [h]]) * np.matrix(np.cos(theta - 0.25 * np.pi))
+    y = np.matrix([[w], [w]]) * np.matrix(np.sin(theta - 0.25 * np.pi))
+    z = np.matrix([[0], [l]]) * np.matrix(np.ones([1, a + 1]))
+
+    x2 = [[], []]
+    y2 = [[], []]
+    z2 = [[], []]
+    for n in range(len(x)):
+        xyz = np.concatenate((x[n], y[n], z[n]), 0)
+        xyz2 = R * xyz
+        x2[n] = np.array(xyz2[0])[0] + pos[0, 0]
+        y2[n] = np.array(xyz2[1])[0] + pos[1, 0]
+        z2[n] = np.array(xyz2[2])[0] + pos[2, 0]
+
+    # Tube
+    ax.plot_surface(np.array(x2), np.array(y2), np.array(z2), color=col)
+
+    # Top
+    ax.plot_surface(np.array([x2[0], np.zeros(len(x2[0])) + np.average(x2[0])]),
+                    np.array([y2[0], np.zeros(len(y2[0])) + np.average(y2[0])]),
+                    np.array([z2[0], np.zeros(len(z2[0])) + np.average(z2[0])]), color=col)
+
+    # Bottom
+    ax.plot_surface(np.array([x2[1], np.zeros(len(x2[1])) + np.average(x2[1])]),
+                    np.array([y2[1], np.zeros(len(y2[1])) + np.average(y2[1])]),
+                    np.array([z2[1], np.zeros(len(z2[1])) + np.average(z2[1])]), color=col)
