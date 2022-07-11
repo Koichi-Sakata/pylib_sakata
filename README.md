@@ -1544,7 +1544,7 @@ plot.savefig('time_traj.png')
 
 ## 7.1. plot_xy
 
-pylib_sakata.plot.**plot_xy**(*ax, x, y, styl='-', col='b', width=1.5, alpha=1.0, xrange=None, yrange=None, xlabel=None, ylabel=None, legend=None, title=None, xscale='linear', yscale='linear', labelouter=True*)
+pylib_sakata.plot.**plot_xy**(*ax, x, y, styl='-', col='b', width=1.5, alpha=1.0, xrange=None, yrange=None, xlabel=None, ylabel=None, legend=None, loc='best', title=None, xscale='linear', yscale='linear', labelouter=True*)
 
 This function is for drawing a 2-D figure from x and y data. You can select xy scale in linear type, log type and so on.
 
@@ -1561,6 +1561,7 @@ This function is for drawing a 2-D figure from x and y data. You can select xy s
   - xlabel: label of x-axis (Optional), Default: None, set strings data
   - ylabe: label of y-axis (Optional), Default: None, set strings data
   - legend: legend of data, Default: None, set a list of strings data
+  - loc: location of the legend, Default: 'best', [Detail](https://matplotlib.org/stable/api/legend_api.html)
   - title: title of figure (Optional), Default: None, set strings data
   - xscale: scale type of x-axis (Optional), Default: 'linear', set in 'linear', 'log', ...
   - labelouter: only display outer label of xy-axes, Default: True
@@ -1588,7 +1589,7 @@ plot.plot_xy(ax3, fft_axis, y_fft*1.0e6, '-', 'b', 1.5, 1.0, freqrange, [0, 20],
 
 ## 7.2. plot_tf
 
-pylib_sakata.plot.**plot_tf**(*ax_mag, ax_phase, sys, freq, styl='-', col='b', width=1.5, alpha=1.0, freqrange=None, magrange=None, legend=None, title=None, labelouter=True*)
+pylib_sakata.plot.**plot_tf**(*ax_mag, ax_phase, sys, freq, styl='-', col='b', width=1.5, alpha=1.0, freqrange=None, magrange=None, legend=None, loc='best', title=None, labelouter=True*)
 
 This function is for drawing a Bode diagram from a LTI model.
 
@@ -1604,6 +1605,7 @@ This function is for drawing a Bode diagram from a LTI model.
   - freqrange: plot range of frequency-axis (Optional), Default: None, set as [freqmin, freqmax]
   - magrange: plot range of magnitude-axis (Optional), Default: None, set as [magmin, magmax]
   - legend: legend of data, Default: None, set a list of strings data
+  - loc: location of the legend, Default: 'best', [Detail](https://matplotlib.org/stable/api/legend_api.html)
   - title: title of figure (Optional), Default: None, set strings data
   - labelouter: only display outer label of xy-axes, Default: True
 - Returns:
@@ -1628,7 +1630,7 @@ plot.plot_tf(ax_mag, ax_phase, Tn, freq, '--', 'b', 1.5, 1.0, [1, 1000], [-60, 1
 
 ## 7.3. plot_tffrd
 
-pylib_sakata.plot.**plot_tffrd**(*ax_mag, ax_phase, freqresp, styl='-', col='b', width=1.5, alpha=1.0, freqrange=None, magrange=None, legend=None, title=None, labelouter=True, ax_coh=None, coh=None*)
+pylib_sakata.plot.**plot_tffrd**(*ax_mag, ax_phase, freqresp, styl='-', col='b', width=1.5, alpha=1.0, freqrange=None, magrange=None, legend=None, loc='best', title=None, labelouter=True, ax_coh=None, coh=None*)
 
 This function is for drawing a Bode diagram from a frequency response data.
 
@@ -1644,6 +1646,7 @@ This function is for drawing a Bode diagram from a frequency response data.
   - freqrange: plot range of frequency-axis (Optional), Default: None, set as [freqmin, freqmax]
   - magrange: plot range of magnitude-axis (Optional), Default: None, set as [magmin, magmax]
   - legend: legend of data, Default: None, set a list of strings data
+  - loc: location of the legend, Default: 'best', [Detail](https://matplotlib.org/stable/api/legend_api.html)
   - title: title of figure (Optional), Default: None, set strings data
   - labelouter: only display outer label of xy-axes, Default: True
   - ax_coh: handle of coherence axis, Default: None
@@ -1678,7 +1681,7 @@ plot.plot_tffrd(ax_mag, ax_phase, Tn_frd, '--', 'b', 1.5, 1.0, [1, 1000], [-60, 
 
 ## 7.4. plot_nyquist
 
-pylib_sakata.plot.**plot_nyquist**(*ax, freqresp, styl='-', col='b', width=1.5, alpha=1.0, xrange=None, yrange=None, legend=None, title=None, labelouter=True*)
+pylib_sakata.plot.**plot_nyquist**(*ax, freqresp, styl='-', col='b', width=1.5, alpha=1.0, xrange=None, yrange=None, legend=None, loc='best', title=None, labelouter=True*)
 
 This function is for drawing a Nyquist diagram from a frequency response data of a open loop system
 
@@ -1692,6 +1695,7 @@ This function is for drawing a Nyquist diagram from a frequency response data of
   - xrange: plot range of real-axis (Optional), Default: None, set as [realmin, realmax]
   - yrange: plot range of imaginary-axis (Optional), Default: None, set as [imagmin, imagmax]
   - legend: legend of data, Default: None, set a list of strings data
+  - loc: location of the legend, Default: 'best', [Detail](https://matplotlib.org/stable/api/legend_api.html)
   - title: title of figure (Optional), Default: None, set strings data
   - labelouter: only display outer label of xy-axes, Default: True
 - Returns:
