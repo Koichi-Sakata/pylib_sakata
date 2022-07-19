@@ -1,11 +1,11 @@
-pylib-sakata User's Manual version-0.1.6
+pylib-sakata User's Manual version-0.1.7
 ===
 
 <!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
 
 <!-- code_chunk_output -->
 
-- [pylib-sakata User's Manual version-0.1.6](#pylib-sakata-users-manual-version-016)
+- [pylib-sakata User's Manual version-0.1.7](#pylib-sakata-users-manual-version-017)
 - [1. Introduction](#1-introduction)
 - [2. Environment Setup](#2-environment-setup)
   - [2.1. Installation of Python](#21-installation-of-python)
@@ -55,6 +55,8 @@ pylib-sakata User's Manual version-0.1.6
   - [3.29. zpetc](#329-zpetc)
   - [3.30. filt](#330-filt)
   - [3.31. minreal](#331-minreal)
+  - [3.32. makeprmset](#332-makeprmset)
+  - [3.33. defprmset](#333-defprmset)
 - [4. pylib_sakata.fft](#4-pylib_sakatafft)
   - [4.1. FreqResp](#41-freqresp)
   - [4.2. fft](#42-fft)
@@ -1176,6 +1178,50 @@ This function is to delete the common pole-zeros of the system.
   - sys: LTI model (StateSpace or TransferFunction or ZpkModel)
 - Returns:
   - out: LTI model whose the common pole-zeros were deleted
+
+## 3.32. makeprmset
+pylib_sakata.ctrl.**makeprmset**(*path='.'*)
+
+This function is to create Cpp and header files of controller parameter sets
+
+- Parameters:
+  - path: path to create Cpp and header files of controller parameter sets
+- Returns:
+  - None
+  
+## 3.33. defprmset
+pylib_sakata.ctrl.**defprmset**(*tfz, prmSetName, path='.', mode='a'*)
+
+- Parameters:
+  - tfz: discrete time TransferFunction model
+  - prmSetName: parameter set name of the following struct in Cpp
+  - path: path to create Cpp and header files of controller parameter sets
+  - mode: mode to open Cpp and header files
+- Returns:
+  - None
+
+```cpp
+typedef struct {
+	double	dA[2];
+	double	dB[2];
+	double	dInPre;
+	double	dOutPre;
+} TF1_INF;						// 1st order TF information
+
+typedef struct {
+	double	dA[3];
+	double	dB[3];
+	double	dInPre[2];
+	double	dOutPre[2];
+} TF2_INF;						// 2nd order TF information
+
+typedef struct {
+	double	dA[4];
+	double	dB[4];
+	double	dInPre[3];
+	double	dOutPre[3];
+} TF3_INF;						// 3rd order TF information
+```
 
 # 4. pylib_sakata.fft
 

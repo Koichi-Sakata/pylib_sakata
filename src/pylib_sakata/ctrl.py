@@ -31,6 +31,8 @@
 # Czpetc, Nzpetc = zpetc(Pz, zerothr=0.99)
 # sys = filt(num, den, dt)
 # sys = minreal(sys)
+# makeprmset(path='.')
+# writeprmset(tfz, prmSetName, path='.', mode='a')
 
 
 import math
@@ -689,10 +691,166 @@ def filt(num, den, dt):
     return minreal(numpoly/denpoly)
 
 
-def minreal(sys):
-    if type(sys) == matlab.TransferFunction:
-        return zpk2tf(tf2zpk(sys))
-    elif type(sys) == matlab.StateSpace:
-        return zpk2ss(ss2zpk(sys))
+def makeprmset(path='.'):
+    path_cpp = path + '/gval_ctrlprm.cpp'
+    f = open(path_cpp, 'w')
+    f.write('#include "TcPch.h"\n')
+    f.write('#pragma hdrstop\n')
+    f.write('#include "head_common.h"\n\n')
+
+    path_h = path + '/head_ctrlprm.h'
+    f = open(path_h, 'w')
+    f.write('#ifndef _HEAD_CTRLPRM_\n')
+    f.write('#define _HEAD_CTRLPRM_\n')
+    f.write('\n\n#endif\n')
+
+
+def defprmset(tfz, prmSetName, path='.', mode='a'):
+    if type(tfz).__module__ != 'numpy':
+        num = tfz.num[0][0]
+        den = tfz.den[0][0]
+
+        path_cpp = path + '/gval_ctrlprm.cpp'
+        f = open(path_cpp, mode)
+        f.write('\n')
+        if len(den) == 2:
+            f.write('TF1_INF	')
+            f.write(prmSetName)
+            f.write(' = {\n')
+            f.write('	{ ')
+            for i in range(len(num)):
+                f.write(str(den[i]))
+                if i != len(den) - 1:
+                    f.write(', ')
+            f.write(' },\n')
+            f.write('	{ ')
+            for i in range(len(num)):
+                f.write(str(num[i]))
+                if i != len(num) - 1:
+                    f.write(', ')
+            f.write(' },\n')
+            f.write('	{ 0.0 },\n')
+            f.write('	{ 0.0 }\n')
+            f.write('};\n')
+        elif len(den) == 3:
+            f.write('TF2_INF	')
+            f.write(prmSetName)
+            f.write(' = {\n')
+            f.write('	{ ')
+            for i in range(len(num)):
+                f.write(str(den[i]))
+                if i != len(den) - 1:
+                    f.write(', ')
+            f.write(' },\n')
+            f.write('	{ ')
+            for i in range(len(num)):
+                f.write(str(num[i]))
+                if i != len(num) - 1:
+                    f.write(', ')
+            f.write(' },\n')
+            f.write('	{ 0.0, 0.0 },\n')
+            f.write('	{ 0.0, 0.0 }\n')
+            f.write('};\n')
+        elif len(den) == 4:
+            f.write('TF3_INF	')
+            f.write(prmSetName)
+            f.write(' = {\n')
+            f.write('	{ ')
+            for i in range(len(num)):
+                f.write(str(den[i]))
+                if i != len(den) - 1:
+                    f.write(', ')
+            f.write(' },\n')
+            f.write('	{ ')
+            for i in range(len(num)):
+                f.write(str(num[i]))
+                if i != len(num) - 1:
+                    f.write(', ')
+            f.write(' },\n')
+            f.write('	{ 0.0, 0.0, 0.0 },\n')
+            f.write('	{ 0.0, 0.0, 0.0 }\n')
+            f.write('};\n')
+        f.close()
+
+        path_h = path + '/head_ctrlprm.h'
+        with open(path_h) as reader:
+            content = reader.read()
+        content = content.replace('#endif\n', '')
+        with open(path_h, 'w') as writer:
+            writer.write(content)
+        f = open(path_h, mode)
+        if len(den) == 2:
+            f.write('extern TF1_INF	')
+        elif len(den) == 3:
+            f.write('extern TF2_INF	')
+        elif len(den) == 4:
+            f.write('extern TF3_INF	')
+        f.write(prmSetName)
+        f.write(';\n')
+        f.write('\n#endif\n')
+        f.close()
     else:
-        return sys
+        path_cpp = path + '/gval_ctrlprm.cpp'
+        f = open(path_cpp, mode)
+        f.write('\n')
+        den = tfz[0].den[0][0]
+        if len(den) == 2:
+            f.write('TF1_INF	')
+            f.write(prmSetName)
+            f.write(' = {\n')
+        elif len(den) == 3:
+            f.write('TF2_INF	')
+            f.write(prmSetName)
+            f.write(' = {\n')
+        elif len(den) == 4:
+            f.write('TF3_INF	')
+            f.write(prmSetName)
+            f.write(' = {\n')
+        for i in range(len(tfz)):
+            num = tfz[i].num[0][0]
+            den = tfz[i].den[0][0]
+            f.write('	{\n')
+            f.write('		{ ')
+            for k in range(len(den)):
+                f.write(str(den[k]))
+                if k != len(den) - 1:
+                    f.write(', ')
+            f.write(' },\n')
+            f.write('		{ ')
+            for k in range(len(num)):
+                f.write(str(num[k]))
+                if k != len(num) - 1:
+                    f.write(', ')
+            f.write(' },\n')
+            if len(den) == 2:
+                f.write('		{ 0.0 },\n')
+                f.write('		{ 0.0 }\n')
+            elif len(den) == 3:
+                f.write('		{ 0.0, 0.0 },\n')
+                f.write('		{ 0.0, 0.0 }\n')
+            elif len(den) == 4:
+                f.write('		{ 0.0, 0.0, 0.0 },\n')
+                f.write('		{ 0.0, 0.0, 0.0 }\n')
+            if i == len(tfz) - 1:
+                f.write('	}\n')
+            else:
+                f.write('	},\n')
+        f.write('};\n')
+
+        path_h = path + '/head_ctrlprm.h'
+        with open(path_h) as reader:
+            content = reader.read()
+        content = content.replace('#endif\n', '')
+        with open(path_h, 'w') as writer:
+            writer.write(content)
+        f = open(path_h, mode)
+        if len(den) == 2:
+            f.write('extern TF1_INF	')
+        elif len(den) == 3:
+            f.write('extern TF2_INF	')
+        elif len(den) == 4:
+            f.write('extern TF3_INF	')
+        f.write(prmSetName)
+        f.write(';\n')
+        f.write('\n#endif\n')
+        f.close()
