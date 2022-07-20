@@ -1083,7 +1083,7 @@ pylib_sakata.ctrl.**dob**(*freq, zeta, M, C, K, dt, nd = 0*)
 
 This function is for design of a discrete-time disturbance observer (DOB).
 $$
-\hat{d} = -z^{n_d} Q[z] u + Q[z] P^{-1}[z] y
+\hat{d} = -z^{-n_d} Q[z] u + Q[z] P^{-1}[z] y
 $$
 Here, it is defined that disturbance $d$ is injected in the system as plus sign.
 
@@ -1096,7 +1096,7 @@ Here, it is defined that disturbance $d$ is injected in the system as plus sign.
   - dt: sampling time of the system
   - nd: sampling number of the dead-time of the system
 - Returns:
-  - DOBu: $z^{n_d} Q[z]$
+  - DOBu: $z^{-n_d} Q[z]$
   - DOBy: $Q[z] P^{-1}[z]$
 
 **Examples**

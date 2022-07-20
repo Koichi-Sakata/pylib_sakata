@@ -124,9 +124,9 @@ ImpModel_frd = ctrl.sys2frd(ImpModel, freq)
 print('Impedance controller was designed.')
 
 # Haptics control
-Freq1 = 600.0
-Freq2 = 60.0
-Zeta2 = 0.7
+freq1 = 600.0
+freq2 = 60.0
+feta2 = 0.7
 Cz_Hap = ctrl.pd(freq1, freq2, zeta2, M_dob, C_dob, K_dob, Ts)
 Cz_Hap_frd = ctrl.sys2frd(Cz_Hap, freq)
 print('Haptics controller was designed.')
