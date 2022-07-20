@@ -36,7 +36,8 @@ print('Common parameters were set.')
 M = 0.022
 C = 1.0
 K = 0
-Pmechs = ctrl.tf([1], [M, C, K])
+Pmechs = ctrl.tf([1.0], [M, C, K])
+Pmechz = ctrl.c2d(Pmechs, Ts, method='zoh')
 numDelay, denDelay = matlab.pade(Ts*4, n=4)
 Ds = ctrl.tf(numDelay, denDelay)
 Dz = z**-3
@@ -62,6 +63,13 @@ Cz_PID = ctrl.pid(freq1, zeta1, freq2, zeta2, M, C, K, Ts)
 Cz_PID_frd = ctrl.sys2frd(Cz_PID, freq)
 print('PID controller was designed.')
 
+# Design PI velocity controller
+freq1 = 20.0
+zeta1 = 0.7
+Cz_PI = ctrl.pi(freq1, zeta1, M, C, Ts)
+Cz_PI_frd = ctrl.sys2frd(Cz_PI, freq)
+print('PI velocity controller was designed.')
+
 # Design notch filters
 freqNF = [2000]
 zetaNF = [0.3]
@@ -82,6 +90,47 @@ for i in range(len(freqPF)):
     PFz_frd += ctrl.sys2frd(PFz[i], freq)
 print('Peak filters were designed.')
 
+# Design DOB for FB
+M_dob = 0.022
+C_dob = 0.5
+K_dob = 0.0
+freq_dob = 100.0
+zeta_dob = 0.7
+DOBfbu, DOBfby = ctrl.dob(freq_dob, zeta_dob, M_dob, C_dob, K_dob, Ts)
+DOBfbu_frd = ctrl.sys2frd(DOBfbu, freq)
+DOBfby_frd = ctrl.sys2frd(DOBfby, freq)
+print('DOB was designed.')
+
+# Design DOB for detection
+freq_dob = 300.0
+zeta_dob = 1.0
+DOBestu, DOBesty = ctrl.dob(freq_dob, zeta_dob, M, C, K, Ts)
+DOBestu_frd = ctrl.sys2frd(DOBestu, freq)
+DOBesty_frd = ctrl.sys2frd(DOBesty, freq)
+print('DOB was designed.')
+
+# Design ZPETC
+Czpetc, Nzpetc = ctrl.zpetc(Pnz, Ts)
+Czpetc_frd = ctrl.sys2frd(Czpetc, freq)
+lead_frd = ctrl.sys2frd(z**Nzpetc, freq)
+print('ZPETC was designed.')
+
+# Impedance control
+M_imp = 0.022
+C_imp = 1.0
+K_imp = 0.0
+ImpModel = ctrl.c2d(ctrl.tf([1.0], [M_imp, C_imp, K_imp]), Ts, method='zoh')
+ImpModel_frd = ctrl.sys2frd(ImpModel, freq)
+print('Impedance controller was designed.')
+
+# Haptics control
+Freq1 = 600.0
+Freq2 = 60.0
+Zeta2 = 0.7
+Cz_Hap = ctrl.pd(freq1, freq2, zeta2, M_dob, C_dob, K_dob, Ts)
+Cz_Hap_frd = ctrl.sys2frd(Cz_Hap, freq)
+print('Haptics controller was designed.')
+
 print('Frequency response analysis is running...')
 G_PD_frd = Pnz_frd * Cz_PD_frd
 S_PD_frd = 1/(1 + G_PD_frd)
@@ -97,14 +146,32 @@ T_PIDwPF_frd = 1 - S_PIDwPF_frd
 
 print('Creating parameter set Cpp and header files...')
 axis_num = 6
+Pmechz_axes = np.array([ctrl.tf([1.0], [1.0], Ts) for i in range(axis_num)])
 Cz_PID_axes = np.array([ctrl.tf([1.0], [1.0], Ts) for i in range(axis_num)])
 Cz_PD_axes = np.array([ctrl.tf([1.0], [1.0], Ts) for i in range(axis_num)])
+Cz_PI_axes = np.array([ctrl.tf([1.0], [1.0], Ts) for i in range(axis_num)])
 NFz_axes = np.array([[ctrl.tf([1.0], [1.0], Ts) for j in range(len(NFz))] for i in range(axis_num)])
 PFz_axes = np.array([[ctrl.tf([0.0], [1.0], Ts) for j in range(len(PFz))] for i in range(axis_num)])
+DOBfbu_axes = np.array([ctrl.tf([1.0], [1.0], Ts) for i in range(axis_num)])
+DOBfby_axes = np.array([ctrl.tf([1.0], [1.0], Ts) for i in range(axis_num)])
+DOBestu_axes = np.array([ctrl.tf([1.0], [1.0], Ts) for i in range(axis_num)])
+DOBesty_axes = np.array([ctrl.tf([1.0], [1.0], Ts) for i in range(axis_num)])
+Czpetc_axes = np.array([ctrl.tf([1.0], [1.0], Ts) for i in range(axis_num)])
+ImpModel_axes = np.array([ctrl.tf([1.0], [1.0], Ts) for i in range(axis_num)])
+Cz_Hap_axes = np.array([ctrl.tf([1.0], [1.0], Ts) for i in range(axis_num)])
 
 for i in range(axis_num):
+    Pmechz_axes[i] = Pmechz
     Cz_PID_axes[i] = Cz_PID
     Cz_PD_axes[i] = Cz_PD
+    Cz_PI_axes[i] = Cz_PI
+    DOBfbu_axes[i] = DOBfbu
+    DOBfby_axes[i] = DOBfby
+    DOBestu_axes[i] = DOBestu
+    DOBesty_axes[i] = DOBesty
+    Czpetc_axes[i] = Czpetc
+    ImpModel_axes[i] = ImpModel
+    Cz_Hap_axes[i] = Cz_Hap
 
 for i in range(axis_num):
     for j in range(len(NFz)):
@@ -116,10 +183,19 @@ for i in range(axis_num):
 
 path = 'src'
 ctrl.makeprmset(path)
+ctrl.defprmset(Pmechz_axes, 'gstModelInf['+str(axis_num)+']', path)
 ctrl.defprmset(Cz_PID_axes, 'gstPIDInf['+str(axis_num)+']', path)
 ctrl.defprmset(Cz_PD_axes, 'gstPDInf['+str(axis_num)+']', path)
+ctrl.defprmset(Cz_PI_axes, 'gstPIInf['+str(axis_num)+']', path)
 ctrl.defprmset(NFz_axes, 'gstNFInf['+str(axis_num)+']['+str(len(NFz))+']', path)
 ctrl.defprmset(PFz_axes, 'gstPFInf['+str(axis_num)+']['+str(len(PFz))+']', path)
+ctrl.defprmset(DOBfbu_axes, 'gstDOBfbuInf['+str(axis_num)+']', path)
+ctrl.defprmset(DOBfby_axes, 'gstDOBfbyInf['+str(axis_num)+']', path)
+ctrl.defprmset(DOBestu_axes, 'gstDOBestuInf['+str(axis_num)+']', path)
+ctrl.defprmset(DOBesty_axes, 'gstDOBestyInf['+str(axis_num)+']', path)
+ctrl.defprmset(Czpetc_axes, 'gstZPETInf['+str(axis_num)+']', path)
+ctrl.defprmset(ImpModel_axes, 'gstImpInf['+str(axis_num)+']', path)
+ctrl.defprmset(Cz_Hap_axes, 'gstHapInf['+str(axis_num)+']', path)
 
 print('Plotting figures...')
 # Plant

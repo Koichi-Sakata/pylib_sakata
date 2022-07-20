@@ -706,20 +706,39 @@ def makeprmset(path='.'):
     f = open(path_cpp, 'w')
     f.write('#include "TcPch.h"\n')
     f.write('#pragma hdrstop\n')
-    f.write('#include "head_common.h"\n\n')
+    f.write('#include "head_ctrlprm.h"\n\n')
 
     path_h = path + '/head_ctrlprm.h'
     f = open(path_h, 'w')
     f.write('#ifndef _HEAD_CTRLPRM_\n')
-    f.write('#define _HEAD_CTRLPRM_\n')
-    f.write('\n\n#endif\n')
+    f.write('#define _HEAD_CTRLPRM_\n\n')
+    f.write('typedef struct {\n')
+    f.write('	double	dA[2];\n')
+    f.write('	double	dB[2];\n')
+    f.write('	double	dInPre;\n')
+    f.write('	double	dOutPre;\n')
+    f.write('} TF1_INF;						// 1st order TF information\n\n')
+    f.write('typedef struct {\n')
+    f.write('	double	dA[3];\n')
+    f.write('	double	dB[3];\n')
+    f.write('	double	dInPre[2];\n')
+    f.write('	double	dOutPre[2];\n')
+    f.write('} TF2_INF;						// 2nd order TF information\n\n')
+    f.write('typedef struct {\n')
+    f.write('	double	dA[4];\n')
+    f.write('	double	dB[4];\n')
+    f.write('	double	dInPre[3];\n')
+    f.write('	double	dOutPre[3];\n')
+    f.write('} TF3_INF;						// 3rd order TF information\n\n')
+    f.write('#endif\n')
 
 
 def defprmset(tfz, prmSetName, path='.', mode='a'):
     if type(tfz).__module__ != 'numpy':
         num = tfz.num[0][0]
         den = tfz.den[0][0]
-
+        if len(den) - len(num) > 0:
+            num = np.concatenate([np.zeros(len(den) - len(num)), num])
         path_cpp = path + '/gval_ctrlprm.cpp'
         f = open(path_cpp, mode)
         f.write('\n')
@@ -820,6 +839,8 @@ def defprmset(tfz, prmSetName, path='.', mode='a'):
             for i in range(len(tfz)):
                 num = tfz[i].num[0][0]
                 den = tfz[i].den[0][0]
+                if len(den) - len(num) > 0:
+                    num = np.concatenate([np.zeros(len(den) - len(num)), num])
                 f.write('	{\n')
                 f.write('		{ ')
                 for k in range(len(den)):
@@ -887,6 +908,8 @@ def defprmset(tfz, prmSetName, path='.', mode='a'):
                 for j in range(len(tfz[i])):
                     num = tfz[i][j].num[0][0]
                     den = tfz[i][j].den[0][0]
+                    if len(den) - len(num) > 0:
+                        num = np.concatenate([np.zeros(len(den) - len(num)), num])
                     f.write('		{\n')
                     f.write('			{ ')
                     for k in range(len(den)):
