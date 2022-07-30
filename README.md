@@ -658,7 +658,7 @@ pylib_sakata.ctrl.**pd**(*freq1, freq2, zeta2, M, C, K, dt=None, method='tustin'
 
 This function is for design of a PD controller.
 $$
-C_{PID}(s) = K_P + \frac{K_D s}{\tau_D s+1} = \frac{b_1s+b_0}{s+a_1}
+C_{PID}(s) = K_P + \frac{K_D s}{\tau_D s+1} = \frac{b_1s+b_0}{s+a_0}
 $$
 $$
 P(s) = \frac{1}{Ms^2+Cs+K}
