@@ -1684,7 +1684,6 @@ This function is for drawing a Bode diagram from a frequency response data.
   - ax_mag: handle of magnitude axis
   - ax_phase: handle of phase axis, if you set as None, phase axis is skipped.
   - freqresp: instance of FreqResp class
-  - freq: 1-D array frequency data [Hz]
   - styl: line style (Optional), Default: '-', Select in '-' (solid), '--' (dashed), '.' (dotted), '-.' (dashdot)
   - col: line color (Optional), Default: 'b' (blue)
   - width: line width (Optional), Default: 1.5
