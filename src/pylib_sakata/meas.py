@@ -53,7 +53,7 @@ def getmatdata(filePath):
     """For example, data measured by Matlab-base software"""
     matdata = io.loadmat(filePath)
     dataNum = len(matdata['dataY'][0])
-    Fs = matdata['samplefreq'][0][0]
+    Fs = matdata['samplefreq'][0][0] / matdata['downsample'][0][0]
     dt = 1.0/Fs
     dataList = [[] for i in range(dataNum)]
     dataValue = [[] for i in range(dataNum)]

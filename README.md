@@ -1,11 +1,11 @@
-pylib-sakata User's Manual version-0.1.9
+pylib-sakata User's Manual version-0.1.10
 ===
 
 <!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
 
 <!-- code_chunk_output -->
 
-- [pylib-sakata User's Manual version-0.1.9](#pylib-sakata-users-manual-version-019)
+- [pylib-sakata User's Manual version-0.1.10](#pylib-sakata-users-manual-version-0110)
 - [1. Introduction](#1-introduction)
 - [2. Environment Setup](#2-environment-setup)
   - [2.1. Installation of Python](#21-installation-of-python)
