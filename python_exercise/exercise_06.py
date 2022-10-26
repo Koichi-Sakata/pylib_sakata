@@ -73,7 +73,7 @@ ax_phase = fig.add_subplot(212)
 plot.plot_tffrd(ax_mag, ax_phase, Ps_frd, '-', 'b', 1.5, 1.0, title='Frequency response of plant')
 plot.savefig(figurefolderName+'/freq_P.png')
 
-# PI controller
+# PID controller
 fig = plot.makefig()
 ax_mag = fig.add_subplot(211)
 ax_phase = fig.add_subplot(212)

@@ -23,7 +23,7 @@ figurefolderName = 'figure_sysid_exp'
 if os.path.exists(figurefolderName):
     shutil.rmtree(figurefolderName)
 os.makedirs(figurefolderName)
-Ts = 1/4000
+Ts = 1/8000
 dataNum = 10000
 freqrange = [1, 1000]
 freq = np.logspace(np.log10(freqrange[0]), np.log10(freqrange[1]), dataNum, base=10)
@@ -55,7 +55,7 @@ print('PID controller was designed.')
 
 print('Getting measurement data...')
 measfileName = 'data/freq_resp.csv'
-Pmeas_frd, coh = meas.measdata2frd(measfileName, 'ServoOutN[1]', 'ErrPosUm[1]', 'FlagNoise', freq, 1., -1.e-6, 8, 0.8)
+Pmeas_frd, coh = meas.measdata2frd(measfileName, 'ServoOutN[0]', 'ActPosUm[0]', 'FlagInject', freq, 1., 1.e-6, 8, 0.8)
 
 print('Frequency response analysis is running...')
 # Model
