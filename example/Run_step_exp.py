@@ -64,7 +64,7 @@ RefPosUm = measdata.value[meas.getdataindex(measdata, 'RefPosUm[0]')]
 ErrPosUm = measdata.value[meas.getdataindex(measdata, 'ErrPosUm[0]')]
 ServoOutN = measdata.value[meas.getdataindex(measdata, 'ServoOutN[0]')]
 # FFT
-freq_fft, ErrPosUm_fft = fft.fft(ErrPosUm[4000:36000], Ts)
+freq_fft, ErrPosUm_fft = fft.fft(ErrPosUm[4000:8000], Ts)
 
 print('Frequency response analysis is running...')
 # Measurement
