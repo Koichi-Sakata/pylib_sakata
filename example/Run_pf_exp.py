@@ -60,17 +60,17 @@ Pmeas_frd, coh = meas.measdata2frd('data/freq_resp.csv', 'ServoOutN[0]', 'ActPos
 # Time response
 measdata = meas.getcsvdata('data/time_resp.csv')
 time = measdata.time
-RefPosUm = measdata.value[meas.getdataindex(measdata, 'RefPosUm[1]')]
-ErrPosUm = measdata.value[meas.getdataindex(measdata, 'ErrPosUm[1]')]
-ServoOutN = measdata.value[meas.getdataindex(measdata, 'ServoOutN[1]')]
+RefPosUm = measdata.value[meas.getdataindex(measdata, 'RefPosUm[0]')]
+ErrPosUm = measdata.value[meas.getdataindex(measdata, 'ErrPosUm[0]')]
+ServoOutN = measdata.value[meas.getdataindex(measdata, 'ServoOutN[0]')]
 # FFT
 freq_fft, ErrPosUm_fft = fft.fft(ErrPosUm[4000:36000], Ts)
 
 measdata_pf = meas.getcsvdata('data/time_resp_pf.csv')
 time_pf = measdata_pf.time
-RefPosUm_pf = measdata_pf.value[meas.getdataindex(measdata_pf, 'RefPosUm[1]')]
-ErrPosUm_pf = measdata_pf.value[meas.getdataindex(measdata_pf, 'ErrPosUm[1]')]
-ServoOutN_pf = measdata_pf.value[meas.getdataindex(measdata_pf, 'ServoOutN[1]')]
+RefPosUm_pf = measdata_pf.value[meas.getdataindex(measdata_pf, 'RefPosUm[0]')]
+ErrPosUm_pf = measdata_pf.value[meas.getdataindex(measdata_pf, 'ErrPosUm[0]')]
+ServoOutN_pf = measdata_pf.value[meas.getdataindex(measdata_pf, 'ServoOutN[0]')]
 # FFT
 freq_fft_pf, ErrPosUm_fft_pf = fft.fft(ErrPosUm_pf[4000:36000], Ts)
 
@@ -95,6 +95,23 @@ for i in range(len(PFz)):
 
 freqPF, zetaPF, kPF, phiPF = ctrl.pfoptparam(freqPF, zetaPF, depthPF, ctrl.feedback(Pnz, Cz, sys='T'))
 print('Peak filters were designed.')
+
+print('Creating parameter set Cpp and header files...')
+axis_num = 6
+Cz_PID_axes = np.array([ctrl.tf([1.0], [1.0], Ts) for i in range(axis_num)])
+PFz_axes = np.array([[ctrl.tf([0.0], [1.0], Ts) for j in range(len(PFz))] for i in range(axis_num)])
+
+for i in range(axis_num):
+    Cz_PID_axes[i] = Cz
+
+for i in range(axis_num):
+    for j in range(len(PFz)):
+        PFz_axes[i][j] = PFz[j]
+
+path = 'src'
+ctrl.makeprmset(path)
+ctrl.defprmset(Cz_PID_axes, 'gstPIDInf['+str(axis_num)+']', path)
+ctrl.defprmset(PFz_axes, 'gstPFInf['+str(axis_num)+']['+str(len(PFz))+']', path)
 
 print('Frequency response analysis is running...')
 # Measurement with PF
