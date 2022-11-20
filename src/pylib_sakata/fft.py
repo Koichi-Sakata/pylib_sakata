@@ -208,7 +208,8 @@ def frdsim(freqresp, x, dt):
 
     # Calculate time response of output
     y = np.real(np.fft.ifft(y_fft_full))
-    return y
+    t = np.linspace(0, (len(y) - 1) * dt, len(y))
+    return t, y
 
 
 def _floorpow2(x):

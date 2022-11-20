@@ -81,9 +81,9 @@ for i in range(len(freqNF)):
 print('Notch filters were designed.')
 
 # Design peak filters
-freqPF = [10.0, 20.0, 30.0, 31.0, 50.0, 60.0, 70.0, 90.0, 180.0]
-zetaPF = [0.001, 0.001, 0.001, 0.001, 0.001, 0.001, 0.001, 0.001, 0.001]
-depthPF = [0.02, 0.1, 0.02, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
+freqPF = [10.0, 20.0, 30.0, 50.0, 60.0, 70.0, 90.0]
+zetaPF = [0.002, 0.002, 0.002, 0.001, 0.001, 0.001, 0.001]
+depthPF = [0.1, 0.05, 0.05, 0.1, 0.1, 0.1, 0.1]
 PFz = ctrl.pfopt(freqPF, zetaPF, depthPF, ctrl.feedback(Pnz, Cz_PID, sys='T'), Ts)
 PFz_frd = 0.0
 for i in range(len(freqPF)):

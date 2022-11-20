@@ -1,11 +1,11 @@
-pylib-sakata User's Manual version-0.1.10
+pylib-sakata User's Manual version-0.1.11
 ===
 
 <!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
 
 <!-- code_chunk_output -->
 
-- [pylib-sakata User's Manual version-0.1.10](#pylib-sakata-users-manual-version-0110)
+- [pylib-sakata User's Manual version-0.1.11](#pylib-sakata-users-manual-version-0111)
 - [1. Introduction](#1-introduction)
 - [2. Environment Setup](#2-environment-setup)
   - [2.1. Installation of Python](#21-installation-of-python)
@@ -1400,6 +1400,7 @@ $$
   - x: 1-D array time response data of input
   - dt: sampling time of the time response data
 - Returns:
+  - t: 1-D array time data [s]
   - y: 1-D array time response data of output
 
 **Examples**
@@ -1412,8 +1413,9 @@ $$
 >>> t = np.linspace(0.0, 10., int(10./dt))
 >>> x = np.sin(2*np.pi*10.0*t) + np.sin(2*np.pi*50.0*t)
 >>> fft.frdsim(freqresp, x, dt)
-array([-0.00635301, -0.00630568, -0.00612106, ..., -0.00610225,
-       -0.0062943 , -0.00634922])
+(array([0.000e+00, 1.000e-03, 2.000e-03, ..., 9.996e+00, 9.997e+00,
+       9.998e+00]), array([-0.00635301, -0.00630568, -0.00612106, ..., -0.00610225,
+       -0.0062943 , -0.00634922]))
 ```
 
 # 5. pylib_sakta.meas

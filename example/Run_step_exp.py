@@ -58,13 +58,13 @@ print('Getting measurement data...')
 Pmeas_frd, coh = meas.measdata2frd('data/freq_resp.csv', 'ServoOutN[0]', 'ActPosUm[0]', 'FlagInject', freq, 1., 1.e-6, 8, 0.8)
 
 # Time response
-measdata = meas.getcsvdata('data/time_step.csv')
+measdata = meas.getcsvdata('data/time_resp.csv')
 time = measdata.time
 RefPosUm = measdata.value[meas.getdataindex(measdata, 'RefPosUm[0]')]
 ErrPosUm = measdata.value[meas.getdataindex(measdata, 'ErrPosUm[0]')]
 ServoOutN = measdata.value[meas.getdataindex(measdata, 'ServoOutN[0]')]
 # FFT
-freq_fft, ErrPosUm_fft = fft.fft(ErrPosUm[4000:8000], Ts)
+freq_fft, ErrPosUm_fft = fft.fft(ErrPosUm[8000:72000], Ts)
 
 print('Frequency response analysis is running...')
 # Measurement
