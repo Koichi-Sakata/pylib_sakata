@@ -32,8 +32,8 @@ z = ctrl.tf([1, 0], [1], Ts)
 print('Common parameters were set.')
 
 # Plant model
-M = 0.022
-C = 1.0
+M = 0.027
+C = 0.7
 K = 0.0
 Pmechs = ctrl.tf([1], [M, C, K])
 numDelay, denDelay = matlab.pade(Ts*4, n=4)
@@ -58,7 +58,7 @@ print('Getting measurement data...')
 Pmeas_frd, coh = meas.measdata2frd('data/freq_resp.csv', 'ServoOutN[0]', 'ActPosUm[0]', 'FlagInject', freq, 1., 1.e-6, 8, 0.8)
 
 # Time response
-measdata = meas.getcsvdata('data/time_resp.csv')
+measdata = meas.getdata('data/time_resp.csv')
 time = measdata.time
 RefPosUm = measdata.value[meas.getdataindex(measdata, 'RefPosUm[0]')]
 ErrPosUm = measdata.value[meas.getdataindex(measdata, 'ErrPosUm[0]')]
@@ -66,7 +66,7 @@ ServoOutN = measdata.value[meas.getdataindex(measdata, 'ServoOutN[0]')]
 # FFT
 freq_fft, ErrPosUm_fft = fft.fft(ErrPosUm[8000:72000], Ts)
 
-measdata_pf = meas.getcsvdata('data/time_resp_pf.csv')
+measdata_pf = meas.getdata('data/time_resp_pf.csv')
 time_pf = measdata_pf.time
 RefPosUm_pf = measdata_pf.value[meas.getdataindex(measdata_pf, 'RefPosUm[0]')]
 ErrPosUm_pf = measdata_pf.value[meas.getdataindex(measdata_pf, 'ErrPosUm[0]')]
