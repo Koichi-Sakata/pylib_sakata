@@ -23,7 +23,7 @@ pylib-sakata User's Manual version-0.1.11
       - [2.4.3.2. Initial setting of PyCharm](#2432-initial-setting-of-pycharm)
     - [2.4.4. Comparison between  VSCode and Spyder and PyCharm](#244-comparison-between--vscode-and-spyder-and-pycharm)
   - [2.5. Getting started](#25-getting-started)
-- [3. pylib_sakata.ctrl](#3-pylib_sakatactrl)
+- [3. pylib\_sakata.ctrl](#3-pylib_sakatactrl)
   - [3.1. ZpkModel](#31-zpkmodel)
   - [3.2. tf](#32-tf)
   - [3.3. ss](#33-ss)
@@ -57,14 +57,14 @@ pylib-sakata User's Manual version-0.1.11
   - [3.31. minreal](#331-minreal)
   - [3.32. makeprmset](#332-makeprmset)
   - [3.33. defprmset](#333-defprmset)
-- [4. pylib_sakata.fft](#4-pylib_sakatafft)
+- [4. pylib\_sakata.fft](#4-pylib_sakatafft)
   - [4.1. FreqResp](#41-freqresp)
   - [4.2. fft](#42-fft)
-  - [4.3. fft_ave](#43-fft_ave)
+  - [4.3. fft\_ave](#43-fft_ave)
   - [4.4. tfestimate](#44-tfestimate)
   - [4.5. frdresize](#45-frdresize)
   - [4.6. frdsim](#46-frdsim)
-- [5. pylib_sakta.meas](#5-pylib_saktameas)
+- [5. pylib\_sakta.meas](#5-pylib_saktameas)
   - [5.1. MeasData](#51-measdata)
   - [5.2. getcsvdata](#52-getcsvdata)
   - [5.3. gettxtdata](#53-gettxtdata)
@@ -72,21 +72,21 @@ pylib-sakata User's Manual version-0.1.11
   - [5.5. getdata](#55-getdata)
   - [5.6. getdataindex](#56-getdataindex)
   - [5.7. measdata2frd](#57-measdata2frd)
-- [6. pylib_sakata.traj](#6-pylib_sakatatraj)
+- [6. pylib\_sakata.traj](#6-pylib_sakatatraj)
   - [6.1. TrajInf](#61-trajinf)
   - [6.2. traj4th](#62-traj4th)
-- [7. pylib_sakata.plot](#7-pylib_sakataplot)
-  - [7.1. plot_xy](#71-plot_xy)
-  - [7.2. plot_tf](#72-plot_tf)
-  - [7.3. plot_tffrd](#73-plot_tffrd)
-  - [7.4. plot_nyquist](#74-plot_nyquist)
-  - [7.5. plot_nyquist_assistline](#75-plot_nyquist_assistline)
+- [7. pylib\_sakata.plot](#7-pylib_sakataplot)
+  - [7.1. plot\_xy](#71-plot_xy)
+  - [7.2. plot\_tf](#72-plot_tf)
+  - [7.3. plot\_tffrd](#73-plot_tffrd)
+  - [7.4. plot\_nyquist](#74-plot_nyquist)
+  - [7.5. plot\_nyquist\_assistline](#75-plot_nyquist_assistline)
   - [7.6. makefig](#76-makefig)
   - [7.7. savefig](#77-savefig)
   - [7.8. showfig](#78-showfig)
-- [8. pylib_sakata.init](#8-pylib_sakatainit)
-  - [8.1. close_all](#81-close_all)
-  - [8.2. clear_all](#82-clear_all)
+- [8. pylib\_sakata.init](#8-pylib_sakatainit)
+  - [8.1. close\_all](#81-close_all)
+  - [8.2. clear\_all](#82-clear_all)
 
 <!-- /code_chunk_output -->
 
@@ -1426,7 +1426,7 @@ class pylib_sakata.meas.**MeasData**(*time, list, value, time, dt*)
 
 - Parameters:
   - dataList: array of data list (*str*)
-  - dataValue: array of data value
+  - value: array of data value
   - time: 1-D array time data [s]
   - dt: sampling time of the time response data
 
