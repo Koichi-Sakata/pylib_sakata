@@ -1,12 +1,19 @@
 # Copyright (c) 2021 Koichi Sakata
 
-
-import kinema
+import os
+import shutil
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
+from pylib_sakata import kinema
 
 print('Start simulation!')
+
+# Common parameters
+figurefolderName = 'figure_kinema'
+if os.path.exists(figurefolderName):
+    shutil.rmtree(figurefolderName)
+os.makedirs(figurefolderName)
 
 # Define link structure
 uLink = []
@@ -24,8 +31,8 @@ uLink[2].p = np.matrix([[0.0], [-150.0], [120.0]])
 uLink[3].p = np.matrix([[0.0], [0.0], [540.0]])
 uLink[4].p = np.matrix([[0.0], [0.0], [900.0]])
 uLink[5].p = np.matrix([[0.0], [-130.0], [900.0]])
-uLink[6].p = np.matrix([[0.0], [-130.0], [1000.0]])
-uLink[7].p = np.matrix([[offsetZ], [-130.0 + offsetY], [1000.0 + offsetX]])
+uLink[6].p = np.matrix([[60.0], [-130.0], [1000.0]])
+uLink[7].p = np.matrix([[60.0 + offsetZ], [-130.0 + offsetY], [1000.0 + offsetX]])
 
 uLink[2].q = -0.2 * np.pi
 uLink[3].q = 0.7 * np.pi
@@ -123,7 +130,7 @@ movie = animation.FuncAnimation(fig, update, frames=t, interval=50)
 
 plt.show()
 
-# movie.save('movie.mp4', writer="ffmpeg")
-# plt.close()
+movie.save(figurefolderName+'/movie.mp4', writer="ffmpeg")
+plt.close()
 
 print('Finished.')
