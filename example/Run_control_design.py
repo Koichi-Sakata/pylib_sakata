@@ -21,9 +21,7 @@ if os.path.exists(figurefolderName):
     shutil.rmtree(figurefolderName)
 os.makedirs(figurefolderName)
 srcpathName = 'src'
-if os.path.exists(srcpathName):
-    shutil.rmtree(srcpathName)
-os.makedirs(srcpathName)
+# srcpathName = 'C:/Users/sakat/source/repos/TwinCAT-CppMotionControl/TwinCAT-CppMotionControl/StaticLIbrary1'
 Ts = 1/8000
 dataNum = 10000
 freqrange = [1, 1000]
@@ -181,21 +179,20 @@ for i in range(axis_num):
     for j in range(len(PFz)):
         PFz_axes[i][j] = PFz[j]
 
-path = 'src'
-ctrl.makeprmset(path)
-ctrl.defprmset(Pmechz_axes, 'gstModelInf['+str(axis_num)+']', path)
-ctrl.defprmset(Cz_PID_axes, 'gstPIDInf['+str(axis_num)+']', path)
-ctrl.defprmset(Cz_PD_axes, 'gstPDInf['+str(axis_num)+']', path)
-ctrl.defprmset(Cz_PI_axes, 'gstPIInf['+str(axis_num)+']', path)
-ctrl.defprmset(NFz_axes, 'gstNFInf['+str(axis_num)+']['+str(len(NFz))+']', path)
-ctrl.defprmset(PFz_axes, 'gstPFInf['+str(axis_num)+']['+str(len(PFz))+']', path)
-ctrl.defprmset(DOBfbu_axes, 'gstDOBfbuInf['+str(axis_num)+']', path)
-ctrl.defprmset(DOBfby_axes, 'gstDOBfbyInf['+str(axis_num)+']', path)
-ctrl.defprmset(DOBestu_axes, 'gstDOBestuInf['+str(axis_num)+']', path)
-ctrl.defprmset(DOBesty_axes, 'gstDOBestyInf['+str(axis_num)+']', path)
-ctrl.defprmset(Czpetc_axes, 'gstZPETInf['+str(axis_num)+']', path)
-ctrl.defprmset(ImpModel_axes, 'gstImpInf['+str(axis_num)+']', path)
-ctrl.defprmset(Cz_Hap_axes, 'gstHapInf['+str(axis_num)+']', path)
+ctrl.makeprmset(srcpathName)
+ctrl.defprmset(Pmechz_axes, 'gstModelInf['+str(axis_num)+']', srcpathName)
+ctrl.defprmset(Cz_PID_axes, 'gstPIDInf['+str(axis_num)+']', srcpathName)
+ctrl.defprmset(Cz_PD_axes, 'gstPDInf['+str(axis_num)+']', srcpathName)
+ctrl.defprmset(Cz_PI_axes, 'gstPIInf['+str(axis_num)+']', srcpathName)
+ctrl.defprmset(NFz_axes, 'gstNFInf['+str(axis_num)+']['+str(len(NFz))+']', srcpathName)
+ctrl.defprmset(PFz_axes, 'gstPFInf['+str(axis_num)+']['+str(len(PFz))+']', srcpathName)
+ctrl.defprmset(DOBfbu_axes, 'gstDOBfbuInf['+str(axis_num)+']', srcpathName)
+ctrl.defprmset(DOBfby_axes, 'gstDOBfbyInf['+str(axis_num)+']', srcpathName)
+ctrl.defprmset(DOBestu_axes, 'gstDOBestuInf['+str(axis_num)+']', srcpathName)
+ctrl.defprmset(DOBesty_axes, 'gstDOBestyInf['+str(axis_num)+']', srcpathName)
+ctrl.defprmset(Czpetc_axes, 'gstZPETInf['+str(axis_num)+']', srcpathName)
+ctrl.defprmset(ImpModel_axes, 'gstImpInf['+str(axis_num)+']', srcpathName)
+ctrl.defprmset(Cz_Hap_axes, 'gstHapInf['+str(axis_num)+']', srcpathName)
 
 print('Plotting figures...')
 # Plant

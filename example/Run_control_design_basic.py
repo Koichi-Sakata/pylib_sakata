@@ -21,9 +21,7 @@ if os.path.exists(figurefolderName):
     shutil.rmtree(figurefolderName)
 os.makedirs(figurefolderName)
 srcpathName = 'src'
-if os.path.exists(srcpathName):
-    shutil.rmtree(srcpathName)
-os.makedirs(srcpathName)
+# srcpathName = 'C:/Users/sakat/source/repos/TwinCAT-CppMotionControl/TwinCAT-CppMotionControl/StaticLIbrary1'
 Ts = 1/8000
 dataNum = 10000
 freqrange = [1, 1000]
@@ -74,17 +72,19 @@ T_PID_frd = 1 - S_PID_frd
 
 print('Creating parameter set Cpp and header files...')
 axis_num = 6
+Pmechz_axes = np.array([ctrl.tf([1.0], [1.0], Ts) for i in range(axis_num)])
 Cz_PID_axes = np.array([ctrl.tf([1.0], [1.0], Ts) for i in range(axis_num)])
 Cz_PD_axes = np.array([ctrl.tf([1.0], [1.0], Ts) for i in range(axis_num)])
 
 for i in range(axis_num):
+    Pmechz_axes[i] = Pmechz
     Cz_PID_axes[i] = Cz_PID
     Cz_PD_axes[i] = Cz_PD
 
-path = 'src'
-ctrl.makeprmset(path)
-ctrl.defprmset(Cz_PID_axes, 'gstPIDInf['+str(axis_num)+']', path)
-ctrl.defprmset(Cz_PD_axes, 'gstPDInf['+str(axis_num)+']', path)
+ctrl.makeprmset(srcpathName)
+ctrl.defprmset(Pmechz_axes, 'gstModelInf['+str(axis_num)+']', srcpathName)
+ctrl.defprmset(Cz_PID_axes, 'gstPIDInf['+str(axis_num)+']', srcpathName)
+ctrl.defprmset(Cz_PD_axes, 'gstPDInf['+str(axis_num)+']', srcpathName)
 
 print('Plotting figures...')
 # Plant
