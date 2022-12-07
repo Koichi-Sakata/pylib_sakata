@@ -31,8 +31,8 @@ z = ctrl.tf([1, 0], [1], Ts)
 print('Common parameters were set.')
 
 # Plant model
-M = 0.022
-C = 1.0
+M = 0.027
+C = 0.7
 K = 0
 Pmechs = ctrl.tf([1.0], [M, C, K])
 Pmechz = ctrl.c2d(Pmechs, Ts, method='zoh')
@@ -54,9 +54,9 @@ print('PD controller was designed.')
 
 # Design PID controller
 freq1 = 30.0
-zeta1 = 1.0
-freq2 = 20.0
-zeta2 = 0.7
+zeta1 = 0.7
+freq2 = 30.0
+zeta2 = 1.0
 Cz_PID = ctrl.pid(freq1, zeta1, freq2, zeta2, M, C, K, Ts)
 Cz_PID_frd = ctrl.sys2frd(Cz_PID, freq)
 print('PID controller was designed.')
@@ -89,8 +89,8 @@ for i in range(len(freqPF)):
 print('Peak filters were designed.')
 
 # Design DOB for FB
-M_dob = 0.022
-C_dob = 0.5
+M_dob = 0.027
+C_dob = 0.7
 K_dob = 0.0
 freq_dob = 100.0
 zeta_dob = 0.7
@@ -114,16 +114,16 @@ lead_frd = ctrl.sys2frd(z**Nzpetc, freq)
 print('ZPETC was designed.')
 
 # Impedance control
-M_imp = 0.022
-C_imp = 1.0
+M_imp = 0.027
+C_imp = 0.7
 K_imp = 0.0
 ImpModel = ctrl.c2d(ctrl.tf([1.0], [M_imp, C_imp, K_imp]), Ts, method='zoh')
 ImpModel_frd = ctrl.sys2frd(ImpModel, freq)
 print('Impedance controller was designed.')
 
 # Haptics control
-freq1 = 600.0
-freq2 = 60.0
+freq1 = 800.0
+freq2 = 100.0
 feta2 = 0.7
 Cz_Hap = ctrl.pd(freq1, freq2, zeta2, M_dob, C_dob, K_dob, Ts)
 Cz_Hap_frd = ctrl.sys2frd(Cz_Hap, freq)
