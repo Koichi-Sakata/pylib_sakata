@@ -45,6 +45,7 @@ def motion_id():
     ads_client.write_by_name('Motion1_Obj1 (Module1).Inputs.MotionId', id_num)
     ads_client.close()
 
+
 def motion_exe():
     motion_id()
     print("Execute Motion")
@@ -79,7 +80,7 @@ def write_value(adsName, value):
     value = int(value)
     ads_client = pyads.Connection(net_id, port)
     ads_client.open()
-    ads_client.write_by_name(adsName,value)
+    ads_client.write_by_name(adsName, value)
     ads_client.close()
 
 

@@ -6,19 +6,29 @@ from tkinter import ttk
 import tkinter
 import pyads
 
+
 def repeat():
     for i in range(len(sigName)):
         for j in range(6):
-            read_value(adsName[i][j], text_sigvalue[i][j])
+            if i == 0 or i == 1:
+                read_value(adsName[i][j], text_sigvalue[i][j], datatype='bin')
+            else:
+                read_value(adsName[i][j], text_sigvalue[i][j])
 
     root.after(100, repeat)
 
-def read_value(adsName, text):
+
+def read_value(adsName, text, datatype=0):
     net_id = net_id_text.get()
     port = int(port_text.get())
     ads_client = pyads.Connection(net_id, port)
     ads_client.open()
     value = ads_client.read_by_name(adsName)
+    value = round(value, 8)
+    if datatype == 'hex':
+        value = hex(value)
+    if datatype == 'bin':
+        value = bin(value)
     ads_client.close()
     text.delete(0, tkinter.END)
     text.insert(0, value)
