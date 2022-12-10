@@ -170,7 +170,7 @@ for i in range(len(sigName)):
         if i == 7:
             break
 
-ttk.Button(frm6, text='Watch', command=watch_value, width=20).grid(column=0, row=rowNum)
+ttk.Button(frm6, text='Read', command=watch_value, width=20).grid(column=0, row=rowNum)
 ttk.Button(frm6, text='Write', command=read_write_value, width=20).grid(column=1, row=rowNum)
 
 # Style
