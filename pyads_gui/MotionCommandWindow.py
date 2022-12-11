@@ -8,7 +8,7 @@ import pyads
 
 
 def repeat():
-    for i in range(len(sigName)):
+    for i in range(len(adsName)):
             read_value(adsName[i], text_sigvalue[i])
 
     root.after(100, repeat)
@@ -73,26 +73,23 @@ def motion_reset():
     ads_client.close()
 
 
-def write_value(adsName, value):
-    print("write value")
-    net_id = net_id_text.get()
-    port = int(port_text.get())
-    value = int(value)
-    ads_client = pyads.Connection(net_id, port)
-    ads_client.open()
-    ads_client.write_by_name(adsName, value)
-    ads_client.close()
-
-
-def read_value(adsName, text):
+def read_value(adsName, text, datatype=0):
     net_id = net_id_text.get()
     port = int(port_text.get())
     ads_client = pyads.Connection(net_id, port)
     ads_client.open()
-    value = ads_client.read_by_name(adsName)
-    ads_client.close()
-    text.delete(0, tkinter.END)
-    text.insert(0, value)
+    try:
+        value = ads_client.read_by_name(adsName)
+        value = round(value, 8)
+        if datatype == 'hex':
+            value = hex(value)
+        if datatype == 'bin':
+            value = bin(value)
+        ads_client.close()
+        text.delete(0, tkinter.END)
+        text.insert(0, value)
+    except:
+        pass
 
 
 root = Tk()
@@ -131,13 +128,12 @@ adsName = [
           ]
 text_sigvalue = []
 
-sigvalue_read = [[] for i in range(len(sigName))]
-for i in range(len(sigName)):
-    for j in range(6):
-        sigvalue_read[i].append(StringVar(frm1))
+sigvalue_read = [[] for i in range(len(adsName))]
+for i in range(len(adsName)):
+    sigvalue_read[i].append(StringVar(frm1))
 
 rowNum = 0
-for i in range(len(sigName)):
+for i in range(len(adsName)):
     ttk.Label(frm1, text=sigName[i]).grid(column=0, row=rowNum + i, sticky=W)
     text_sigvalue.append(ttk.Entry(frm1, textvariable=sigvalue_read[i], width=6))
     text_sigvalue[i].grid(column=1, row=rowNum + i)

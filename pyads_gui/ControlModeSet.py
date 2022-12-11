@@ -9,21 +9,17 @@ import pyads
 
 def watch_value():
     print("read value")
-    for i in range(len(sigName)):
-        for j in range(6):
+    for i in range(len(adsName)):
+        for j in range(len(adsName[i])):
             read_value(adsName[i][j], text_sigvalue[i][j])
-            if i == 7:
-                break
 
 
 def read_write_value():
     print("write value")
-    for i in range(len(sigName)):
-        for j in range(6):
-            value = text_sigvalue[i][j].get()#read_value(adsName[i][j], text_sigvalue[i][j])
+    for i in range(len(adsName)):
+        for j in range(len(adsName[i])):
+            value = int(text_sigvalue[i][j].get(), 0)
             write_value(adsName[i][j], value)
-            if i == 7:
-                break
 
 
 def read_value(adsName, text, datatype=0):
@@ -31,22 +27,24 @@ def read_value(adsName, text, datatype=0):
     port = int(port_text.get())
     ads_client = pyads.Connection(net_id, port)
     ads_client.open()
-    value = ads_client.read_by_name(adsName)
-    value = round(value, 8)
-    if datatype == 'hex':
-        value = hex(value)
-    if datatype == 'bin':
-        value = bin(value)
-    ads_client.close()
-    text.delete(0, tkinter.END)
-    text.insert(0, value)
-    return value
+    try:
+        value = ads_client.read_by_name(adsName)
+        value = round(value, 8)
+        if datatype == 'hex':
+            value = hex(value)
+        if datatype == 'bin':
+            value = bin(value)
+        ads_client.close()
+        text.delete(0, tkinter.END)
+        text.insert(0, value)
+    except:
+        pass
+
 
 
 def write_value(adsName, value):
     net_id = net_id_text.get()
     port = int(port_text.get())
-    value = int(value)
     ads_client = pyads.Connection(net_id, port)
     ads_client.open()
     ads_client.write_by_name(adsName, value)
@@ -156,19 +154,17 @@ adsName = [
             ]
           ]
 
-sigvalue_read = [[] for i in range(len(sigName))]
-for i in range(len(sigName)):
-    for j in range(6):
+sigvalue_read = [[] for i in range(len(adsName))]
+for i in range(len(adsName)):
+    for j in range(len(adsName[i])):
         sigvalue_read[i].append(StringVar(frm5))
 
-text_sigvalue = [[] for i in range(len(sigName))]
-for i in range(len(sigName)):
+text_sigvalue = [[] for i in range(len(adsName))]
+for i in range(len(adsName)):
     ttk.Label(frm5, text=sigName[i]).grid(column=0, row=rowNum + i, sticky=W)
-    for j in range(6):
+    for j in range(len(adsName[i])):
         text_sigvalue[i].append(ttk.Entry(frm5, textvariable=sigvalue_read[i][j], width=16))
         text_sigvalue[i][j].grid(column=1+j, row=rowNum + i)
-        if i == 7:
-            break
 
 ttk.Button(frm6, text='Read', command=watch_value, width=20).grid(column=0, row=rowNum)
 ttk.Button(frm6, text='Write', command=read_write_value, width=20).grid(column=1, row=rowNum)

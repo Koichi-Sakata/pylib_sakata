@@ -8,9 +8,9 @@ import pyads
 
 
 def repeat():
-    for i in range(len(sigName)):
-        for j in range(6):
-            if i == 0 or i == 1:
+    for i in range(len(adsName)):
+        for j in range(len(adsName[i])):
+            if i <= 1:
                 read_value(adsName[i][j], text_sigvalue[i][j], datatype='bin')
             else:
                 read_value(adsName[i][j], text_sigvalue[i][j])
@@ -23,15 +23,18 @@ def read_value(adsName, text, datatype=0):
     port = int(port_text.get())
     ads_client = pyads.Connection(net_id, port)
     ads_client.open()
-    value = ads_client.read_by_name(adsName)
-    value = round(value, 8)
-    if datatype == 'hex':
-        value = hex(value)
-    if datatype == 'bin':
-        value = bin(value)
-    ads_client.close()
-    text.delete(0, tkinter.END)
-    text.insert(0, value)
+    try:
+        value = ads_client.read_by_name(adsName)
+        value = round(value, 8)
+        if datatype == 'hex':
+            value = hex(value)
+        if datatype == 'bin':
+            value = bin(value)
+        ads_client.close()
+        text.delete(0, tkinter.END)
+        text.insert(0, value)
+    except:
+        pass
 
     
 root = Tk()
@@ -131,15 +134,15 @@ adsName = [
             ]
           ]
 
-sigvalue_read = [[] for i in range(len(sigName))]
-for i in range(len(sigName)):
-    for j in range(6):
+sigvalue_read = [[] for i in range(len(adsName))]
+for i in range(len(adsName)):
+    for j in range(len(adsName[i])):
         sigvalue_read[i].append(StringVar(frm4))
 
-text_sigvalue = [[] for i in range(len(sigName))]
-for i in range(len(sigName)):
+text_sigvalue = [[] for i in range(len(adsName))]
+for i in range(len(adsName)):
     ttk.Label(frm4, text=sigName[i]).grid(column=0, row=rowNum + i, sticky=W)
-    for j in range(6):
+    for j in range(len(adsName[i])):
         text_sigvalue[i].append(ttk.Entry(frm4, textvariable=sigvalue_read[i][j], width=16))
         text_sigvalue[i][j].grid(column=1+j, row=rowNum + i)
 
