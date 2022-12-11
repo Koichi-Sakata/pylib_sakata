@@ -22,10 +22,10 @@ typedef struct {
 	double	dOutPre[3];
 } TF3_INF;						// 3rd order TF information
 
+extern TF2_INF	gstModelInf[6];
+
 extern TF2_INF	gstPIDInf[6];
 
 extern TF1_INF	gstPDInf[6];
-
-extern TF2_INF	gstPFInf[6][7];
 
 #endif

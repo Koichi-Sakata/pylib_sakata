@@ -21,7 +21,7 @@ if os.path.exists(figurefolderName):
     shutil.rmtree(figurefolderName)
 os.makedirs(figurefolderName)
 srcpathName = 'src'
-# srcpathName = 'C:/Users/sakat/source/repos/TwinCAT-CppMotionControl/TwinCAT-CppMotionControl/StaticLIbrary1'
+# srcpathName = 'C:/Users/sakat/source/repos/TwinCAT-CppMotionControl-main/TwinCAT-CppMotionControl/StaticLibrary1'
 Ts = 1/8000
 dataNum = 10000
 freqrange = [1, 1000]
