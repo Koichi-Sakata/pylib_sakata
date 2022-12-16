@@ -50,9 +50,9 @@ Ts_frd = 1 - Ss_frd
 print('Time response analysis is running...')
 t = np.linspace(0.0, 5.0e-3, dataNum)
 r = np.ones(len(t))
-y, tout, xout = matlab.lsim(Ts, r, t)
-e, tout, xout = matlab.lsim(Ss, r, t)
-u, tout, xout = matlab.lsim(Cs, e, t)
+y, tout, xout = matlab.lsim(ctrl.tf2ss(Ts), r, t)
+e, tout, xout = matlab.lsim(ctrl.tf2ss(Ss), r, t)
+u, tout, xout = matlab.lsim(ctrl.tf2ss(Cs), e, t)
 
 print('Plotting figures...')
 # Time response

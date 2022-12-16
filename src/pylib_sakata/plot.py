@@ -16,6 +16,7 @@ from control import matlab
 from matplotlib import pyplot as plt
 from .fft import FreqResp
 
+
 def plot_xy(ax, x, y, styl='-', col='b', width=1.5, alpha=1.0, xrange=None, yrange=None, xlabel=None, ylabel=None, legend=None, loc='best', title=None, xscale='linear', yscale='linear', labelouter=True):
     ax.set_xscale(xscale)
     ax.set_yscale(yscale)
@@ -194,7 +195,7 @@ def makefig(dpi=100, popwin=False):
 
 
 def savefig(figName):
-    plt.savefig(figName)
+    plt.savefig(figName, bbox_inches='tight')
 
 
 def showfig():
