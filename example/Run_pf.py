@@ -60,22 +60,9 @@ Cz = ctrl.pid(freq1, zeta1, freq2, zeta2, M, C, K, Ts)
 Cz_frd = ctrl.sys2frd(Cz, freq)
 print('PID controller was designed.')
 
-print('Getting measurement data...')
-# SysId
-Pmeas_frd, coh = meas.measdata2frd('data/freq_resp.csv', 'ServoOutN[0]', 'ActPosUm[0]', 'FlagInject', freq, 1., 1.e-6, 8, 0.8)
-
-# Time response
-measdata = meas.getcsvdata('data/time_resp.csv')
-time = measdata.time
-RefPosUm = measdata.value[meas.getdataindex(measdata, 'RefPosUm[0]')]
-ErrPosUm = measdata.value[meas.getdataindex(measdata, 'ErrPosUm[0]')]
-ServoOutN = measdata.value[meas.getdataindex(measdata, 'ServoOutN[0]')]
-# FFT
-freq_fft, ErrPosUm_fft = fft.fft(ErrPosUm[8000:72000], Ts)
-
 print('Frequency response analysis is running...')
 # Measurement w/o PF
-Gn_frd = Pmeas_frd * Cz_frd
+Gn_frd = Pnz_frd * Cz_frd
 Sn_frd = 1/(1 + Gn_frd)
 Tn_frd = 1 - Sn_frd
 

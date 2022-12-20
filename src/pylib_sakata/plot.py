@@ -81,12 +81,17 @@ def plot_tf(ax_mag, ax_phase, sys, freq, styl='-', col='b', width=1.5, alpha=1.0
     if ax_phase != None:
         ax_phase.set_xscale('log')
         ax_phase.set_xlim(freqrange)
-        ax_phase.set_ylim(-200, 200)
+        # ax_phase.set_ylim(-200, 200)
+        ax_phase.set_ylim(-400, 40)
         ax_phase.set_xlabel('Frequency [Hz]')
         ax_phase.set_ylabel('Phase [deg]')
-        ax_phase.set_yticks([-180, -90, 0, 90, 180])
+        # ax_phase.set_yticks([-180, -90, 0, 90, 180])
+        ax_phase.set_yticks([-360, -270, -180, -90, 0])
         ax_phase.grid(b=True, which='both', axis='both')
         # phase plot
+        for k in range(len(phasedeg)):
+            if phasedeg[k] > 0:
+                phasedeg[k] -= 360
         ax_phase.plot(freq, phasedeg, linestyle=styl, color=col, linewidth=width, alpha=alpha)
         if labelouter == True:
             ax_phase.label_outer()  
@@ -126,13 +131,18 @@ def plot_tffrd(ax_mag, ax_phase, freqresp, styl='-', col='b', width=1.5, alpha=1
     if ax_phase != None:
         ax_phase.set_xscale('log')
         ax_phase.set_xlim(freqrange)
-        ax_phase.set_ylim(-200, 200)
+        # ax_phase.set_ylim(-200, 200)
+        ax_phase.set_ylim(-400, 40)
         if ax_coh == None:
             ax_phase.set_xlabel('Frequency [Hz]')
         ax_phase.set_ylabel('Phase [deg]')
-        ax_phase.set_yticks([-180, -90, 0, 90, 180])
+        # ax_phase.set_yticks([-180, -90, 0, 90, 180])
+        ax_phase.set_yticks([-360, -270, -180, -90, 0])
         ax_phase.grid(b=True, which='both', axis='both')
         # phase plot
+        for k in range(len(phasedeg)):
+            if phasedeg[k] > 0:
+                phasedeg[k] -= 360
         ax_phase.plot(freqresp.freq, phasedeg, linestyle=styl, color=col, linewidth=width, alpha=alpha)
         if labelouter == True:
             ax_phase.label_outer()
