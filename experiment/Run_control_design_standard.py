@@ -16,7 +16,7 @@ from pylib_sakata import plot
 print('Start simulation!')
 
 # Common parameters
-figurefolderName = 'figure_control_design'
+figurefolderName = 'figure_control_design_standard'
 if os.path.exists(figurefolderName):
     shutil.rmtree(figurefolderName)
 os.makedirs(figurefolderName)
