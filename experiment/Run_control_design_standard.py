@@ -16,12 +16,8 @@ from pylib_sakata import plot
 print('Start simulation!')
 
 # Common parameters
-figurefolderName = 'figure_control_design_standard'
-if os.path.exists(figurefolderName):
-    shutil.rmtree(figurefolderName)
-os.makedirs(figurefolderName)
 srcpathName = 'src'
-srcpathName = 'C:/Users/sakat/source/repos/TwinCAT-CppMotionControl-main/TwinCAT-CppMotionControl/StaticLibrary1'
+# srcpathName = 'C:/Users/sakat/source/repos/TwinCAT-CppMotionControl-main/TwinCAT-CppMotionControl/StaticLibrary1'
 Ts = 1/8000
 dataNum = 10000
 freqrange = [1, 1000]
@@ -131,55 +127,21 @@ Cz_Hap = ctrl.pd(freq1, freq2, zeta2, M_dob, C_dob, K_dob, Ts)
 Cz_Hap_frd = ctrl.sys2frd(Cz_Hap, freq)
 print('Haptics controller was designed.')
 
-print('Frequency response analysis is running...')
-G_PD_frd = Pnz_frd * Cz_PD_frd
-S_PD_frd = 1/(1 + G_PD_frd)
-T_PD_frd = 1 - S_PD_frd
-
-G_PID_frd = Pnz_frd * Cz_PID_frd
-S_PID_frd = 1/(1 + G_PID_frd)
-T_PID_frd = 1 - S_PID_frd
-
-G_PIDwPF_frd = Pnz_frd * Cz_PID_frd * (1.0+PFz_frd)
-S_PIDwPF_frd = 1/(1 + G_PIDwPF_frd)
-T_PIDwPF_frd = 1 - S_PIDwPF_frd
-
 print('Creating parameter set Cpp and header files...')
 axis_num = 6
-Pmechz_axes = np.array([ctrl.tf([1.0], [1.0], Ts) for i in range(axis_num)])
-Cz_PID_axes = np.array([ctrl.tf([1.0], [1.0], Ts) for i in range(axis_num)])
-Cz_PD_axes = np.array([ctrl.tf([1.0], [1.0], Ts) for i in range(axis_num)])
-Cz_PI_axes = np.array([ctrl.tf([1.0], [1.0], Ts) for i in range(axis_num)])
-NFz_axes = np.array([[ctrl.tf([1.0], [1.0], Ts) for j in range(len(NFz))] for i in range(axis_num)])
-PFz_axes = np.array([[ctrl.tf([0.0], [1.0], Ts) for j in range(len(PFz))] for i in range(axis_num)])
-DOBfbu_axes = np.array([ctrl.tf([1.0], [1.0], Ts) for i in range(axis_num)])
-DOBfby_axes = np.array([ctrl.tf([1.0], [1.0], Ts) for i in range(axis_num)])
-DOBestu_axes = np.array([ctrl.tf([1.0], [1.0], Ts) for i in range(axis_num)])
-DOBesty_axes = np.array([ctrl.tf([1.0], [1.0], Ts) for i in range(axis_num)])
-Czpetc_axes = np.array([ctrl.tf([1.0], [1.0], Ts) for i in range(axis_num)])
-ImpModel_axes = np.array([ctrl.tf([1.0], [1.0], Ts) for i in range(axis_num)])
-Cz_Hap_axes = np.array([ctrl.tf([1.0], [1.0], Ts) for i in range(axis_num)])
-
-for i in range(axis_num):
-    Pmechz_axes[i] = Pmechz
-    Cz_PID_axes[i] = Cz_PID
-    Cz_PD_axes[i] = Cz_PD
-    Cz_PI_axes[i] = Cz_PI
-    DOBfbu_axes[i] = DOBfbu
-    DOBfby_axes[i] = DOBfby
-    DOBestu_axes[i] = DOBestu
-    DOBesty_axes[i] = DOBesty
-    Czpetc_axes[i] = Czpetc
-    ImpModel_axes[i] = ImpModel
-    Cz_Hap_axes[i] = Cz_Hap
-
-for i in range(axis_num):
-    for j in range(len(NFz)):
-        NFz_axes[i][j] = NFz[j]
-
-for i in range(axis_num):
-    for j in range(len(PFz)):
-        PFz_axes[i][j] = PFz[j]
+Pmechz_axes = [Pmechz for i in range(axis_num)]
+Cz_PID_axes = [Cz_PID for i in range(axis_num)]
+Cz_PD_axes = [Cz_PD for i in range(axis_num)]
+Cz_PI_axes = [Cz_PI for i in range(axis_num)]
+NFz_axes = [[NFz[j] for j in range(len(NFz))] for i in range(axis_num)]
+PFz_axes = [[PFz[j] for j in range(len(PFz))] for i in range(axis_num)]
+DOBfbu_axes = [DOBfbu for i in range(axis_num)]
+DOBfby_axes = [DOBfby for i in range(axis_num)]
+DOBestu_axes = [DOBestu for i in range(axis_num)]
+DOBesty_axes = [DOBesty for i in range(axis_num)]
+Czpetc_axes = [Czpetc for i in range(axis_num)]
+ImpModel_axes = [ImpModel for i in range(axis_num)]
+Cz_Hap_axes = [Cz_Hap for i in range(axis_num)]
 
 ctrl.makeprmset(srcpathName)
 ctrl.defprmset(Pmechz_axes, 'gstModelInf['+str(axis_num)+']', srcpathName)
@@ -195,57 +157,5 @@ ctrl.defprmset(DOBesty_axes, 'gstDOBestyInf['+str(axis_num)+']', srcpathName)
 ctrl.defprmset(Czpetc_axes, 'gstZPETInf['+str(axis_num)+']', srcpathName)
 ctrl.defprmset(ImpModel_axes, 'gstImpInf['+str(axis_num)+']', srcpathName)
 ctrl.defprmset(Cz_Hap_axes, 'gstHapInf['+str(axis_num)+']', srcpathName)
-
-print('Plotting figures...')
-# Plant
-fig = plot.makefig()
-ax_mag = fig.add_subplot(211)
-ax_phase = fig.add_subplot(212)
-plot.plot_tffrd(ax_mag, ax_phase, Pnz_frd, '-', 'b', 1.5, 1.0, title='Frequency response of plant')
-plot.savefig(figurefolderName+'/freq_P.png')
-
-# PID controller
-fig = plot.makefig()
-ax_mag = fig.add_subplot(211)
-ax_phase = fig.add_subplot(212)
-plot.plot_tffrd(ax_mag, ax_phase, Cz_PD_frd, '-', 'b', 1.5, 1.0, freqrange, title='Frequency response of PID controller')
-plot.plot_tffrd(ax_mag, ax_phase, Cz_PID_frd, '--', 'r', 1.5, 1.0, freqrange, magrange=[30, 75], legend=['PD', 'PID'])
-plot.savefig(figurefolderName+'/freq_C.png')
-
-# Open loop function
-fig = plot.makefig()
-ax_mag = fig.add_subplot(211)
-ax_phase = fig.add_subplot(212)
-plot.plot_tffrd(ax_mag, ax_phase, G_PD_frd, '-', 'b', 1.5, 1.0, freqrange, title='Frequency response of open loop transfer function')
-plot.plot_tffrd(ax_mag, ax_phase, G_PID_frd, '-', 'm', 1.5, 1.0, freqrange)
-plot.plot_tffrd(ax_mag, ax_phase, G_PIDwPF_frd, '--', 'r', 1.5, 1.0, freqrange, legend=['PD', 'PID', 'PID with PF'])
-plot.savefig(figurefolderName+'/freq_G.png')
-
-# Sensitivity function
-fig = plot.makefig()
-ax_mag = fig.add_subplot(111)
-ax_phase = None
-plot.plot_tffrd(ax_mag, ax_phase, S_PD_frd, '-', 'b', 1.5, 1.0, freqrange, title='Frequency response of sensitivity function')
-plot.plot_tffrd(ax_mag, ax_phase, S_PID_frd, '-', 'm', 1.5, 1.0, freqrange)
-plot.plot_tffrd(ax_mag, ax_phase, S_PIDwPF_frd, '--', 'r', 1.5, 1.0, freqrange, legend=['PD', 'PID', 'PID with PF'])
-plot.savefig(figurefolderName+'/freq_S.png')
-
-# Complementary sensitivity function
-fig = plot.makefig()
-ax_mag = fig.add_subplot(211)
-ax_phase = fig.add_subplot(212)
-plot.plot_tffrd(ax_mag, ax_phase, T_PD_frd, '-', 'b', 1.5, 1.0, freqrange, title='Frequency response of complementary sensitivity function')
-plot.plot_tffrd(ax_mag, ax_phase, T_PID_frd, '-', 'm', 1.5, 1.0, freqrange)
-plot.plot_tffrd(ax_mag, ax_phase, T_PIDwPF_frd, '--', 'r', 1.5, 1.0, freqrange, legend=['PD', 'PID', 'PID with PF'])
-plot.savefig(figurefolderName+'/freq_T.png')
-
-# Nyquist
-fig = plot.makefig()
-ax = fig.add_subplot(111)
-plot.plot_nyquist(ax, G_PD_frd, '-', 'b', 1.5, 1.0, title='Nyquist Diagram')
-plot.plot_nyquist(ax, G_PID_frd, '-', 'm', 1.5, 1.0)
-plot.plot_nyquist(ax, G_PIDwPF_frd, '--', 'r', 1.5, 1.0, legend=['PD', 'PID', 'PID with PF'])
-plot.plot_nyquist_assistline(ax)
-plot.savefig(figurefolderName+'/nyquist.png')
 
 print('Finished.')

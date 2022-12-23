@@ -16,12 +16,8 @@ from pylib_sakata import plot
 print('Start simulation!')
 
 # Common parameters
-figurefolderName = 'figure_control_design_basic'
-if os.path.exists(figurefolderName):
-    shutil.rmtree(figurefolderName)
-os.makedirs(figurefolderName)
 srcpathName = 'src'
-srcpathName = 'C:/Users/sakat/source/repos/TwinCAT-CppMotionControl-main/TwinCAT-CppMotionControl/StaticLibrary1'
+# srcpathName = 'C:/Users/sakat/source/repos/TwinCAT-CppMotionControl-main/TwinCAT-CppMotionControl/StaticLibrary1'
 Ts = 1/8000
 dataNum = 10000
 freqrange = [1, 1000]
@@ -31,8 +27,8 @@ z = ctrl.tf([1, 0], [1], Ts)
 print('Common parameters were set.')
 
 # Plant model
-M = 0.12
-C = 2.4
+M = 0.027
+C = 0.7
 K = 0.0
 Pmechs = ctrl.tf([1.0], [M, C, K])
 Pmechz = ctrl.c2d(Pmechs, Ts, method='zoh')
@@ -61,45 +57,15 @@ Cz_PID = ctrl.pid(freq1, zeta1, freq2, zeta2, M, C, K, Ts)
 Cz_PID_frd = ctrl.sys2frd(Cz_PID, freq)
 print('PID controller was designed.')
 
-print('Frequency response analysis is running...')
-G_PD_frd = Pnz_frd * Cz_PD_frd
-S_PD_frd = 1/(1 + G_PD_frd)
-T_PD_frd = 1 - S_PD_frd
-
-G_PID_frd = Pnz_frd * Cz_PID_frd
-S_PID_frd = 1/(1 + G_PID_frd)
-T_PID_frd = 1 - S_PID_frd
-
 print('Creating parameter set Cpp and header files...')
 axis_num = 6
-Pmechz_axes = np.array([ctrl.tf([1.0], [1.0], Ts) for i in range(axis_num)])
-Cz_PID_axes = np.array([ctrl.tf([1.0], [1.0], Ts) for i in range(axis_num)])
-Cz_PD_axes = np.array([ctrl.tf([1.0], [1.0], Ts) for i in range(axis_num)])
-
-for i in range(axis_num):
-    Pmechz_axes[i] = Pmechz
-    Cz_PID_axes[i] = Cz_PID
-    Cz_PD_axes[i] = Cz_PD
+Pmechz_axes = [Pmechz for i in range(axis_num)]
+Cz_PID_axes = [Cz_PID for i in range(axis_num)]
+Cz_PD_axes = [Cz_PD for i in range(axis_num)]
 
 ctrl.makeprmset(srcpathName)
 ctrl.defprmset(Pmechz_axes, 'gstModelInf['+str(axis_num)+']', srcpathName)
 ctrl.defprmset(Cz_PID_axes, 'gstPIDInf['+str(axis_num)+']', srcpathName)
 ctrl.defprmset(Cz_PD_axes, 'gstPDInf['+str(axis_num)+']', srcpathName)
-
-print('Plotting figures...')
-# Plant
-fig = plot.makefig()
-ax_mag = fig.add_subplot(211)
-ax_phase = fig.add_subplot(212)
-plot.plot_tffrd(ax_mag, ax_phase, Pnz_frd, '-', 'b', 1.5, 1.0, title='Frequency response of plant')
-plot.savefig(figurefolderName+'/freq_P.png')
-
-# PID controller
-fig = plot.makefig()
-ax_mag = fig.add_subplot(211)
-ax_phase = fig.add_subplot(212)
-plot.plot_tffrd(ax_mag, ax_phase, Cz_PD_frd, '-', 'b', 1.5, 1.0, freqrange, title='Frequency response of PID controller')
-plot.plot_tffrd(ax_mag, ax_phase, Cz_PID_frd, '--', 'r', 1.5, 1.0, freqrange, magrange=[30, 75], legend=['PD', 'PID'])
-plot.savefig(figurefolderName+'/freq_C.png')
 
 print('Finished.')

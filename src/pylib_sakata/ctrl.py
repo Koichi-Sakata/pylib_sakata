@@ -734,6 +734,8 @@ def makeprmset(path='.'):
 
 
 def defprmset(tfz, prmSetName, path='.', mode='a'):
+    if isinstance(tfz, list):
+        tfz = np.array(tfz)
     if type(tfz).__module__ != 'numpy':
         num = tfz.num[0][0]
         den = tfz.den[0][0]
