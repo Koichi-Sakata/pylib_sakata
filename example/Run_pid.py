@@ -35,17 +35,18 @@ K = 0
 Pmechs = ctrl.tf([1], [M, C, K])
 numDelay, denDelay = matlab.pade(Ts*4, n=4)
 Ds = ctrl.tf(numDelay, denDelay)
-Dz = z**-4
-Pns = Pmechs * Ds
+Dz = z**-3
+Pns = Pmechs# * Ds
 Pnz = ctrl.c2d(Pmechs, Ts, method='zoh') * Dz
+Pns_frd = ctrl.sys2frd(Pns, freq)
 Pnz_frd = ctrl.sys2frd(Pnz, freq)
 print('Plant model was set.')
 
 # Design PID controller
-freq1 = 10.0
-zeta1 = 1.0
-freq2 = 10.0
-zeta2 = 1.0
+freq1 = 180
+zeta1 = 0.7
+freq2 = 180
+zeta2 = 0.7
 Cz = ctrl.pid(freq1, zeta1, freq2, zeta2, M, C, K, Ts)
 Cz_frd = ctrl.sys2frd(Cz, freq)
 print('PID controller was designed.')
@@ -55,12 +56,27 @@ Gn_frd = Pnz_frd * Cz_frd
 Sn_frd = 1/(1 + Gn_frd)
 Tn_frd = 1 - Sn_frd
 
+print('Time response analysis is running...')
+t = np.linspace(0.0, 0.1, int(0.1/Ts)+1)
+r = np.ones(len(t))
+y, tout, xout = matlab.lsim(ctrl.feedback(Pnz, Cz, sys='T'), r, t)
+e, tout, xout = matlab.lsim(ctrl.feedback(Pnz, Cz, sys='S'), r, t)
+u, tout, xout = matlab.lsim(Cz, e, t)
+
 print('Plotting figures...')
+# Time response
+fig = plot.makefig()
+ax1 = fig.add_subplot(211)
+ax2 = fig.add_subplot(212)
+plot.plot_xy(ax1, t, y, '-', 'b', 1.5, 1.0, [0, max(t)], ylabel='Position [m]', legend=['y'], title='Time response')
+plot.plot_xy(ax2, t, u, '-', 'b', 1.5, 1.0, [0, max(t)], xlabel='Time [s]', ylabel='Force [N]', legend=['u'])
+plot.savefig(figurefolderName+'/time_resp.png')
+
 # Plant
 fig = plot.makefig()
 ax_mag = fig.add_subplot(211)
 ax_phase = fig.add_subplot(212)
-plot.plot_tffrd(ax_mag, ax_phase, Pnz_frd, '-', 'b', 1.5, 1.0, title='Frequency response of plant')
+plot.plot_tffrd(ax_mag, ax_phase, Pns_frd, '-', 'b', 1.5, 1.0, title='Frequency response of plant')
 plot.savefig(figurefolderName+'/freq_P.png')
 
 # PID controller

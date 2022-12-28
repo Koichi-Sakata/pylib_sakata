@@ -130,7 +130,7 @@ movie = animation.FuncAnimation(fig, update, frames=t, interval=50)
 
 plt.show()
 
-movie.save(figurefolderName+'/movie.mp4', writer="ffmpeg")
+movie.save(figurefolderName+'/movie.gif', writer="ffmpeg")
 plt.close()
 
 print('Finished.')
