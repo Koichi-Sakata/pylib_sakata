@@ -31,21 +31,21 @@ print('Common parameters were set.')
 # Plant model
 M = 2.0
 C = 10.0
-K = 0
+K = 0.0
 Pmechs = ctrl.tf([1], [M, C, K])
 numDelay, denDelay = matlab.pade(Ts*4, n=4)
 Ds = ctrl.tf(numDelay, denDelay)
 Dz = z**-3
-Pns = Pmechs# * Ds
+Pns = Pmechs * Ds
 Pnz = ctrl.c2d(Pmechs, Ts, method='zoh') * Dz
 Pns_frd = ctrl.sys2frd(Pns, freq)
 Pnz_frd = ctrl.sys2frd(Pnz, freq)
 print('Plant model was set.')
 
 # Design PID controller
-freq1 = 180
+freq1 = 20
 zeta1 = 0.7
-freq2 = 180
+freq2 = 20
 zeta2 = 0.7
 Cz = ctrl.pid(freq1, zeta1, freq2, zeta2, M, C, K, Ts)
 Cz_frd = ctrl.sys2frd(Cz, freq)
