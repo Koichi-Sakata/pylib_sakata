@@ -608,12 +608,8 @@ dt = 0.001
 pylib_sakata.ctrl.**pi**(*freq, zeta, L, R, dt=None, method='tustin'*)
 
 This function is for design of a PI controller.
-$$
-C_{PI}(s) = K_P + \frac{K_I}{s} = \frac{b_1s+b_0}{s}
-$$
-$$
-P(s) = \frac{1}{Ls+R}
-$$
+$$C_{PI}(s) = K_P + \frac{K_I}{s} = \frac{b_1s+b_0}{s}$$
+$$P(s) = \frac{1}{Ls+R}$$
 
 - Parameters:
   - freq: frequency[Hz] of the pole pair of the feedback system with the PI controller
