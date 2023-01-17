@@ -1,8 +1,6 @@
 pylib-sakata User's Manual version-0.1.13
 ===
 
-<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
-
 <!-- code_chunk_output -->
 
 - [1. Introduction](#-1-introduction-)
