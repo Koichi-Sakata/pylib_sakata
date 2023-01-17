@@ -608,12 +608,7 @@ dt = 0.001
 pylib_sakata.ctrl.**pi**(*freq, zeta, L, R, dt=None, method='tustin'*)
 
 This function is for design of a PI controller.
-$$
-C_{PI}(s) = K_P + \frac{K_I}{s} = \frac{b_1s+b_0}{s}
-$$
-$$
-P(s) = \frac{1}{Ls+R}
-$$
+$$\begin{aligned}C_{PI}(s) &= K_P + \frac{K_I}{s} = \frac{b_1s+b_0}{s} \\ P(s) &= \frac{1}{Ls+R}\end{aligned}$$
 
 - Parameters:
   - freq: frequency[Hz] of the pole pair of the feedback system with the PI controller
@@ -648,12 +643,7 @@ dt = 0.001
 pylib_sakata.ctrl.**pd**(*freq1, freq2, zeta2, M, C, K, dt=None, method='tustin'*)
 
 This function is for design of a PD controller.
-$$
-C_{PID}(s) = K_P + \frac{K_D s}{\tau_D s+1} = \frac{b_1s+b_0}{s+a_0}
-$$
-$$
-P(s) = \frac{1}{Ms^2+Cs+K}
-$$
+$$\begin{aligned}C_{PID}(s) &= K_P + \frac{K_D s}{\tau_D s+1} = \frac{b_1s+b_0}{s+a_0}\\ P(s) &= \frac{1}{Ms^2+Cs+K}\end{aligned}$$
 
 - Parameters:
   - freq1: frequency[Hz] of the first pole of the feedback system with the PD controller
@@ -690,12 +680,8 @@ dt = 0.001
 pylib_sakata.ctrl.**pid**(*freq1, zeta1, freq2, zeta2, M, C, K, dt=None, method='tustin'*)
 
 This function is for design of a PID controller.
-$$
-C_{PID}(s) = K_P + \frac{K_I}{s} + \frac{K_D s}{\tau_D s+1} = \frac{b_2s^2+b_1s+b_0}{s^2+a_1s}
-$$
-$$
-P(s) = \frac{1}{Ms^2+Cs+K}
-$$
+$$\begin{aligned}
+C_{PID}(s) &= K_P + \frac{K_I}{s} + \frac{K_D s}{\tau_D s+1} = \frac{b_2s^2+b_1s+b_0}{s^2+a_1s} \\ P(s) &= \frac{1}{Ms^2+Cs+K}\end{aligned}$$
 
 - Parameters:
   - freq1: frequency[Hz] of the first pole pair of the feedback system with the PID controller
@@ -733,9 +719,7 @@ dt = 0.001
 pylib_sakata.ctrl.**pl1st**(*freq1, freq2, dt=None, method='tustin'*)
 
 This function is for design of a first order phase lead filter.
-$$
-F_{PL}(s) = \frac{f_2}{f_1} * \frac{s+2\pi f_1}{s+2\pi f_2}
-$$
+$$F_{PL}(s) = \frac{f_2}{f_1} * \frac{s+2\pi f_1}{s+2\pi f_2}$$
 
 - Parameters:
   - freq1: frequency[Hz] of numerator of the phase lead filter
@@ -768,9 +752,7 @@ dt = 0.001
 pylib_sakata.ctrl.**pl2nd**(*freq1, zeta1, freq2, zeta2, dt=None, method='tustin'*)
 
 This function is for design of a second order phase lead filter.
-$$
-F_{PL^2}(s) = \left( \frac{f_2}{f_1} \right)^2 * \frac{s^2+2\zeta_1 (2\pi f_1)s+(2\pi f_1)^2}{s^2+2\zeta_2 (2\pi f_2)s+(2\pi f_2)^2}
-$$
+$$F_{PL^2}(s) = \left( \frac{f_2}{f_1} \right)^2 * \frac{s^2+2\zeta_1 (2\pi f_1)s+(2\pi f_1)^2}{s^2+2\zeta_2 (2\pi f_2)s+(2\pi f_2)^2}$$
 
 - Parameters:
   - freq1: frequency[Hz] of numerator of the phase lead filter
@@ -805,9 +787,7 @@ dt = 0.001
 pylib_sakata.ctrl.**lpf1st**(*freq, dt=None, method='tustin'*)
 
 This function is for design of a first order low pass filter.
-$$
-F_{LP}(s) = \frac{2\pi f}{s+2\pi f}
-$$
+$$F_{LP}(s) = \frac{2\pi f}{s+2\pi f}$$
 
 - Parameters:
   - freq: frequency[Hz] of the low pass filter
@@ -839,9 +819,7 @@ dt = 0.001
 pylib_sakata.ctrl.**lpf2nd**(*freq, zeta, dt=None, method='tustin'*)
 
 This function is for design of a second order low pass filter.
-$$
-F_{LP^2}(s) = \frac{(2\pi f)^2}{s^2+2\zeta (2\pi f)s+(2\pi f)^2}
-$$
+$$F_{LP^2}(s) = \frac{(2\pi f)^2}{s^2+2\zeta (2\pi f)s+(2\pi f)^2}$$
 
 - Parameters:
   - freq: frequency[Hz] of the low pass filter
@@ -874,9 +852,7 @@ dt = 0.001
 pylib_sakata.ctrl.**hpf1st**(*freq, dt=None, method='tustin'*)
 
 This function is for design of a first order high pass filter.
-$$
-F_{HP}(s) = 1 - F_{LP}(s) = \frac{s}{s+2\pi f}
-$$
+$$F_{HP}(s) = 1 - F_{LP}(s) = \frac{s}{s+2\pi f}$$
 
 - Parameters:
   - freq: frequency[Hz] of the high pass filter
@@ -908,9 +884,7 @@ dt = 0.001
 pylib_sakata.ctrl.**hpf2nd**(*freq, zeta, dt=None, method='tustin'*)
 
 This function is for design of a second order high pass filter.
-$$
-F_{HP^2}(s) = 1 - F_{LP^2}(s) = \frac{s^2+2\zeta (2\pi f)s}{s^2+2\zeta (2\pi f)s+(2\pi f)^2}
-$$
+$$F_{HP^2}(s) = 1 - F_{LP^2}(s) = \frac{s^2+2\zeta (2\pi f)s}{s^2+2\zeta (2\pi f)s+(2\pi f)^2}$$
 
 - Parameters:
   - freq: frequency[Hz] of the high pass filter
@@ -943,9 +917,7 @@ dt = 0.001
 pylib_sakata.ctrl.**nf**(*freq, zeta, depth, dt=None, method='matched'*)
 
 This function is for design of notch filters.
-$$
-F_{notch}(s) = \frac{s^2+2d\zeta (2\pi f)s+(2\pi f)^2}{s^2+2\zeta (2\pi f)s+(2\pi f)^2}
-$$
+$$F_{notch}(s) = \frac{s^2+2d\zeta (2\pi f)s+(2\pi f)^2}{s^2+2\zeta (2\pi f)s+(2\pi f)^2}$$
 
 - Parameters:
   - freq: array of frequency[Hz] of the notch filters
@@ -977,9 +949,7 @@ array([TransferFunction(array([ 0.9876627 , -1.59787102,  0.9874145 ]), array([ 
 pylib_sakata.ctrl.**pf**(*freq, zeta, k, phi, dt=None, method='tustin'*)
 
 This function is for design of peak filters ([resonant filters](https://ieeexplore.ieee.org/document/4291569)).
-$$
-F_{peak}(s) = \frac{k(s^2-\phi s)}{s^2+2\zeta (2\pi f)s+(2\pi f)^2}
-$$
+$$F_{peak}(s) = \frac{k(s^2-\phi s)}{s^2+2\zeta (2\pi f)s+(2\pi f)^2}$$
 
 - Parameters:
   - freq: array of frequency[Hz] of the peak filters
@@ -1073,9 +1043,8 @@ array([TransferFunction(array([ 0.0049857 , -0.00972818,  0.00474248]), array([ 
 pylib_sakata.ctrl.**dob**(*freq, zeta, M, C, K, dt, nd = 0*)
 
 This function is for design of a discrete-time disturbance observer (DOB).
-$$
-\hat{d} = -z^{-n_d} Q[z] u + Q[z] P^{-1}[z] y
-$$
+$$\hat{d} = -z^{-n_d} Q[z] u + Q[z] P^{-1}[z] y$$
+
 Here, it is defined that disturbance $d$ is injected in the system as plus sign.
 
 - Parameters:
@@ -1382,9 +1351,7 @@ resp = array([-5.10821217e-03-5.65218353e-02j -5.10244172e-03-5.64813436e-02j
 pylib_sakata.fft.**frdsim**(*freqresp, x, dt*)
 
 This function is for simulation steady time response data when a time-domain data is input to a system written by frequency response data.
-$$
-y(t) = \text{ifft}(\text{FreqResp}(\omega)\times\text{fft}(u(t)))
-$$
+$$y(t) = \text{ifft}(\text{FreqResp}(\omega)\times\text{fft}(u(t)))$$
 
 - Parameters:
   - freqresp: instance of FreqResp class
