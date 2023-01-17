@@ -5,79 +5,87 @@ pylib-sakata User's Manual version-0.1.13
 
 <!-- code_chunk_output -->
 
-- [2.1. Installation of Python](#21-installation-of-python)
-- [2.2. Installation  of required Python libraries](#22-installation--of-required-python-libraries)
-- [2.3. Installation of pylib-sakata](#23-installation-of-pylib-sakata)
-- [2.4. Installation of IDE for Python](#24-installation-of-ide-for-python)
-  - [2.4.1. Visual Studio Code (VSCode)](#241-visual-studio-code-vscode)
-    - [2.4.1.1. Installation of VSCode](#2411-installation-of-vscode)
-    - [2.4.1.2. Initial setting of VSCode](#2412-initial-setting-of-vscode)
-  - [2.4.2. Spyder](#242-spyder)
-    - [2.4.2.1. Installation of Spyder](#2421-installation-of-spyder)
-    - [2.4.2.2. Initial setting of Spyder](#2422-initial-setting-of-spyder)
-  - [2.4.3. PyCharm](#243-pycharm)
-    - [2.4.3.1. Installation of PyCharm](#2431-installation-of-pycharm)
-    - [2.4.3.2. Initial setting of PyCharm](#2432-initial-setting-of-pycharm)
-  - [2.4.4. Comparison between  VSCode and Spyder and PyCharm](#244-comparison-between--vscode-and-spyder-and-pycharm)
-- [2.5. Getting started](#25-getting-started)
-- [3.1. ZpkModel](#31-zpkmodel)
-- [3.2. tf](#32-tf)
-- [3.3. ss](#33-ss)
-- [3.4. zpk](#34-zpk)
-- [3.5. tf2ss](#35-tf2ss)
-- [3.6. tf2zpk](#36-tf2zpk)
-- [3.7. ss2tf](#37-ss2tf)
-- [3.8. ss2zpk](#38-ss2zpk)
-- [3.9. zpk2tf](#39-zpk2tf)
-- [3.10. zpk2ss](#310-zpk2ss)
-- [3.11. sys2frd](#311-sys2frd)
-- [3.12. feedback](#312-feedback)
-- [3.13. frdfeedback](#313-frdfeedback)
-- [3.14. c2d](#314-c2d)
-- [3.15. pi](#315-pi)
-- [3.16. pd](#316-pd)
-- [3.17. pid](#317-pid)
-- [3.18. pl1st](#318-pl1st)
-- [3.19. pl2nd](#319-pl2nd)
-- [3.20. lpf1st](#320-lpf1st)
-- [3.21. lpf2nd](#321-lpf2nd)
-- [3.22. hpf1st](#322-hpf1st)
-- [3.23. hpf2nd](#323-hpf2nd)
-- [3.24. nf](#324-nf)
-- [3.25. pf](#325-pf)
-- [3.26. pfoptparam](#326-pfoptparam)
-- [3.27. pfopt](#327-pfopt)
-- [3.28. dob](#328-dob)
-- [3.29. zpetc](#329-zpetc)
-- [3.30. filt](#330-filt)
-- [3.31. minreal](#331-minreal)
-- [3.32. makeprmset](#332-makeprmset)
-- [3.33. defprmset](#333-defprmset)
-- [4.1. FreqResp](#41-freqresp)
-- [4.2. fft](#42-fft)
-- [4.3. fft\_ave](#43-fft_ave)
-- [4.4. tfestimate](#44-tfestimate)
-- [4.5. frdresize](#45-frdresize)
-- [4.6. frdsim](#46-frdsim)
-- [5.1. MeasData](#51-measdata)
-- [5.2. getcsvdata](#52-getcsvdata)
-- [5.3. gettxtdata](#53-gettxtdata)
-- [5.4. getmatdata](#54-getmatdata)
-- [5.5. getdata](#55-getdata)
-- [5.6. getdataindex](#56-getdataindex)
-- [5.7. measdata2frd](#57-measdata2frd)
-- [6.1. TrajInf](#61-trajinf)
-- [6.2. traj4th](#62-traj4th)
-- [7.1. plot\_xy](#71-plot_xy)
-- [7.2. plot\_tf](#72-plot_tf)
-- [7.3. plot\_tffrd](#73-plot_tffrd)
-- [7.4. plot\_nyquist](#74-plot_nyquist)
-- [7.5. plot\_nyquist\_assistline](#75-plot_nyquist_assistline)
-- [7.6. makefig](#76-makefig)
-- [7.7. savefig](#77-savefig)
-- [7.8. showfig](#78-showfig)
-- [8.1. close\_all](#81-close_all)
-- [8.2. clear\_all](#82-clear_all)
+- [1. Introduction](#-1-introduction-)
+- [2. Environment Setup](#-2-environment-setup-)
+  - [2.1. Installation of Python](#-21-installation-of-python-)
+  - [2.2. Installation  of required Python libraries](#-22-installation--of-required-python-libraries-)
+  - [2.3. Installation of pylib-sakata](#-23-installation-of-pylib-sakata-)
+  - [2.4. Installation of IDE for Python](#-24-installation-of-ide-for-python-)
+    - [2.4.1. Visual Studio Code (VSCode)](#-241-visual-studio-code-vscode-)
+      - [2.4.1.1. Installation of VSCode](#-2411-installation-of-vscode-)
+      - [2.4.1.2. Initial setting of VSCode](#-2412-initial-setting-of-vscode-)
+    - [2.4.2. Spyder](#-242-spyder-)
+      - [2.4.2.1. Installation of Spyder](#-2421-installation-of-spyder-)
+      - [2.4.2.2. Initial setting of Spyder](#-2422-initial-setting-of-spyder-)
+    - [2.4.3. PyCharm](#-243-pycharm-)
+      - [2.4.3.1. Installation of PyCharm](#-2431-installation-of-pycharm-)
+      - [2.4.3.2. Initial setting of PyCharm](#-2432-initial-setting-of-pycharm-)
+    - [2.4.4. Comparison between  VSCode and Spyder and PyCharm](#-244-comparison-between--vscode-and-spyder-and-pycharm-)
+  - [2.5. Getting started](#-25-getting-started-)
+- [3. pylib_sakata.ctrl](#-3-pylib_sakatactrl-)
+  - [3.1. ZpkModel](#-31-zpkmodel-)
+  - [3.2. tf](#-32-tf-)
+  - [3.3. ss](#-33-ss-)
+  - [3.4. zpk](#-34-zpk-)
+  - [3.5. tf2ss](#-35-tf2ss-)
+  - [3.6. tf2zpk](#-36-tf2zpk-)
+  - [3.7. ss2tf](#-37-ss2tf-)
+  - [3.8. ss2zpk](#-38-ss2zpk-)
+  - [3.9. zpk2tf](#-39-zpk2tf-)
+  - [3.10. zpk2ss](#-310-zpk2ss-)
+  - [3.11. sys2frd](#-311-sys2frd-)
+  - [3.12. feedback](#-312-feedback-)
+  - [3.13. frdfeedback](#-313-frdfeedback-)
+  - [3.14. c2d](#-314-c2d-)
+  - [3.15. pi](#-315-pi-)
+  - [3.16. pd](#-316-pd-)
+  - [3.17. pid](#-317-pid-)
+  - [3.18. pl1st](#-318-pl1st-)
+  - [3.19. pl2nd](#-319-pl2nd-)
+  - [3.20. lpf1st](#-320-lpf1st-)
+  - [3.21. lpf2nd](#-321-lpf2nd-)
+  - [3.22. hpf1st](#-322-hpf1st-)
+  - [3.23. hpf2nd](#-323-hpf2nd-)
+  - [3.24. nf](#-324-nf-)
+  - [3.25. pf](#-325-pf-)
+  - [3.26. pfoptparam](#-326-pfoptparam-)
+  - [3.27. pfopt](#-327-pfopt-)
+  - [3.28. dob](#-328-dob-)
+  - [3.29. zpetc](#-329-zpetc-)
+  - [3.30. filt](#-330-filt-)
+  - [3.31. minreal](#-331-minreal-)
+  - [3.32. makeprmset](#-332-makeprmset-)
+  - [3.33. defprmset](#-333-defprmset-)
+- [4. pylib_sakata.fft](#-4-pylib_sakatafft-)
+  - [4.1. FreqResp](#-41-freqresp-)
+  - [4.2. fft](#-42-fft-)
+  - [4.3. fft_ave](#-43-fft_ave-)
+  - [4.4. tfestimate](#-44-tfestimate-)
+  - [4.5. frdresize](#-45-frdresize-)
+  - [4.6. frdsim](#-46-frdsim-)
+- [5. pylib_sakta.meas](#-5-pylib_saktameas-)
+  - [5.1. MeasData](#-51-measdata-)
+  - [5.2. getcsvdata](#-52-getcsvdata-)
+  - [5.3. gettxtdata](#-53-gettxtdata-)
+  - [5.4. getmatdata](#-54-getmatdata-)
+  - [5.5. getdata](#-55-getdata-)
+  - [5.6. getdataindex](#-56-getdataindex-)
+  - [5.7. measdata2frd](#-57-measdata2frd-)
+- [6. pylib_sakata.traj](#-6-pylib_sakatatraj-)
+  - [6.1. TrajInf](#-61-trajinf-)
+  - [6.2. traj4th](#-62-traj4th-)
+- [7. pylib_sakata.plot](#-7-pylib_sakataplot-)
+  - [7.1. plot_xy](#-71-plot_xy-)
+  - [7.2. plot_tf](#-72-plot_tf-)
+  - [7.3. plot_tffrd](#-73-plot_tffrd-)
+  - [7.4. plot_nyquist](#-74-plot_nyquist-)
+  - [7.5. plot_nyquist_assistline](#-75-plot_nyquist_assistline-)
+  - [7.6. makefig](#-76-makefig-)
+  - [7.7. savefig](#-77-savefig-)
+  - [7.8. showfig](#-78-showfig-)
+- [8. pylib_sakata.init](#-8-pylib_sakatainit-)
+  - [8.1. close_all](#-81-close_all-)
+  - [8.2. clear_all](#-82-clear_all-)
 
 <!-- /code_chunk_output -->
 
@@ -608,8 +616,7 @@ dt = 0.001
 pylib_sakata.ctrl.**pi**(*freq, zeta, L, R, dt=None, method='tustin'*)
 
 This function is for design of a PI controller.
-$$C_{PI}(s) = K_P + \frac{K_I}{s} = \frac{b_1s+b_0}{s}$$
-$$P(s) = \frac{1}{Ls+R}$$
+$$\begin{aligned}C_{PI}(s) &= K_P + \frac{K_I}{s} = \frac{b_1s+b_0}{s} \\ P(s) &= \frac{1}{Ls+R}\end{aligned}$$
 
 - Parameters:
   - freq: frequency[Hz] of the pole pair of the feedback system with the PI controller
@@ -644,12 +651,7 @@ dt = 0.001
 pylib_sakata.ctrl.**pd**(*freq1, freq2, zeta2, M, C, K, dt=None, method='tustin'*)
 
 This function is for design of a PD controller.
-$$
-C_{PID}(s) = K_P + \frac{K_D s}{\tau_D s+1} = \frac{b_1s+b_0}{s+a_0}
-$$
-$$
-P(s) = \frac{1}{Ms^2+Cs+K}
-$$
+$$\begin{aligned}C_{PID}(s) &= K_P + \frac{K_D s}{\tau_D s+1} = \frac{b_1s+b_0}{s+a_0}\\ P(s) &= \frac{1}{Ms^2+Cs+K}\end{aligned}$$
 
 - Parameters:
   - freq1: frequency[Hz] of the first pole of the feedback system with the PD controller
@@ -686,12 +688,8 @@ dt = 0.001
 pylib_sakata.ctrl.**pid**(*freq1, zeta1, freq2, zeta2, M, C, K, dt=None, method='tustin'*)
 
 This function is for design of a PID controller.
-$$
-C_{PID}(s) = K_P + \frac{K_I}{s} + \frac{K_D s}{\tau_D s+1} = \frac{b_2s^2+b_1s+b_0}{s^2+a_1s}
-$$
-$$
-P(s) = \frac{1}{Ms^2+Cs+K}
-$$
+$$\begin{aligned}
+C_{PID}(s) &= K_P + \frac{K_I}{s} + \frac{K_D s}{\tau_D s+1} = \frac{b_2s^2+b_1s+b_0}{s^2+a_1s} \\ P(s) &= \frac{1}{Ms^2+Cs+K}\end{aligned}$$
 
 - Parameters:
   - freq1: frequency[Hz] of the first pole pair of the feedback system with the PID controller
@@ -729,9 +727,7 @@ dt = 0.001
 pylib_sakata.ctrl.**pl1st**(*freq1, freq2, dt=None, method='tustin'*)
 
 This function is for design of a first order phase lead filter.
-$$
-F_{PL}(s) = \frac{f_2}{f_1} * \frac{s+2\pi f_1}{s+2\pi f_2}
-$$
+$$F_{PL}(s) = \frac{f_2}{f_1} * \frac{s+2\pi f_1}{s+2\pi f_2}$$
 
 - Parameters:
   - freq1: frequency[Hz] of numerator of the phase lead filter
@@ -764,9 +760,7 @@ dt = 0.001
 pylib_sakata.ctrl.**pl2nd**(*freq1, zeta1, freq2, zeta2, dt=None, method='tustin'*)
 
 This function is for design of a second order phase lead filter.
-$$
-F_{PL^2}(s) = \left( \frac{f_2}{f_1} \right)^2 * \frac{s^2+2\zeta_1 (2\pi f_1)s+(2\pi f_1)^2}{s^2+2\zeta_2 (2\pi f_2)s+(2\pi f_2)^2}
-$$
+$$F_{PL^2}(s) = \left( \frac{f_2}{f_1} \right)^2 * \frac{s^2+2\zeta_1 (2\pi f_1)s+(2\pi f_1)^2}{s^2+2\zeta_2 (2\pi f_2)s+(2\pi f_2)^2}$$
 
 - Parameters:
   - freq1: frequency[Hz] of numerator of the phase lead filter
@@ -801,9 +795,7 @@ dt = 0.001
 pylib_sakata.ctrl.**lpf1st**(*freq, dt=None, method='tustin'*)
 
 This function is for design of a first order low pass filter.
-$$
-F_{LP}(s) = \frac{2\pi f}{s+2\pi f}
-$$
+$$F_{LP}(s) = \frac{2\pi f}{s+2\pi f}$$
 
 - Parameters:
   - freq: frequency[Hz] of the low pass filter
@@ -835,9 +827,7 @@ dt = 0.001
 pylib_sakata.ctrl.**lpf2nd**(*freq, zeta, dt=None, method='tustin'*)
 
 This function is for design of a second order low pass filter.
-$$
-F_{LP^2}(s) = \frac{(2\pi f)^2}{s^2+2\zeta (2\pi f)s+(2\pi f)^2}
-$$
+$$F_{LP^2}(s) = \frac{(2\pi f)^2}{s^2+2\zeta (2\pi f)s+(2\pi f)^2}$$
 
 - Parameters:
   - freq: frequency[Hz] of the low pass filter
@@ -870,9 +860,7 @@ dt = 0.001
 pylib_sakata.ctrl.**hpf1st**(*freq, dt=None, method='tustin'*)
 
 This function is for design of a first order high pass filter.
-$$
-F_{HP}(s) = 1 - F_{LP}(s) = \frac{s}{s+2\pi f}
-$$
+$$F_{HP}(s) = 1 - F_{LP}(s) = \frac{s}{s+2\pi f}$$
 
 - Parameters:
   - freq: frequency[Hz] of the high pass filter
@@ -904,9 +892,7 @@ dt = 0.001
 pylib_sakata.ctrl.**hpf2nd**(*freq, zeta, dt=None, method='tustin'*)
 
 This function is for design of a second order high pass filter.
-$$
-F_{HP^2}(s) = 1 - F_{LP^2}(s) = \frac{s^2+2\zeta (2\pi f)s}{s^2+2\zeta (2\pi f)s+(2\pi f)^2}
-$$
+$$F_{HP^2}(s) = 1 - F_{LP^2}(s) = \frac{s^2+2\zeta (2\pi f)s}{s^2+2\zeta (2\pi f)s+(2\pi f)^2}$$
 
 - Parameters:
   - freq: frequency[Hz] of the high pass filter
@@ -939,9 +925,7 @@ dt = 0.001
 pylib_sakata.ctrl.**nf**(*freq, zeta, depth, dt=None, method='matched'*)
 
 This function is for design of notch filters.
-$$
-F_{notch}(s) = \frac{s^2+2d\zeta (2\pi f)s+(2\pi f)^2}{s^2+2\zeta (2\pi f)s+(2\pi f)^2}
-$$
+$$F_{notch}(s) = \frac{s^2+2d\zeta (2\pi f)s+(2\pi f)^2}{s^2+2\zeta (2\pi f)s+(2\pi f)^2}$$
 
 - Parameters:
   - freq: array of frequency[Hz] of the notch filters
@@ -973,9 +957,7 @@ array([TransferFunction(array([ 0.9876627 , -1.59787102,  0.9874145 ]), array([ 
 pylib_sakata.ctrl.**pf**(*freq, zeta, k, phi, dt=None, method='tustin'*)
 
 This function is for design of peak filters ([resonant filters](https://ieeexplore.ieee.org/document/4291569)).
-$$
-F_{peak}(s) = \frac{k(s^2-\phi s)}{s^2+2\zeta (2\pi f)s+(2\pi f)^2}
-$$
+$$F_{peak}(s) = \frac{k(s^2-\phi s)}{s^2+2\zeta (2\pi f)s+(2\pi f)^2}$$
 
 - Parameters:
   - freq: array of frequency[Hz] of the peak filters
@@ -1069,9 +1051,8 @@ array([TransferFunction(array([ 0.0049857 , -0.00972818,  0.00474248]), array([ 
 pylib_sakata.ctrl.**dob**(*freq, zeta, M, C, K, dt, nd = 0*)
 
 This function is for design of a discrete-time disturbance observer (DOB).
-$$
-\hat{d} = -z^{-n_d} Q[z] u + Q[z] P^{-1}[z] y
-$$
+$$\hat{d} = -z^{-n_d} Q[z] u + Q[z] P^{-1}[z] y$$
+
 Here, it is defined that disturbance $d$ is injected in the system as plus sign.
 
 - Parameters:
@@ -1378,9 +1359,7 @@ resp = array([-5.10821217e-03-5.65218353e-02j -5.10244172e-03-5.64813436e-02j
 pylib_sakata.fft.**frdsim**(*freqresp, x, dt*)
 
 This function is for simulation steady time response data when a time-domain data is input to a system written by frequency response data.
-$$
-y(t) = \text{ifft}(\text{FreqResp}(\omega)\times\text{fft}(u(t)))
-$$
+$$y(t) = \text{ifft}(\text{FreqResp}(\omega)\times\text{fft}(u(t)))$$
 
 - Parameters:
   - freqresp: instance of FreqResp class
