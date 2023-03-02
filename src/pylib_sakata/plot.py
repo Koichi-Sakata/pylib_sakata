@@ -34,7 +34,7 @@ def plot_xy(ax, x, y, styl='-', col='b', width=1.5, alpha=1.0, xrange=None, yran
         ax.set_xlabel(xlabel)
     if ylabel != None:
         ax.set_ylabel(ylabel)
-    ax.grid(b=True, which='both', axis='both')
+    ax.grid(visible=True, which='both', axis='both')
     # plot
     ax.plot(x, y, linestyle=styl, color=col, linewidth=width, alpha=alpha)
     # legend and title
@@ -67,7 +67,7 @@ def plot_tf(ax_mag, ax_phase, sys, freq, styl='-', col='b', width=1.5, alpha=1.0
     if ax_phase == None:
             ax_mag.set_xlabel('Frequency [Hz]')
     ax_mag.set_ylabel('Magnitude [dB]')
-    ax_mag.grid(b=True, which='both', axis='both')
+    ax_mag.grid(visible=True, which='both', axis='both')
     # mag plot
     ax_mag.plot(freq, magdb, linestyle=styl, color=col, linewidth=width, alpha=alpha)
     # legend and title
@@ -87,7 +87,7 @@ def plot_tf(ax_mag, ax_phase, sys, freq, styl='-', col='b', width=1.5, alpha=1.0
         ax_phase.set_ylabel('Phase [deg]')
         # ax_phase.set_yticks([-180, -90, 0, 90, 180])
         ax_phase.set_yticks([-360, -270, -180, -90, 0])
-        ax_phase.grid(b=True, which='both', axis='both')
+        ax_phase.grid(visible=True, which='both', axis='both')
         # phase plot
         for k in range(len(phasedeg)):
             if phasedeg[k] > 0:
@@ -117,7 +117,7 @@ def plot_tffrd(ax_mag, ax_phase, freqresp, styl='-', col='b', width=1.5, alpha=1
     if ax_phase == None and ax_coh == None:
             ax_mag.set_xlabel('Frequency [Hz]')
     ax_mag.set_ylabel('Magnitude [dB]')
-    ax_mag.grid(b=True, which='both', axis='both')
+    ax_mag.grid(visible=True, which='both', axis='both')
     # mag plot
     ax_mag.plot(freqresp.freq, magdb, linestyle=styl, color=col, linewidth=width, alpha=alpha)
     # legend and title
@@ -138,7 +138,7 @@ def plot_tffrd(ax_mag, ax_phase, freqresp, styl='-', col='b', width=1.5, alpha=1
         ax_phase.set_ylabel('Phase [deg]')
         # ax_phase.set_yticks([-180, -90, 0, 90, 180])
         ax_phase.set_yticks([-360, -270, -180, -90, 0])
-        ax_phase.grid(b=True, which='both', axis='both')
+        ax_phase.grid(visible=True, which='both', axis='both')
         # phase plot
         for k in range(len(phasedeg)):
             if phasedeg[k] > 0:
@@ -153,7 +153,7 @@ def plot_tffrd(ax_mag, ax_phase, freqresp, styl='-', col='b', width=1.5, alpha=1
         ax_coh.set_ylim(0, 1.2)
         ax_coh.set_xlabel('Frequency [Hz]')
         ax_coh.set_ylabel('Coherence [.]')
-        ax_coh.grid(b=True, which='both', axis='both')
+        ax_coh.grid(visible=True, which='both', axis='both')
         # coherence plot
         ax_coh.plot(freqresp.freq, coh, linestyle=styl, color=col, linewidth=width, alpha=alpha)
         if labelouter == True:
@@ -173,7 +173,7 @@ def plot_nyquist(ax, freqresp, styl='-', col='b', width=1.5, alpha=1.0, xrange=N
     ax.set_xlabel('Real')
     ax.set_ylabel('Imaginary')
     ax.set_aspect('equal', adjustable='box')
-    ax.grid(b=True, which='both', axis='both')
+    ax.grid(visible=True, which='both', axis='both')
     # plot
     ax.plot(x, y, linestyle=styl, color=col, linewidth=width, alpha=alpha)
     # legend and title
