@@ -1569,7 +1569,7 @@ This function is for generation of a trajectory based on sine waves.
 traj = traj.SinStep(0, 100, 100, 200, 0.001, 0.5)
 ```
 
-Comparison of these trajectories under the specification: posStep = 1, velMax = 1, accAve = 2 is shown as follows.
+The comparison of these trajectories under the specification: posStep = 1, velMax = 1, accAve = 2 is shown as follows.
 
 <img src="figure\time_traj.png" alt="vscode_disp" style="zoom: 15%;" />
 <img src="figure\time_fft.png" alt="vscode_disp" style="zoom: 40%;" />
