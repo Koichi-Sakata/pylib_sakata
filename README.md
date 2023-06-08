@@ -1,4 +1,4 @@
-pylib-sakata User's Manual version-0.1.14
+pylib-sakata User's Manual version-0.1.15
 ===
 
 <!-- code_chunk_output -->
@@ -72,6 +72,7 @@ pylib-sakata User's Manual version-0.1.14
 - [6. pylib\_sakata.traj](#6-pylib_sakatatraj)
   - [6.1. TrajInf](#61-trajinf)
   - [6.2. traj4th](#62-traj4th)
+  - [6.3. trajSinStep](#63-trajsinstep)
 - [7. pylib\_sakata.plot](#7-pylib_sakataplot)
   - [7.1. plot\_xy](#71-plot_xy)
   - [7.2. plot\_tf](#72-plot_tf)
@@ -614,7 +615,8 @@ dt = 0.001
 pylib_sakata.ctrl.**pi**(*freq, zeta, L, R, dt=None, method='tustin'*)
 
 This function is for design of a PI controller.
-$$\begin{aligned}C_{PI}(s) &= K_P + \frac{K_I}{s} = \frac{b_1s+b_0}{s} \\ P(s) &= \frac{1}{Ls+R}\end{aligned}$$
+$$C_{PI}(s) = K_P + \frac{K_I}{s} = \frac{b_1s+b_0}{s}$$
+$$P(s) = \frac{1}{Ls+R}$$
 
 - Parameters:
   - freq: frequency[Hz] of the pole pair of the feedback system with the PI controller
@@ -649,7 +651,8 @@ dt = 0.001
 pylib_sakata.ctrl.**pd**(*freq1, freq2, zeta2, M, C, K, dt=None, method='tustin'*)
 
 This function is for design of a PD controller.
-$$\begin{aligned}C_{PID}(s) &= K_P + \frac{K_D s}{\tau_D s+1} = \frac{b_1s+b_0}{s+a_0}\\ P(s) &= \frac{1}{Ms^2+Cs+K}\end{aligned}$$
+$$C_{PID}(s) = K_P + \frac{K_D s}{\tau_D s+1} = \frac{b_1s+b_0}{s+a_0}$$
+$$P(s) = \frac{1}{Ms^2+Cs+K}$$
 
 - Parameters:
   - freq1: frequency[Hz] of the first pole of the feedback system with the PD controller
@@ -686,8 +689,8 @@ dt = 0.001
 pylib_sakata.ctrl.**pid**(*freq1, zeta1, freq2, zeta2, M, C, K, dt=None, method='tustin'*)
 
 This function is for design of a PID controller.
-$$\begin{aligned}
-C_{PID}(s) &= K_P + \frac{K_I}{s} + \frac{K_D s}{\tau_D s+1} = \frac{b_2s^2+b_1s+b_0}{s^2+a_1s} \\ P(s) &= \frac{1}{Ms^2+Cs+K}\end{aligned}$$
+$$C_{PID}(s) = K_P + \frac{K_I}{s} + \frac{K_D s}{\tau_D s+1} = \frac{b_2s^2+b_1s+b_0}{s^2+a_1s}$$
+$$P(s) = \frac{1}{Ms^2+Cs+K}$$
 
 - Parameters:
   - freq1: frequency[Hz] of the first pole pair of the feedback system with the PID controller
@@ -1523,7 +1526,8 @@ class pylib_sakata.traj.**TrajInf**(*time, pos, vel, acc, T, dt*)
 
 ### 6.2. traj4th
 
-pylib_sakata.traj.**traj4th**(*posStart, posStep, velMax, accAve, dt, Tstay=0*)
+pylib_sakata.traj.**traj4th**(*posStart, posStep, velMax, accAve, dt, Tstay=0*)  
+pylib_sakata.traj.**traj4th2**(*posStart, posStep, velMax, accAve, dt, Tstay=0*)
 
 This function is for generation of a 4th order polynomial trajectory.
 
@@ -1533,24 +1537,42 @@ This function is for generation of a 4th order polynomial trajectory.
   - velMax: maximum of velocity of the trajectory
   - accAve: average of accelation (= decelation) of the trajectory
   - dt: sampling time of the trajectory data.
+  - Tstay: time after the step moving
 - Returns:
   - out: instance of TrajInf class of the 4th order polynomial trajectory
 
 **Examples**
 ```python
 traj = traj.traj4th(0, 100, 100, 200, 0.001, 0.5)
-
-fig = plot.makefig()
-ax1 = fig.add_subplot(311)
-ax2 = fig.add_subplot(312)
-ax3 = fig.add_subplot(313)
-plot.plot_xy(ax1, traj.time, traj.pos, ylabel='[m]', legend=['Pos'], title='TrajInf')
-plot.plot_xy(ax2, traj.time, traj.vel, ylabel='[m/s]', legend=['Vel'])
-plot.plot_xy(ax3, traj.time, traj.acc, xlabel='Time [s]', ylabel='[m/s^2]', legend=['Acc'])
-plot.savefig('time_traj.png')
 ```
 
-<img src="figure\time_traj.png" alt="vscode_disp" style="zoom: 80%;" />
+### 6.3. trajSinStep
+
+pylib_sakata.traj.**trajSinStep**(*posStart, posStep, velMax, accAve, dt, Tstay=0*)
+pylib_sakata.traj.**trajSinStep2**(*posStart, posStep, velMax, accAve, dt, Tstay=0*)
+pylib_sakata.traj.**trajSinStep3**(*posStart, posStep, velMax, accAve, dt, Tstay=0*)
+
+This function is for generation of a trajectory based on sine waves.
+
+- Parameters:
+  - posStart: start position of the trajectory
+  - posStep: step position of the trajectory
+  - velMax: maximum of velocity of the trajectory
+  - accAve: average of accelation (= decelation) of the trajectory
+  - dt: sampling time of the trajectory data.
+  - Tstay: time after the step moving
+- Returns:
+  - out: instance of TrajInf class of the trajectory based on sine waves
+
+**Examples**
+```python
+traj = traj.SinStep(0, 100, 100, 200, 0.001, 0.5)
+```
+
+Comparison of these trajectories under the specification: posStep = 1, velMax = 1, accAve = 2 is shown as follows.
+
+<img src="figure\time_traj.png" alt="vscode_disp" style="zoom: 15%;" />
+<img src="figure\time_fft.png" alt="vscode_disp" style="zoom: 40%;" />
 
 ## 7. pylib_sakata.plot
 
@@ -1738,12 +1760,13 @@ plot.plot_nyquist_assistline(ax)
 
 ### 7.6. makefig
 
-pylib_sakata.plot.**makefig**(dpi=100, popwin=False)
+pylib_sakata.plot.**makefig**(dpi=100, figsize=(6, 4), popwin=False)
 
 This function will make a new figure handle.
 
 - Parameters:
   - dpi: dot per inch of figure (Optional), Default: 100
+  - figsize: set figure size (Optional), Default: (6, 4) which means 600x400 pixels
   - popwin: switch to fix the popup window of the figure (Optional), Default: False
 - Returns:
   - fig: figure handle

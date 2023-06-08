@@ -195,12 +195,12 @@ def plot_nyquist_assistline(ax):
     ax.plot(-1.0, 0.0, marker='x', color='r')
     
     
-def makefig(dpi=100, popwin=False):
-    fig = plt.figure(dpi=dpi)
+def makefig(dpi=100, figsize=(6, 4), popwin=False):
+    fig = plt.figure(dpi=dpi, figsize=figsize)
     if popwin != False:
         mngr = plt.get_current_fig_manager()
         # to put it into the upper left corner for example:
-        mngr.window.setGeometry(50,250,640, 545)
+        mngr.window.geometry(str(figsize[0])+'00x'+str(figsize[1])+'00+0+0')
     return fig
 
 

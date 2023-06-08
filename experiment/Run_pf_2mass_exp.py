@@ -32,13 +32,13 @@ z = ctrl.tf([1, 0], [1], Ts)
 print('Common parameters were set.')
 
 # Plant model
-M1 = 0.03
-M2 = 0.08
+M1 = 0.035
+M2 = 0.075
 M = M1 + M2
 C = 2.4
 K = 0.0
-Creso = 3.5
-Kreso = 68000.0
+Creso = 4.0
+Kreso = 55000.0
 k1 = M2/(M1 * (M1 + M2))
 k2 = -1.0/(M1 + M2)
 omegaPreso = np.sqrt(Kreso * (M1 + M2)/(M1 * M2))
@@ -59,9 +59,9 @@ Pnz_frd = Pnz1_frd
 print('Plant model was set.')
 
 # Design PID controller
-freq1 = 25.0
+freq1 = 30.0
 zeta1 = 0.7
-freq2 = 25.0
+freq2 = 30.0
 zeta2 = 0.7
 Cz = ctrl.pid(freq1, zeta1, freq2, zeta2, M, C, K, Ts)
 Cz_frd = ctrl.sys2frd(Cz, freq)
@@ -80,6 +80,7 @@ ErrPosUm = measdata.value[meas.getdataindex(measdata, 'ErrPosUm[0]')]
 ServoOutN = measdata.value[meas.getdataindex(measdata, 'ServoOutN[0]')]
 # FFT
 freq_fft, ErrPosUm_fft = fft.fft(ErrPosUm[8000:72000], Ts)
+freq_fft, ServoOutN_fft = fft.fft(ServoOutN[8000:72000], Ts)
 
 measdata_pf = meas.getdata('data/time_resp_2mass_nf_pf.csv')
 time_pf = measdata_pf.time
@@ -88,9 +89,10 @@ ErrPosUm_pf = measdata_pf.value[meas.getdataindex(measdata_pf, 'ErrPosUm[0]')]
 ServoOutN_pf = measdata_pf.value[meas.getdataindex(measdata_pf, 'ServoOutN[0]')]
 # FFT
 freq_fft_pf, ErrPosUm_fft_pf = fft.fft(ErrPosUm_pf[8000:72000], Ts)
+freq_fft_pf, ServoOutN_fft_pf = fft.fft(ServoOutN_pf[8000:72000], Ts)
 
 # Design notch filters
-freqNF = [280]
+freqNF = [240]
 zetaNF = [0.2]
 depthNF = [0.02]
 NFz = ctrl.nf(freqNF, zetaNF, depthNF, Ts)
@@ -108,9 +110,9 @@ Sn_frd = 1/(1 + Gn_frd)
 Tn_frd = 1 - Sn_frd
 
 # Design peak filters
-freqPF = [10.0, 20.0, 30.0, 50.0, 60.0, 70.0, 90.0]
-zetaPF = [0.002, 0.002, 0.002, 0.001, 0.001, 0.001, 0.001]
-depthPF = [0.1, 0.05, 0.05, 0.1, 0.1, 0.1, 0.1]
+freqPF = [10.0, 20.0, 30.0, 60.0, 70.0, 90.0]
+zetaPF = [0.001, 0.001, 0.001, 0.001, 0.001, 0.001]
+depthPF = [0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
 PFz = ctrl.pfopt(freqPF, zetaPF, depthPF, ctrl.feedback(Pnz, Cz * NFz_all, sys='T'), Ts)
 PFz_frd = 0.0
 for i in range(len(freqPF)):
@@ -144,9 +146,12 @@ plot.savefig(figurefolderName+'/time_resp.png')
 
 # FFT
 fig = plot.makefig()
-ax1 = fig.add_subplot(111)
+ax1 = fig.add_subplot(211)
+ax2 = fig.add_subplot(212)
 plot.plot_xy(ax1, freq_fft, ErrPosUm_fft, '-', 'r', 1.5, 1.0, title='Power spectrum density')
-plot.plot_xy(ax1, freq_fft_pf, ErrPosUm_fft_pf, '--', 'm', 1.5, 1.0, xscale='log', xrange=[1.0, 1000.0], yrange=[0.0, 0.2], xlabel='Frequency [Hz]', ylabel='Error Pos [um]', legend=['with NF only', 'with NF+PF'])
+plot.plot_xy(ax1, freq_fft_pf, ErrPosUm_fft_pf, '--', 'm', 1.5, 1.0, xscale='log', xrange=[1.0, 1000.0], yrange=[0.0, 0.4], ylabel='Error Pos [um]', legend=['with NF only', 'with NF+PF'])
+plot.plot_xy(ax2, freq_fft, ServoOutN_fft, '-', 'r', 1.5, 1.0)
+plot.plot_xy(ax2, freq_fft_pf, ServoOutN_fft_pf, '--', 'm', 1.5, 1.0, xscale='log', xrange=[1.0, 1000.0], yrange=[0.0, 0.002], xlabel='Frequency [Hz]', ylabel='ServoOut [N]', legend=['with NF only', 'with NF+PF'])
 plot.savefig(figurefolderName+'/time_fft.png')
 
 # Time response
@@ -164,9 +169,9 @@ fig = plot.makefig()
 ax1 = fig.add_subplot(211)
 ax2 = fig.add_subplot(212)
 plot.plot_xy(ax1, freq_fft, ErrPosUm_fft, '-', 'r', 1.5, 1.0, title='Power spectrum density')
-plot.plot_xy(ax1, freq_fft_pf, ErrPosUm_fft_pf, '--', 'm', 1.5, 1.0, xscale='log', xrange=[1.0, 1000.0], yrange=[0.0, 0.2], ylabel='Error Pos [um]', legend=['w/o PF (Exp)', 'with PF (Exp)'])
+plot.plot_xy(ax1, freq_fft_pf, ErrPosUm_fft_pf, '--', 'm', 1.5, 1.0, xscale='log', xrange=[1.0, 1000.0], yrange=[0.0, 0.4], ylabel='Error Pos [um]', legend=['w/o PF (Exp)', 'with PF (Exp)'])
 plot.plot_xy(ax2, freq_fft, ErrPosUm_fft, '-', 'r', 1.5, 1.0)
-plot.plot_xy(ax2, freq_fft_sim, ErrPosUm_fft_pf_sim, '--', 'm', 1.5, 1.0, xscale='log', xrange=[1.0, 1000.0], yrange=[0.0, 0.2], xlabel='Frequency [Hz]', ylabel='Error Pos [um]', legend=['w/o PF (Exp)', 'with PF (Sim)'])
+plot.plot_xy(ax2, freq_fft_sim, ErrPosUm_fft_pf_sim, '--', 'm', 1.5, 1.0, xscale='log', xrange=[1.0, 1000.0], yrange=[0.0, 0.4], xlabel='Frequency [Hz]', ylabel='Error Pos [um]', legend=['w/o PF (Exp)', 'with PF (Sim)'])
 plot.savefig(figurefolderName+'/time_fft_vs_sim.png')
 
 # Plant

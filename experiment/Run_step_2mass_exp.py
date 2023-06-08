@@ -32,13 +32,13 @@ z = ctrl.tf([1, 0], [1], Ts)
 print('Common parameters were set.')
 
 # Plant model
-M1 = 0.03
-M2 = 0.08
+M1 = 0.034
+M2 = 0.076
 M = M1 + M2
 C = 2.4
 K = 0.0
-Creso = 3.5
-Kreso = 68000.0
+Creso = 3.0
+Kreso = 72000.0
 k1 = M2/(M1 * (M1 + M2))
 k2 = -1.0/(M1 + M2)
 omegaPreso = np.sqrt(Kreso * (M1 + M2)/(M1 * M2))

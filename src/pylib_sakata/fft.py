@@ -138,7 +138,7 @@ def fft_ave(data, dt, windivnum=4, overlap=0.5):
         data_array.append(data[ps:ps + framesize:1])  # 切り出し位置psからフレームサイズ分抽出して配列に追加
 
     # Hanning Window
-    han = signal.hanning(framesize)
+    han = signal.windows.hann(framesize)
     acf = 1 / (sum(han) / framesize)  # Amplitude Correction Factor
     for i in range(N_ave):
         data_array[i] = data_array[i] * han

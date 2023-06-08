@@ -17,7 +17,7 @@ print('Start simulation!')
 
 # Common parameters
 srcpathName = 'src'
-# srcpathName = 'C:/Users/sakat/source/repos/TwinCAT-CppMotionControl-main/TwinCAT-CppMotionControl/StaticLibrary1'
+srcpathName = 'C:/Users/sakat/source/repos/TwinCAT-CppMotionControl-main/TwinCAT-CppMotionControl/StaticLibrary1'
 Ts = 1/8000
 dataNum = 10000
 freqrange = [1, 1000]
@@ -49,9 +49,9 @@ Cz_PD_frd = ctrl.sys2frd(Cz_PD, freq)
 print('PD controller was designed.')
 
 # Design PID controller
-freq1 = 25.0
+freq1 = 30.0
 zeta1 = 0.7
-freq2 = 25.0
+freq2 = 30.0
 zeta2 = 0.7
 Cz_PID = ctrl.pid(freq1, zeta1, freq2, zeta2, M, C, K, Ts)
 Cz_PID_frd = ctrl.sys2frd(Cz_PID, freq)
@@ -65,7 +65,7 @@ Cz_PI_frd = ctrl.sys2frd(Cz_PI, freq)
 print('PI velocity controller was designed.')
 
 # Design notch filters
-freqNF = [280]
+freqNF = [240]
 zetaNF = [0.2]
 depthNF = [0.02]
 NFz = ctrl.nf(freqNF, zetaNF, depthNF, Ts)
@@ -77,9 +77,9 @@ for i in range(len(freqNF)):
 print('Notch filters were designed.')
 
 # Design peak filters
-freqPF = [10.0, 20.0, 30.0, 50.0, 60.0, 70.0, 90.0]
-zetaPF = [0.002, 0.002, 0.002, 0.001, 0.001, 0.001, 0.001]
-depthPF = [0.1, 0.05, 0.05, 0.1, 0.1, 0.1, 0.1]
+freqPF = [10.0, 20.0, 30.0, 60.0, 70.0, 90.0]
+zetaPF = [0.001, 0.001, 0.001, 0.001, 0.001, 0.001]
+depthPF = [0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
 PFz = ctrl.pfopt(freqPF, zetaPF, depthPF, ctrl.feedback(Pnz, Cz_PID * NFz_all, sys='T'), Ts)
 PFz_frd = 0.0
 for i in range(len(freqPF)):
