@@ -1,10 +1,11 @@
-# Copyright (c) 2022 Koichi Sakata
-
-
 from tkinter import *
-from tkinter import ttk
-import tkinter
+import tkinter as tk
+import tkinter.ttk as ttk
 import pyads
+import func_MotionCommandWindow
+import func_ControlModeSet
+import func_NoiseParamSet
+import func_TrajectoryParamSet
 
 
 def repeat():
@@ -31,18 +32,45 @@ def read_value(adsName, text, datatype=0):
         if datatype == 'bin':
             value = bin(value)
         ads_client.close()
-        text.delete(0, tkinter.END)
+        text.delete(0, tk.END)
         text.insert(0, value)
     except:
         pass
 
-    
-root = Tk()
-root.title("Motion Watch Window")
+
+def tab1_main(frm):
+    func_MotionCommandWindow.func_dispUI(frm, net_id_text, port_text)
+
+
+def tab2_main(frm):
+    func_ControlModeSet.func_dispUI(frm, net_id_text, port_text)
+
+
+def tab3_main(frm):
+    func_NoiseParamSet.func_dispUI(frm, net_id_text, port_text)
+
+
+def tab4_main(frm):
+    func_TrajectoryParamSet.func_dispUI(frm, net_id_text, port_text)
+
+root = tk.Tk()
+root.title("CppMotionControl GUI")
 frm = ttk.Frame(root,padding=10)
 frm.grid(column=0, row=0, sticky=NSEW)
+tab=ttk.Notebook(root)
+tab.grid(column=0, row=1, sticky=NSEW)
 frm4 = ttk.Frame(root,padding=10)
-frm4.grid(column=0, row=1, sticky=NSEW)
+frm4.grid(column=0, row=2, sticky=NSEW)
+
+tab1=tk.Frame(tab)
+tab2=tk.Frame(tab)
+tab3=tk.Frame(tab)
+tab4=tk.Frame(tab)
+
+tab.add(tab1, text="Motion Command", padding=3)
+tab.add(tab2, text="Control Mode Set",padding=3)
+tab.add(tab3, text="Noise Param Set", padding=3)
+tab.add(tab4, text="Trajectory Param Set", padding=3)
 
 # default value
 ads_net_id  = StringVar(frm, value="192.168.10.3.1.1")
@@ -55,6 +83,14 @@ net_id_text.grid(column=1, row=0)
 ttk.Label(frm, text="port").grid(column=0, row=1)
 port_text = ttk.Entry(frm, textvariable=port_number, width=16)
 port_text.grid(column=1, row=1)
+
+tab.grid()
+
+tab1_main(tab1)
+tab2_main(tab2)
+tab3_main(tab3)
+tab4_main(tab4)
+
 
 rowNum = 0
 ttk.Label(frm4, text="Axis").grid(column=0, row=rowNum)
@@ -141,7 +177,7 @@ for i in range(len(adsName)):
 
 text_sigvalue = [[] for i in range(len(adsName))]
 for i in range(len(adsName)):
-    ttk.Label(frm4, text=sigName[i]).grid(column=0, row=rowNum + i, sticky=W)
+    ttk.Label(frm4, text=sigName[i], width=16).grid(column=0, row=rowNum + i, sticky=W)
     for j in range(len(adsName[i])):
         text_sigvalue[i].append(ttk.Entry(frm4, textvariable=sigvalue_read[i][j], width=16))
         text_sigvalue[i][j].grid(column=1+j, row=rowNum + i)
@@ -150,5 +186,8 @@ for i in range(len(adsName)):
 s = ttk.Style()
 s.theme_use('classic')
 
-root.after(100, repeat)
+repeat()
 root.mainloop()
+
+
+

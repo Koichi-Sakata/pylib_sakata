@@ -25,7 +25,7 @@ if os.path.exists(figurefolderName):
 os.makedirs(figurefolderName)
 Ts = 1/8000
 dataNum = 10000
-freqrange = [1, 1000]
+freqrange = [1, 3000]
 freq = np.logspace(np.log10(freqrange[0]), np.log10(freqrange[1]), dataNum, base=10)
 s = ctrl.tf([1, 0], [1])
 z = ctrl.tf([1, 0], [1], Ts)
