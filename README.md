@@ -1458,13 +1458,13 @@ This function is for getting measurement data from a file.
 
 **Examples**
 ```python
-measdata = meas.getmatdata('data\001-inject.csv')
+measdata = meas.getdata('data\001-inject.csv')
 ```
 ```python
-measdata = meas.getmatdata('data\001-inject.txt')
+measdata = meas.getdata('data\001-inject.txt')
 ```
 ```python
-measdata = meas.getmatdata('data\001-inject.mat')
+measdata = meas.getdata('data\001-inject.mat')
 ```
 
 ### 5.6. getdataindex
