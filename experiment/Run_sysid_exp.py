@@ -25,7 +25,7 @@ if os.path.exists(figurefolderName):
 os.makedirs(figurefolderName)
 Ts = 1/8000
 dataNum = 10000
-freqrange = [1, 3000]
+freqrange = [1, 1000]
 freq = np.logspace(np.log10(freqrange[0]), np.log10(freqrange[1]), dataNum, base=10)
 s = ctrl.tf([1, 0], [1])
 z = ctrl.tf([1, 0], [1], Ts)
@@ -44,7 +44,7 @@ Pnz = ctrl.c2d(Pmechs, Ts, method='zoh') * Dz
 Pnz_frd = ctrl.sys2frd(Pnz, freq)
 
 print('Getting measurement data...')
-measfileName = 'data/freq_resp.csv'
+measfileName = 'data/freq_resp_PD_20230720.csv'
 # Frequency response
 Pmeas_frd, coh = meas.measdata2frd(measfileName, 'ServoOutN[0]', 'ActPosUm[0]', 'FlagInject', freq, 1., 1.e-6, 8, 0.8)
 

@@ -46,7 +46,7 @@ freq2 = 10.0
 zeta2 = 1.0
 Cz = ctrl.pd(freq1, freq2, zeta2, M, C, K, Ts)
 Cz_frd = ctrl.sys2frd(Cz, freq)
-print('PID controller was designed.')
+print('PD controller was designed.')
 
 print('System identification simulation is running...')
 Snz = ctrl.feedback(Pnz, Cz, sys='S')

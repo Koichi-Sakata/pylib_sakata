@@ -65,7 +65,7 @@ Gi_frd = Pi_frd * Ci_frd
 Si_frd = 1/(1 + Gi_frd)
 Ti_frd = 1 - Si_frd
 
-Gs_frd = Ps_frd * Cs_frd * Ti_frd
+Gs_frd = Ps_frd * Cs_frd * Ti_frd * Kt
 Ss_frd = 1/(1 + Gs_frd)
 Ts_frd = 1 - Ss_frd
 

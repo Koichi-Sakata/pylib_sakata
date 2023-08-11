@@ -27,7 +27,7 @@ print('Common parameters were set.')
 
 # Plant model
 L = 0.1
-R = 10.0
+R = 10
 Ps = ctrl.tf([1], [L, R])
 Ps_frd = ctrl.sys2frd(Ps, freq)
 print('Plant model was set.')

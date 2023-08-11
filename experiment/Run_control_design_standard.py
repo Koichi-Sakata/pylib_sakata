@@ -16,7 +16,7 @@ from pylib_sakata import plot
 print('Start simulation!')
 
 # Common parameters
-srcpathName = 'src'
+# srcpathName = 'src'
 srcpathName = 'C:/Users/sakat/source/repos/TwinCAT-CppMotionControl-main/TwinCAT-CppMotionControl/StaticLibrary1'
 Ts = 1/8000
 dataNum = 10000
@@ -28,7 +28,7 @@ print('Common parameters were set.')
 
 # Plant model
 M = 0.11
-C = 2.4
+C = 0.7
 K = 0.0
 Pmechs = ctrl.tf([1.0], [M, C, K])
 Pmechz = ctrl.c2d(Pmechs, Ts, method='zoh')
@@ -49,9 +49,9 @@ Cz_PD_frd = ctrl.sys2frd(Cz_PD, freq)
 print('PD controller was designed.')
 
 # Design PID controller
-freq1 = 30.0
+freq1 = 25.0
 zeta1 = 0.7
-freq2 = 30.0
+freq2 = 25.0
 zeta2 = 0.7
 Cz_PID = ctrl.pid(freq1, zeta1, freq2, zeta2, M, C, K, Ts)
 Cz_PID_frd = ctrl.sys2frd(Cz_PID, freq)
@@ -65,7 +65,7 @@ Cz_PI_frd = ctrl.sys2frd(Cz_PI, freq)
 print('PI velocity controller was designed.')
 
 # Design notch filters
-freqNF = [240]
+freqNF = [265]
 zetaNF = [0.2]
 depthNF = [0.02]
 NFz = ctrl.nf(freqNF, zetaNF, depthNF, Ts)

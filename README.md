@@ -61,7 +61,7 @@ pylib-sakata User's Manual version-0.1.15
   - [4.4. tfestimate](#44-tfestimate)
   - [4.5. frdresize](#45-frdresize)
   - [4.6. frdsim](#46-frdsim)
-- [5. pylib\_sakta.meas](#5-pylib_saktameas)
+- [5. pylib\_sakata.meas](#5-pylib_sakatameas)
   - [5.1. MeasData](#51-measdata)
   - [5.2. getcsvdata](#52-getcsvdata)
   - [5.3. gettxtdata](#53-gettxtdata)
@@ -1385,7 +1385,7 @@ $$y(t) = \text{ifft}(\text{FreqResp}(\omega)\times\text{fft}(u(t)))$$
        -0.0062943 , -0.00634922]))
 ```
 
-## 5. pylib_sakta.meas
+## 5. pylib_sakata.meas
 
 ### 5.1. MeasData
 

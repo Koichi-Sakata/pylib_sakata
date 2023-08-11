@@ -32,13 +32,17 @@ z = ctrl.tf([1, 0], [1], Ts)
 print('Common parameters were set.')
 
 # Plant model
-M1 = 0.035
-M2 = 0.075
+# M1 = 0.035
+M1 = 0.0343
+# M2 = 0.075
+M2 = 0.0757
 M = M1 + M2
-C = 2.4
+C = 0.7
 K = 0.0
-Creso = 4.0
-Kreso = 55000.0
+# Creso = 4.0
+Creso = 2.5
+# Kreso = 55000.0
+Kreso = 65460.0
 k1 = M2/(M1 * (M1 + M2))
 k2 = -1.0/(M1 + M2)
 omegaPreso = np.sqrt(Kreso * (M1 + M2)/(M1 * M2))
@@ -59,16 +63,16 @@ Pnz_frd = Pnz1_frd
 print('Plant model was set.')
 
 # Design PID controller
-freq1 = 30.0
+freq1 = 25.0
 zeta1 = 0.7
-freq2 = 30.0
+freq2 = 25.0
 zeta2 = 0.7
 Cz = ctrl.pid(freq1, zeta1, freq2, zeta2, M, C, K, Ts)
 Cz_frd = ctrl.sys2frd(Cz, freq)
 print('PID controller was designed.')
 
 print('Getting measurement data...')
-measfileName = 'data/freq_resp_2mass.csv'
+measfileName = 'data/freq_resp_2mass_20230720.csv'
 # Frequency response
 Pmeas_frd, coh = meas.measdata2frd(measfileName, 'ServoOutN[0]', 'ActPosUm[0]', 'FlagInject', freq, 1., 1.e-6, 8, 0.8)
 
