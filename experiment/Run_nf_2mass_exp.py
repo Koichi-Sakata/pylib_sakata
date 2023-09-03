@@ -133,9 +133,9 @@ ax2 = fig.add_subplot(312)
 ax3 = fig.add_subplot(313)
 plot.plot_xy(ax1, time, RefPosUm*1.0e-3, '-', 'b', 1.5, 1.0, ylabel='Ref Pos [mm]', title='Time response')
 plot.plot_xy(ax2, time, ErrPosUm, '-', 'b', 1.5, 1.0)
-plot.plot_xy(ax2, time_nf, ErrPosUm_nf, '--', 'r', 1.5, 1.0, yrange=[-2.5, 2.5], ylabel='Error Pos [um]')
+plot.plot_xy(ax2, time_nf, ErrPosUm_nf, '--', 'g', 1.5, 1.0, yrange=[-2.5, 2.5], ylabel='Error Pos [um]')
 plot.plot_xy(ax3, time, ServoOutN, '-', 'b', 1.5, 1.0)
-plot.plot_xy(ax3, time_nf, ServoOutN_nf, '--', 'r', 1.5, 1.0, yrange=[-0.02, 0.04], xlabel='Time [s]', ylabel='ServoOut [N]', legend=['w/o NF', 'with NF'])
+plot.plot_xy(ax3, time_nf, ServoOutN_nf, '--', 'g', 1.5, 1.0, yrange=[-0.02, 0.04], xlabel='Time [s]', ylabel='ServoOut [N]', legend=['w/o NF', 'with NF'])
 plot.savefig(figurefolderName+'/time_resp.png')
 
 # FFT
@@ -143,9 +143,9 @@ fig = plot.makefig()
 ax1 = fig.add_subplot(211)
 ax2 = fig.add_subplot(212)
 plot.plot_xy(ax1, freq_fft, ErrPosUm_fft, '-', 'b', 1.5, 1.0, title='Power spectrum density')
-plot.plot_xy(ax1, freq_fft_nf, ErrPosUm_fft_nf, '--', 'r', 1.5, 1.0, xscale='log', xrange=[1.0, 1000.0], yrange=[0.0, 0.4], ylabel='Error Pos [um]', legend=['w/o NF', 'with NF'])
+plot.plot_xy(ax1, freq_fft_nf, ErrPosUm_fft_nf, '--', 'g', 1.5, 1.0, xscale='log', xrange=[1.0, 1000.0], yrange=[0.0, 0.4], ylabel='Error Pos [um]', legend=['w/o NF', 'with NF'])
 plot.plot_xy(ax2, freq_fft, ServoOutN_fft, '-', 'b', 1.5, 1.0)
-plot.plot_xy(ax2, freq_fft_nf, ServoOutN_fft_nf, '--', 'r', 1.5, 1.0, xscale='log', xrange=[1.0, 1000.0], yrange=[0.0, 0.002], xlabel='Frequency [Hz]', ylabel='ServoOut [N]', legend=['w/o NF', 'with NF'])
+plot.plot_xy(ax2, freq_fft_nf, ServoOutN_fft_nf, '--', 'g', 1.5, 1.0, xscale='log', xrange=[1.0, 1000.0], yrange=[0.0, 0.002], xlabel='Frequency [Hz]', ylabel='ServoOut [N]', legend=['w/o NF', 'with NF'])
 plot.savefig(figurefolderName+'/time_fft.png')
 
 # Time response
@@ -153,9 +153,9 @@ fig = plot.makefig()
 ax1 = fig.add_subplot(211)
 ax2 = fig.add_subplot(212)
 plot.plot_xy(ax1, time, ErrPosUm, '-', 'b', 1.5, 1.0)
-plot.plot_xy(ax1, time_nf, ErrPosUm_nf, '--', 'r', 1.5, 1.0, yrange=[-2.5, 2.5], ylabel='Error Pos [um]', legend=['w/o NF (Exp)', 'with NF (Exp)'], loc='upper right', title='Time response')
+plot.plot_xy(ax1, time_nf, ErrPosUm_nf, '--', 'g', 1.5, 1.0, yrange=[-2.5, 2.5], ylabel='Error Pos [um]', legend=['w/o NF (Exp)', 'with NF (Exp)'], loc='upper right', title='Time response')
 plot.plot_xy(ax2, time, ErrPosUm, '-', 'b', 1.5, 1.0)
-plot.plot_xy(ax2, time_sim, ErrPosUm_nf_sim, '--', 'r', 1.5, 1.0, yrange=[-2.5, 2.5], xlabel='Time [s]', ylabel='Error Pos [um]', legend=['w/o NF (Exp)', 'with NF (Sim)'], loc='upper right')
+plot.plot_xy(ax2, time_sim, ErrPosUm_nf_sim, '--', 'g', 1.5, 1.0, yrange=[-2.5, 2.5], xlabel='Time [s]', ylabel='Error Pos [um]', legend=['w/o NF (Exp)', 'with NF (Sim)'], loc='upper right')
 plot.savefig(figurefolderName+'/time_resp_vs_sim.png')
 
 # FFT
@@ -163,9 +163,9 @@ fig = plot.makefig()
 ax1 = fig.add_subplot(211)
 ax2 = fig.add_subplot(212)
 plot.plot_xy(ax1, freq_fft, ErrPosUm_fft, '-', 'b', 1.5, 1.0, title='Power spectrum density')
-plot.plot_xy(ax1, freq_fft_nf, ErrPosUm_fft_nf, '--', 'r', 1.5, 1.0, xscale='log', xrange=[1.0, 1000.0], yrange=[0.0, 0.4], ylabel='Error Pos [um]', legend=['w/o NF (Exp)', 'with NF (Exp)'])
+plot.plot_xy(ax1, freq_fft_nf, ErrPosUm_fft_nf, '--', 'g', 1.5, 1.0, xscale='log', xrange=[1.0, 1000.0], yrange=[0.0, 0.4], ylabel='Error Pos [um]', legend=['w/o NF (Exp)', 'with NF (Exp)'])
 plot.plot_xy(ax2, freq_fft, ErrPosUm_fft, '-', 'b', 1.5, 1.0)
-plot.plot_xy(ax2, freq_fft_sim, ErrPosUm_fft_nf_sim, '--', 'r', 1.5, 1.0, xscale='log', xrange=[1.0, 1000.0], yrange=[0.0, 0.4], xlabel='Frequency [Hz]', ylabel='Error Pos [um]', legend=['w/o NF (Exp)', 'with NF (Sim)'])
+plot.plot_xy(ax2, freq_fft_sim, ErrPosUm_fft_nf_sim, '--', 'g', 1.5, 1.0, xscale='log', xrange=[1.0, 1000.0], yrange=[0.0, 0.4], xlabel='Frequency [Hz]', ylabel='Error Pos [um]', legend=['w/o NF (Exp)', 'with NF (Sim)'])
 plot.savefig(figurefolderName+'/time_fft_vs_sim.png')
 
 # Plant
@@ -189,7 +189,7 @@ fig = plot.makefig()
 ax_mag = fig.add_subplot(211)
 ax_phase = fig.add_subplot(212)
 plot.plot_tffrd(ax_mag, ax_phase, Gn_frd, '-', 'b', 1.5, 1.0, title='Frequency response of open loop transfer function')
-plot.plot_tffrd(ax_mag, ax_phase, G_frd, '--', 'r', 1.5, 1.0, freqrange, legend=['w/o NF', 'with NF'])
+plot.plot_tffrd(ax_mag, ax_phase, G_frd, '--', 'g', 1.5, 1.0, freqrange, legend=['w/o NF', 'with NF'])
 plot.savefig(figurefolderName+'/freq_G.png')
 
 # Sensitivity function
@@ -197,7 +197,7 @@ fig = plot.makefig()
 ax_mag = fig.add_subplot(111)
 ax_phase = None
 plot.plot_tffrd(ax_mag, ax_phase, Sn_frd, '-', 'b', 1.5, 1.0, title='Frequency response of sensitivity function')
-plot.plot_tffrd(ax_mag, ax_phase, S_frd, '--', 'r', 1.5, 1.0, freqrange, [-60, 10], legend=['w/o NF', 'with NF'])
+plot.plot_tffrd(ax_mag, ax_phase, S_frd, '--', 'g', 1.5, 1.0, freqrange, [-60, 10], legend=['w/o NF', 'with NF'])
 plot.savefig(figurefolderName+'/freq_S.png')
 
 # Complementary sensitivity function
@@ -205,14 +205,14 @@ fig = plot.makefig()
 ax_mag = fig.add_subplot(211)
 ax_phase = fig.add_subplot(212)
 plot.plot_tffrd(ax_mag, ax_phase, Tn_frd, '-', 'b', 1.5, 1.0, title='Frequency response of complementary sensitivity function')
-plot.plot_tffrd(ax_mag, ax_phase, T_frd, '--', 'r', 1.5, 1.0, freqrange, [-60, 10], legend=['w/o NF', 'with NF'])
+plot.plot_tffrd(ax_mag, ax_phase, T_frd, '--', 'g', 1.5, 1.0, freqrange, [-60, 10], legend=['w/o NF', 'with NF'])
 plot.savefig(figurefolderName+'/freq_T.png')
 
 # Nyquist
 fig = plot.makefig()
 ax = fig.add_subplot(111)
 plot.plot_nyquist(ax, Gn_frd, '-', 'b', 1.5, 1.0, title='Nyquist diagram')
-plot.plot_nyquist(ax, G_frd, '--', 'r', 1.5, 1.0, legend=['w/o NF', 'with NF'])
+plot.plot_nyquist(ax, G_frd, '--', 'g', 1.5, 1.0, legend=['w/o NF', 'with NF'])
 plot.plot_nyquist_assistline(ax)
 plot.savefig(figurefolderName+'/nyquist.png')
 
