@@ -27,7 +27,7 @@ z = ctrl.tf([1, 0], [1], Ts)
 print('Common parameters were set.')
 
 # Plant model
-M = 0.027
+M = 0.0185
 C = 0.7
 K = 0.0
 Pmechs = ctrl.tf([1.0], [M, C, K])

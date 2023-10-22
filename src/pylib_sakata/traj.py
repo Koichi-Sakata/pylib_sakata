@@ -1,6 +1,7 @@
 # Copyright (c) 2021 Koichi Sakata
 
 # class TrajInf(time, pos, vel, acc, T, dt)
+# TrajInf = traj3rd(posStart, posStep, velMax, accAve, dt, Tstay=0)
 # TrajInf = traj4th(posStart, posStep, velMax, accAve, dt, Tstay=0)
 # TrajInf = traj4th2(posStart, posStep, velMax, accAve, dt, Tstay=0)
 # TrajInf = trajSinStep(posStart, posStep, velMax, accAve, dt, Tstay=0)
@@ -21,6 +22,101 @@ class TrajInf():
         self.snap = snap
         self.T = T
         self.dt = dt
+
+
+def traj3rd(posStart, posStep, velMax, accAve, dt, Tstay=0):
+    if velMax <= 0:
+        print('Error: velMax should be more than 0.0')
+
+    if accAve <= 0:
+        print('Error: accAve should be more than 0.0')
+
+    if posStep < 0:
+        direction = False
+        posStep *= -1
+    else:
+        direction = True
+
+    velCon = velMax
+    Tacc = velMax / accAve
+    posCon = velMax * Tacc
+    Tcon = (posStep - posCon) / velMax
+
+    if posStep <= posCon:
+        accAve = posStep / Tacc ** 2
+        Tcon = 0.0
+        velCon = accAve * Tacc
+
+    if Tacc == 0.0:
+        A = 0.0
+    else:
+        A = 4.0 * velCon / (Tacc ** 2)
+    Tmove = 2.0 * Tacc + Tcon
+
+    datalength = int((Tstay + Tmove) / dt + 1)
+
+    time = np.array(range(datalength)) * dt
+    pos = np.array([0.0] * datalength)
+    vel = np.array([0.0] * datalength)
+    acc = np.array([0.0] * datalength)
+    jerk = np.array([0.0] * datalength)
+    snap = np.array([0.0] * datalength)
+    for i, t in enumerate(time):
+        if t <= 0.0:
+            pos[i] = 0.0
+            vel[i] = 0.0
+            acc[i] = 0.0
+            jerk[i] = 0.0
+            snap[i] = 0.0
+        elif 0.0 < t <= 0.5 * Tacc:
+            pos[i] = 1.0/6.0 * A * t ** 3
+            vel[i] = 0.5 * A * t ** 2
+            acc[i] = A * t
+            jerk[i] = A
+            snap[i] = 0.0
+        elif 0.5 * Tacc < t <= Tacc:
+            pos[i] = -1.0/6.0 * A * (t - Tacc) ** 3 + velCon * (t - Tacc) + 0.5 * velCon * Tacc
+            vel[i] = -0.5 * A * (t - Tacc) ** 2 + velCon
+            acc[i] = -A * (t - Tacc)
+            jerk[i] = -A
+            snap[i] = 0.0
+        elif Tcon > 0.0 and Tacc < t <= Tacc + Tcon:
+            t = t - Tacc
+            pos[i] = velCon * t + 0.5 * velCon * Tacc
+            vel[i] = velCon
+            acc[i] = 0.0
+            jerk[i] = 0.0
+            snap[i] = 0.0
+        elif Tacc + Tcon < t <= Tmove - 0.5 * Tacc:
+            t = t - Tacc - Tcon
+            pos[i] = -1.0/6.0 * A * t ** 3 + velCon * t + velCon * (Tcon + 0.5 * Tacc)
+            vel[i] = -0.5 * A * t ** 2 + velCon
+            acc[i] = -A * t
+            jerk[i] = -A
+            snap[i] = 0.0
+        elif Tmove - 0.5 * Tacc < t <= Tmove:
+            t = t - Tacc - Tcon
+            pos[i] = 1.0/6.0 * A * (t - Tacc) ** 3 + posStep
+            vel[i] = 0.5 * A * (t - Tacc) ** 2
+            acc[i] = A * (t - Tacc)
+            jerk[i] = A
+            snap[i] = 0.0
+        else:
+            pos[i] = posStep
+            vel[i] = 0.0
+            acc[i] = 0.0
+            jerk[i] = 0.0
+            snap[i] = 0.0
+
+        if not direction:
+            # Move to minus direction
+            pos[i] *= -1
+            vel[i] *= -1
+            acc[i] *= -1
+            jerk[i] *= -1
+            snap[i] *= -1
+    pos += posStart
+    return TrajInf(time, pos, vel, acc, jerk, snap, Tmove, dt)
 
 
 def traj4th(posStart, posStep, velMax, accAve, dt, Tstay=0):

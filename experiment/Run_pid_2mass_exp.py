@@ -32,16 +32,12 @@ z = ctrl.tf([1, 0], [1], Ts)
 print('Common parameters were set.')
 
 # Plant model
-# M1 = 0.035
 M1 = 0.0343
-# M2 = 0.075
 M2 = 0.0757
 M = M1 + M2
 C = 0.7
 K = 0.0
-# Creso = 4.0
 Creso = 2.5
-# Kreso = 55000.0
 Kreso = 65460.0
 k1 = M2/(M1 * (M1 + M2))
 k2 = -1.0/(M1 + M2)
