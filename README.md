@@ -1,4 +1,4 @@
-pylib-sakata User's Manual version-0.1.15
+pylib-sakata User's Manual version-0.1.16
 ===
 
 <!-- code_chunk_output -->
@@ -71,8 +71,9 @@ pylib-sakata User's Manual version-0.1.15
   - [5.7. measdata2frd](#57-measdata2frd)
 - [6. pylib\_sakata.traj](#6-pylib_sakatatraj)
   - [6.1. TrajInf](#61-trajinf)
-  - [6.2. traj4th](#62-traj4th)
-  - [6.3. trajSinStep](#63-trajsinstep)
+  - [6.2. traj3rd](#62-traj3rd)
+  - [6.3. traj4th](#63-traj4th)
+  - [6.4. trajSinStep](#64-trajsinstep)
 - [7. pylib\_sakata.plot](#7-pylib_sakataplot)
   - [7.1. plot\_xy](#71-plot_xy)
   - [7.2. plot\_tf](#72-plot_tf)
@@ -1524,7 +1525,28 @@ class pylib_sakata.traj.**TrajInf**(*time, pos, vel, acc, T, dt*)
   - T: moving time [s]
   - dt: sampling time of the trajectory data
 
-### 6.2. traj4th
+### 6.2. traj3rd
+
+pylib_sakata.traj.**traj3rd**(*posStart, posStep, velMax, accAve, dt, Tstay=0*)  
+
+This function is for generation of a 3rd order polynomial trajectory.
+
+- Parameters:
+  - posStart: start position of the trajectory
+  - posStep: step position of the trajectory
+  - velMax: maximum of velocity of the trajectory
+  - accAve: average of accelation (= decelation) of the trajectory
+  - dt: sampling time of the trajectory data.
+  - Tstay: time after the step moving
+- Returns:
+  - out: instance of TrajInf class of the 3rd order polynomial trajectory
+
+**Examples**
+```python
+traj = traj.traj3rd(0, 100, 100, 200, 0.001, 0.5)
+```
+
+### 6.3. traj4th
 
 pylib_sakata.traj.**traj4th**(*posStart, posStep, velMax, accAve, dt, Tstay=0*)  
 pylib_sakata.traj.**traj4th2**(*posStart, posStep, velMax, accAve, dt, Tstay=0*)
@@ -1546,7 +1568,7 @@ This function is for generation of a 4th order polynomial trajectory.
 traj = traj.traj4th(0, 100, 100, 200, 0.001, 0.5)
 ```
 
-### 6.3. trajSinStep
+### 6.4. trajSinStep
 
 pylib_sakata.traj.**trajSinStep**(*posStart, posStep, velMax, accAve, dt, Tstay=0*)
 pylib_sakata.traj.**trajSinStep2**(*posStart, posStep, velMax, accAve, dt, Tstay=0*)
