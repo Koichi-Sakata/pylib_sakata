@@ -49,9 +49,9 @@ Cz_PD_frd = ctrl.sys2frd(Cz_PD, freq)
 print('PD controller was designed.')
 
 # Design PID controller
-freq1 = 25.0
+freq1 = 20.0
 zeta1 = 0.7
-freq2 = 25.0
+freq2 = 20.0
 zeta2 = 0.7
 Cz_PID = ctrl.pid(freq1, zeta1, freq2, zeta2, M, C, K, Ts)
 Cz_PID_frd = ctrl.sys2frd(Cz_PID, freq)

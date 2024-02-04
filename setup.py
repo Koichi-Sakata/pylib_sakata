@@ -1,4 +1,4 @@
-# Copyright (c) 2022 Koichi Sakata
+# Copyright (c) 2024 Koichi Sakata
 
 import setuptools
 
@@ -7,7 +7,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="pylib-sakata",
-    version="0.1.16",
+    version="0.1.17",
     author="Koichi Sakata",
     author_email="",
     description="Control system design and analysis package",

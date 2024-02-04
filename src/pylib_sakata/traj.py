@@ -2,6 +2,7 @@
 
 # class TrajInf(time, pos, vel, acc, T, dt)
 # TrajInf = traj3rd(posStart, posStep, velMax, accAve, dt, Tstay=0)
+# TrajInf = traj3rd2(posStart, posStep, velMax, accAve, jerkRatio, dt, Tstay=0)
 # TrajInf = traj4th(posStart, posStep, velMax, accAve, dt, Tstay=0)
 # TrajInf = traj4th2(posStart, posStep, velMax, accAve, dt, Tstay=0)
 # TrajInf = trajSinStep(posStart, posStep, velMax, accAve, dt, Tstay=0)
@@ -26,10 +27,10 @@ class TrajInf():
 
 def traj3rd(posStart, posStep, velMax, accAve, dt, Tstay=0):
     if velMax <= 0:
-        print('Error: velMax should be more than 0.0')
+        print('Error: velMax must be more than 0.0')
 
     if accAve <= 0:
-        print('Error: accAve should be more than 0.0')
+        print('Error: accAve must be more than 0.0')
 
     if posStep < 0:
         direction = False
@@ -119,12 +120,129 @@ def traj3rd(posStart, posStep, velMax, accAve, dt, Tstay=0):
     return TrajInf(time, pos, vel, acc, jerk, snap, Tmove, dt)
 
 
-def traj4th(posStart, posStep, velMax, accAve, dt, Tstay=0):
+def traj3rd2(posStart, posStep, velMax, accAve, jerkRatio, dt, Tstay=0):
     if velMax <= 0:
-        print('Error: velMax should be more than 0.0')
+        print('Error: velMax must be more than 0.0')
 
     if accAve <= 0:
-        print('Error: accAve should be more than 0.0')
+        print('Error: accAve must be more than 0.0')
+
+    if jerkRatio < 0.01:
+        print('Error: jerkRatio must be 0.01 or more than 0.01. jerkRatio was changed to 0.01.')
+        jerkRatio = 0.01
+    elif jerkRatio > 0.5:
+        print('Error: jerkRatio must be 0.5 or less than 0.5. jerkRatio was changed to 0.01.')
+        jerkRatio = 0.5
+
+    if posStep < 0:
+        direction = False
+        posStep *= -1
+    else:
+        direction = True
+
+    velCon = velMax
+    Tacc = velMax / accAve
+    posCon = velMax * Tacc
+    Tcon = (posStep - posCon) / velMax
+
+    if posStep <= posCon:
+        accAve = posStep / Tacc ** 2
+        Tcon = 0.0
+        velCon = accAve * Tacc
+
+    if Tacc == 0.0:
+        A = 0.0
+    else:
+        A = accAve / (Tacc * jerkRatio * (1 - jerkRatio))
+    Tmove = 2.0 * Tacc + Tcon
+
+    datalength = int((Tstay + Tmove) / dt + 1)
+
+    time = np.array(range(datalength)) * dt
+    pos = np.array([0.0] * datalength)
+    vel = np.array([0.0] * datalength)
+    acc = np.array([0.0] * datalength)
+    jerk = np.array([0.0] * datalength)
+    snap = np.array([0.0] * datalength)
+    for i, t in enumerate(time):
+        if t <= 0.0:
+            pos[i] = 0.0
+            vel[i] = 0.0
+            acc[i] = 0.0
+            jerk[i] = 0.0
+            snap[i] = 0.0
+        elif 0.0 < t <= Tacc * jerkRatio:
+            pos[i] = 1.0/6.0 * A * t ** 3
+            vel[i] = 0.5 * A * t ** 2
+            acc[i] = A * t
+            jerk[i] = A
+            snap[i] = 0.0
+        elif Tacc * jerkRatio < t <= Tacc * (1 - jerkRatio):
+            t = t - Tacc * jerkRatio
+            pos[i] = 0.5 * A * Tacc * jerkRatio * t ** 2 + 0.5 * A * (Tacc * jerkRatio) ** 2 * t + 1.0/6.0 * A * (Tacc * jerkRatio) ** 3
+            vel[i] = A * Tacc * jerkRatio * t + 0.5 * A * (Tacc * jerkRatio) ** 2
+            acc[i] = A * Tacc * jerkRatio
+            jerk[i] = 0.0
+            snap[i] = 0.0
+        elif Tacc * (1 - jerkRatio) < t <= Tacc:
+            t = t - Tacc * (1 - jerkRatio)
+            pos[i] = -1.0/6.0 * A * t ** 3 + 0.5 * A * Tacc * jerkRatio * t ** 2 + (velCon - 0.5 * A * (Tacc * jerkRatio) ** 2) * t + 1.0/6.0 * A * (Tacc * jerkRatio) ** 3 + 0.5 * A * Tacc ** 3 * jerkRatio * (1 - jerkRatio) * (1 - 2 * jerkRatio)
+            vel[i] = -0.5 * A * t ** 2 + A * Tacc * jerkRatio * t + velCon - 0.5 * A * (Tacc * jerkRatio) ** 2
+            acc[i] = -A * t + A * Tacc * jerkRatio
+            jerk[i] = -A
+            snap[i] = 0.0
+        elif Tcon > 0.0 and Tacc < t <= Tacc + Tcon:
+            t = t - Tacc
+            pos[i] = velCon * t + 0.5 * velCon * Tacc
+            vel[i] = velCon
+            acc[i] = 0.0
+            jerk[i] = 0.0
+            snap[i] = 0.0
+        elif Tacc + Tcon < t <= Tacc * (1 + jerkRatio) + Tcon:
+            t = t - Tacc - Tcon
+            pos[i] = -1.0/6.0 * A * t ** 3 + velCon * t + velCon * (Tcon + 0.5 * Tacc)
+            vel[i] = -0.5 * A * t ** 2 + velCon
+            acc[i] = -A * t
+            jerk[i] = -A
+            snap[i] = 0.0
+        elif Tacc * (1 + jerkRatio) + Tcon < t <= Tmove - Tacc * jerkRatio:
+            t = t - Tacc * (1 + jerkRatio) - Tcon
+            pos[i] = -0.5 * A * Tacc * jerkRatio * t ** 2 + (velCon - 0.5 * A * (Tacc * jerkRatio) ** 2) * t -1.0/6.0 * A * (Tacc * jerkRatio) ** 3 + velCon * Tacc * jerkRatio + velCon * (Tcon + 0.5 * Tacc)
+            vel[i] = -A * Tacc * jerkRatio * t + velCon - 0.5 * A * (Tacc * jerkRatio) ** 2
+            acc[i] = -A * Tacc * jerkRatio
+            jerk[i] = 0.0
+            snap[i] = 0.0
+        elif Tmove - Tacc * jerkRatio < t <= Tmove:
+            t = t - Tmove + Tacc * jerkRatio
+            pos[i] = 1.0/6.0 * A * t ** 3 - 0.5 * A * Tacc * jerkRatio * t ** 2 + posStep + 0.5 * A * (Tacc * jerkRatio) ** 2 * t - 1.0/6.0 * A * (Tacc * jerkRatio) ** 3
+            vel[i] = 0.5 * A * t ** 2 - A * Tacc * jerkRatio * t + 0.5 * A * (Tacc * jerkRatio) ** 2
+            acc[i] = A * t - A * Tacc * jerkRatio
+            jerk[i] = A
+            snap[i] = 0.0
+        else:
+            pos[i] = posStep
+            vel[i] = 0.0
+            acc[i] = 0.0
+            jerk[i] = 0.0
+            snap[i] = 0.0
+
+        if not direction:
+            # Move to minus direction
+            pos[i] *= -1
+            vel[i] *= -1
+            acc[i] *= -1
+            jerk[i] *= -1
+            snap[i] *= -1
+    pos += posStart
+    return TrajInf(time, pos, vel, acc, jerk, snap, Tmove, dt)
+
+
+def traj4th(posStart, posStep, velMax, accAve, dt, Tstay=0):
+    if velMax <= 0:
+        print('Error: velMax must be more than 0.0')
+
+    if accAve <= 0:
+        print('Error: accAve must be more than 0.0')
 
     if posStep < 0:
         direction = False
@@ -203,10 +321,10 @@ def traj4th(posStart, posStep, velMax, accAve, dt, Tstay=0):
 
 def traj4th2(posStart, posStep, velMax, accAve, dt, Tstay=0):
     if velMax <= 0:
-        print('Error: velMax should be more than 0.0')
+        print('Error: velMax must be more than 0.0')
 
     if accAve <= 0:
-        print('Error: accAve should be more than 0.0')
+        print('Error: accAve must be more than 0.0')
 
     if posStep < 0:
         direction = False
@@ -313,10 +431,10 @@ def traj4th2(posStart, posStep, velMax, accAve, dt, Tstay=0):
 
 def trajSinStep(posStart, posStep, velMax, accAve, dt, Tstay=0):
     if velMax <= 0:
-        print('Error: velMax should be more than 0.0')
+        print('Error: velMax must be more than 0.0')
 
     if accAve <= 0:
-        print('Error: accAve should be more than 0.0')
+        print('Error: accAve must be more than 0.0')
 
     if posStep < 0:
         direction = False
@@ -395,10 +513,10 @@ def trajSinStep(posStart, posStep, velMax, accAve, dt, Tstay=0):
 
 def trajSinStep2(posStart, posStep, velMax, accAve, dt, Tstay=0):
     if velMax <= 0:
-        print('Error: velMax should be more than 0.0')
+        print('Error: velMax must be more than 0.0')
 
     if accAve <= 0:
-        print('Error: accAve should be more than 0.0')
+        print('Error: accAve must be more than 0.0')
 
     if posStep < 0:
         direction = False
@@ -478,10 +596,10 @@ def trajSinStep2(posStart, posStep, velMax, accAve, dt, Tstay=0):
 
 def trajSinStep3(posStart, posStep, velMax, accAve, dt, Tstay=0):
     if velMax <= 0:
-        print('Error: velMax should be more than 0.0')
+        print('Error: velMax must be more than 0.0')
 
     if accAve <= 0:
-        print('Error: accAve should be more than 0.0')
+        print('Error: accAve must be more than 0.0')
 
     if posStep < 0:
         direction = False
