@@ -42,7 +42,8 @@ from numpy.polynomial import polynomial
 import control
 from control import matlab
 from .fft import FreqResp
-
+import warnings
+warnings.simplefilter("ignore", np.ComplexWarning)
 
 class ZpkModel:
 
@@ -267,9 +268,12 @@ def zpk(z, p, k, dt=0):
     return ZpkModel(z, p, k, dt)
 
 
-def tf2ss(tf, form='reachable'):
+def tf2ss(tf, form=None):
     # form: 'reachable' or 'observable' or 'modal'
-    ss, T = control.canonical_form(matlab.tf2ss(tf), form=form)
+    if form == None:
+        ss = matlab.tf2ss(tf)
+    else:
+        ss, T = control.canonical_form(matlab.tf2ss(tf), form=form)
     return ss
 
 
@@ -689,6 +693,7 @@ def filt(num, den, dt):
     denpoly = 0
     for i in range(len(den)):
         denpoly += den[i] * zinv ** i
+    # return minreal(numpoly / denpoly)
     return minreal(numpoly / denpoly)
 
 

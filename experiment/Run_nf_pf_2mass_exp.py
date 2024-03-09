@@ -161,7 +161,7 @@ plot.plot_xy(ax2, time_nf_pf, ErrPosUm_nf_pf, '-', 'r', 1.5, 1.0, yrange=[-2.5, 
 plot.plot_xy(ax3, time, ServoOutN, '-', 'b', 1.5, 1.0)
 plot.plot_xy(ax3, time_nf, ServoOutN_nf, '-', 'g', 1.5, 1.0)
 plot.plot_xy(ax3, time_nf_pf, ServoOutN_nf_pf, '-', 'r', 1.5, 1.0, xlabel='Time [s]', ylabel='ServoOut [N]', legend=['w/o Filters', 'with NF', 'with NF+PF'])
-plot.savefig(figurefolderName+'/time_resp.svg')
+plot.savefig(figurefolderName+'/time_resp.png')
 
 # FFT
 fig = plot.makefig()
@@ -173,7 +173,7 @@ plot.plot_xy(ax1, freq_fft_nf_pf, ErrPosUm_fft_nf_pf, '--', 'r', 1.5, 1.0, xscal
 plot.plot_xy(ax2, freq_fft, ServoOutN_fft, '-', 'b', 1.5, 1.0)
 plot.plot_xy(ax2, freq_fft_nf, ServoOutN_fft_nf, '--', 'g', 1.5, 1.0)
 plot.plot_xy(ax2, freq_fft_nf_pf, ServoOutN_fft_nf_pf, '--', 'r', 1.5, 1.0, xscale='log', xrange=[1.0, 1000.0], yrange=[0.0, 0.002], xlabel='Frequency [Hz]', ylabel='ServoOut [N]', legend=['w/o Filters', 'with NF', 'with NF+PF'])
-plot.savefig(figurefolderName+'/time_fft.svg')
+plot.savefig(figurefolderName+'/time_fft.png')
 
 # Time response
 fig = plot.makefig()
@@ -185,7 +185,7 @@ plot.plot_xy(ax1, time_nf_pf, ErrPosUm_nf_pf, '--', 'r', 1.5, 1.0, yrange=[-2.5,
 plot.plot_xy(ax2, time, ErrPosUm, '-', 'b', 1.5, 1.0)
 plot.plot_xy(ax2, time_sim_nf, ErrPosUm_sim_nf, '--', 'g', 1.5, 1.0)
 plot.plot_xy(ax2, time_sim_nf_pf, ErrPosUm_sim_nf_pf, '--', 'r', 1.5, 1.0, yrange=[-1.0, 1.0], xlabel='Time [s]', ylabel='Error Pos [um]', legend=['w/o Filters (Exp)', 'with NF (Sim)', 'with NF+PF (Sim)'], loc='upper right')
-plot.savefig(figurefolderName+'/time_resp_vs_sim.svg')
+plot.savefig(figurefolderName+'/time_resp_vs_sim.png')
 
 # FFT
 fig = plot.makefig()
@@ -197,7 +197,7 @@ plot.plot_xy(ax1, freq_fft_nf_pf, ErrPosUm_fft_nf_pf, '--', 'r', 1.5, 1.0, xscal
 plot.plot_xy(ax2, freq_fft, ErrPosUm_fft, '-', 'b', 1.5, 1.0)
 plot.plot_xy(ax2, freq_fft_sim_nf, ErrPosUm_fft_sim_nf, '--', 'g', 1.5, 1.0)
 plot.plot_xy(ax2, freq_fft_sim_nf_pf, ErrPosUm_fft_sim_nf_pf, '--', 'r', 1.5, 1.0, xscale='log', xrange=[1.0, 1000.0], yrange=[0.0, 0.4], xlabel='Frequency [Hz]', ylabel='Error Pos [um]', legend=['w/o Filters (Exp)', 'with NF (Sim)', 'with NF+PF (Sim)'])
-plot.savefig(figurefolderName+'/time_fft_vs_sim.svg')
+plot.savefig(figurefolderName+'/time_fft_vs_sim.png')
 
 # Plant
 fig = plot.makefig()
@@ -206,14 +206,14 @@ ax_phase = fig.add_subplot(312)
 ax_coh = fig.add_subplot(313)
 plot.plot_tffrd(ax_mag, ax_phase, Pmeas_frd, '-', 'm', 1.5, 1.0, ax_coh=ax_coh, coh=coh, title='Frequency response of plant')
 plot.plot_tffrd(ax_mag, ax_phase, Pnz_frd, '--', 'b', 1.5, 1.0, freqrange, legend=['Measurement', 'Model'])
-plot.savefig(figurefolderName+'/freq_P.svg')
+plot.savefig(figurefolderName+'/freq_P.png')
 
 # PID controller
 fig = plot.makefig()
 ax_mag = fig.add_subplot(211)
 ax_phase = fig.add_subplot(212)
 plot.plot_tffrd(ax_mag, ax_phase, Cz_frd, '-', 'b', 1.5, 1.0, freqrange, title='Frequency response of PID controller')
-plot.savefig(figurefolderName+'/freq_C.svg')
+plot.savefig(figurefolderName+'/freq_C.png')
 
 # Open loop function
 fig = plot.makefig()
@@ -222,7 +222,7 @@ ax_phase = fig.add_subplot(212)
 plot.plot_tffrd(ax_mag, ax_phase, G_frd, '-', 'b', 1.5, 1.0, title='Frequency response of open loop transfer function')
 plot.plot_tffrd(ax_mag, ax_phase, G_frd_nf, '-', 'g', 1.5, 1.0)
 plot.plot_tffrd(ax_mag, ax_phase, G_frd_nf_pf, '-', 'r', 1.5, 1.0, freqrange, legend=['w/o Filters', 'with NF', 'with NF+PF'])
-plot.savefig(figurefolderName+'/freq_G.svg')
+plot.savefig(figurefolderName+'/freq_G.png')
 
 # Sensitivity function
 fig = plot.makefig()
@@ -231,7 +231,7 @@ ax_phase = None
 plot.plot_tffrd(ax_mag, ax_phase, S_frd, '-', 'b', 1.5, 1.0, title='Frequency response of sensitivity function')
 plot.plot_tffrd(ax_mag, ax_phase, S_frd_nf, '-', 'g', 1.5, 1.0)
 plot.plot_tffrd(ax_mag, ax_phase, S_frd_nf_pf, '-', 'r', 1.5, 1.0, freqrange, [-60, 10], legend=['w/o Filters', 'with NF', 'with NF+PF'])
-plot.savefig(figurefolderName+'/freq_S.svg')
+plot.savefig(figurefolderName+'/freq_S.png')
 
 # Complementary sensitivity function
 fig = plot.makefig()
@@ -240,7 +240,7 @@ ax_phase = fig.add_subplot(212)
 plot.plot_tffrd(ax_mag, ax_phase, T_frd, '-', 'b', 1.5, 1.0, title='Frequency response of complementary sensitivity function')
 plot.plot_tffrd(ax_mag, ax_phase, T_frd_nf, '-', 'g', 1.5, 1.0)
 plot.plot_tffrd(ax_mag, ax_phase, T_frd_nf_pf, '-', 'r', 1.5, 1.0, freqrange, [-60, 10], legend=['w/o Filters', 'with NF', 'with NF+PF'])
-plot.savefig(figurefolderName+'/freq_T.svg')
+plot.savefig(figurefolderName+'/freq_T.png')
 
 # Nyquist
 fig = plot.makefig()
@@ -249,6 +249,7 @@ plot.plot_nyquist(ax, G_frd, '-', 'b', 1.5, 1.0, title='Nyquist diagram')
 plot.plot_nyquist(ax, G_frd_nf, '-', 'g', 1.5, 1.0)
 plot.plot_nyquist(ax, G_frd_nf_pf, '-', 'r', 1.5, 1.0, legend=['w/o Filters', 'with NF', 'with NF+PF'])
 plot.plot_nyquist_assistline(ax)
-plot.savefig(figurefolderName+'/nyquist.svg')
+plot.savefig(figurefolderName+'/nyquist.png')
 
+plot.showfig()
 print('Finished.')

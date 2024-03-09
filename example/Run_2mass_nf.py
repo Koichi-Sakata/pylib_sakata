@@ -154,4 +154,5 @@ plot.plot_nyquist(ax, Gn2_nf_frd, '-', 'm', 1.5, 1.0, legend=['Motor side', 'Loa
 plot.plot_nyquist_assistline(ax)
 plot.savefig(figurefolderName+'/nyquist.png')
 
+plot.showfig()
 print('Finished.')

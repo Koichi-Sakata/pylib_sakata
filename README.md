@@ -1,4 +1,4 @@
-pylib-sakata User's Manual version-0.1.17
+pylib-sakata User's Manual version-0.1.18
 ===
 
 <!-- code_chunk_output -->
@@ -355,11 +355,11 @@ pylib_sakata.ctrl.**zpk**(*z, p, k, dt=0*)
 
 ### 3.5. tf2ss
 
-pylib_sakata.ctrl.**tf2ss**(*tf, form='reachable'*)
+pylib_sakata.ctrl.**tf2ss**(*tf, form=None*)
 
 - Parameters:
   - tf: instance of TransferFunction class
-  - form: canonical form (Optional), Default: reachable. You can select the canonical form in reachable, observable, and modal.
+  - form: canonical form (Optional), you can select the canonical form in 'reachable', 'observable', and 'modal'.
 - Returns:
   - out: instance of StateSpace class
 
@@ -593,7 +593,7 @@ The matched method of **c2d** in control library does not supported for pure int
 **Examples**
 ```python
 >>> C_tf = ctrl.tf([1., 3., 2.], [1., 3., 0.])
->>> print(ctrl.c2d_matched(C_tf, 0.001))
+>>> print(ctrl.c2d(C_tf, 0.001, 'matched'))
 
 z^2 - 1.997 z + 0.997
 ---------------------
@@ -603,7 +603,7 @@ dt = 0.001
 ```
 ```python
 >>> C_zpk = ctrl.zpk([-1., -2.,], [0., -3.,], 1.)
->>> ctrl.c2d_matched(C_zpk, 0.001)
+>>> ctrl.c2d(C_zpk, 0.001, 'matched')
 
     (z-0.999)(z-0.998)
 1 * ------------------

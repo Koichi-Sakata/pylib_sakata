@@ -54,7 +54,7 @@ Cz_frd = ctrl.sys2frd(Cz, freq)
 print('PID controller was designed.')
 
 print('Getting measurement data...')
-measfileName = 'data/freq_resp.csv'
+measfileName = 'data/freq_resp_PD_20230720.csv'
 # Frequency response
 Pmeas_frd, coh = meas.measdata2frd(measfileName, 'ServoOutN[0]', 'ActPosUm[0]', 'FlagInject', freq, 1., 1.e-6, 8, 0.8)
 
@@ -117,4 +117,5 @@ plot.plot_nyquist(ax, Gn_frd, '--', 'b', 1.5, 1.0, legend=['Measurement', 'Model
 plot.plot_nyquist_assistline(ax)
 plot.savefig(figurefolderName+'/nyquist.png')
 
+plot.showfig()
 print('Finished.')

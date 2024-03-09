@@ -49,7 +49,7 @@ print('A peak filter was designed.')
 
 print('Frequency response analysis is running...')
 Cs = Cs * Fs
-Cs_frd = Cs_frd * Fs_frd
+Cs_frd = Cs_frd
 
 Ss = ctrl.feedback(Ps, Cs, sys='S')
 Ts = ctrl.feedback(Ps, Cs, sys='T')
@@ -62,9 +62,9 @@ Ts_frd = 1 - Ss_frd
 print('Time response analysis is running...')
 t = np.linspace(0.0, 5.0e-3, dataNum)
 r = np.sin(omegaF * t)
-y, tout, xout = matlab.lsim(Ts, r, t)
-e, tout, xout = matlab.lsim(Ss, r, t)
-u, tout, xout = matlab.lsim(Cs, e, t)
+y, tout, xout = matlab.lsim(ctrl.tf2ss(Ts), r, t)
+e, tout, xout = matlab.lsim(ctrl.tf2ss(Ss), r, t)
+u, tout, xout = matlab.lsim(ctrl.tf2ss(Cs), e, t)
 
 print('Plotting figures...')
 # Time response
@@ -105,4 +105,5 @@ plot.plot_tffrd(ax_mag, ax_phase, Ss_frd, '-', 'b', 1.5, 1.0, freqrange, title='
 plot.plot_tffrd(ax_mag, ax_phase, Ts_frd, '-', 'r', 1.5, 1.0, freqrange, magrange=[-50, 20], legend=['S', 'T'])
 plot.savefig(figurefolderName+'/freq_ST.png')
 
+plot.showfig()
 print('Finished.')

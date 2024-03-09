@@ -99,4 +99,5 @@ plot.plot_xy(ax1, freq_fft3, jerk4_fft, '-', 'm', 1.5, 1.0, title='Power spectru
 plot.plot_xy(ax1, freq_fft4, jerk5_fft, '-', 'g', 1.5, 1.0, xscale='log', yscale='log', xrange=[1.0, 100.0], yrange=[0.001, 100], xlabel='Frequency [Hz]', ylabel='Ref Jerk [mm/s3]', legend=['3rd', '4th', '4th v2', 'sin', 'sin v2', 'sin v3'])
 plot.savefig(figurefolderName+'/time_fft.png')
 
+plot.showfig()
 print('Finished.')

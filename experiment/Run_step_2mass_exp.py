@@ -148,4 +148,5 @@ plot.plot_nyquist(ax, Gn_frd, '-', 'b', 1.5, 1.0, title='Nyquist diagram')
 plot.plot_nyquist_assistline(ax)
 plot.savefig(figurefolderName+'/nyquist.png')
 
+plot.showfig()
 print('Finished.')

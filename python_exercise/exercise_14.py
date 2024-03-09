@@ -60,12 +60,12 @@ t_4th = traj.time
 r_4th = traj.pos
 v_4th = traj.vel
 a_4th = traj.acc
-e1, tout, xout = matlab.lsim(Snz, r_4th, t_4th)
+e1, tout, xout = matlab.lsim(ctrl.tf2ss(Snz), r_4th, t_4th)
 uff = M * a_4th + C * v_4th + K * r_4th
-y2, tout, xout = matlab.lsim(Pnz, uff, t_4th)
-e2, tout, xout = matlab.lsim(Snz, r_4th - y2, t_4th)
-u1, tout, xout = matlab.lsim(Cz, e1, t_4th)
-u2, tout, xout = matlab.lsim(Cz, e2, t_4th)
+y2, tout, xout = matlab.lsim(ctrl.tf2ss(Pnz), uff, t_4th)
+e2, tout, xout = matlab.lsim(ctrl.tf2ss(Snz), r_4th - y2, t_4th)
+u1, tout, xout = matlab.lsim(ctrl.tf2ss(Cz), e1, t_4th)
+u2, tout, xout = matlab.lsim(ctrl.tf2ss(Cz), e2, t_4th)
 
 
 print('Plotting figures...')
@@ -123,4 +123,5 @@ plot.plot_nyquist(ax, Gn_frd, '-', 'b', 1.5, 1.0, title='Nyquist Diagram')
 plot.plot_nyquist_assistline(ax)
 plot.savefig(figurefolderName+'/nyquist.png')
 
+plot.showfig()
 print('Finished.')

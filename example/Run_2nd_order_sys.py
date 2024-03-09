@@ -47,7 +47,7 @@ t = np.linspace(0.0, 5.0, 200)
 r = np.ones(len(t))
 y = [[] for k in range(len(Gs))]
 for k in range(len(Gs)):
-    y[k], tout, xout = matlab.lsim(Gs[k], r, t)
+    y[k], tout, xout = matlab.lsim(ctrl.tf2ss(Gs[k]), r, t)
 
 print('Plotting figures...')
 # Time response
@@ -102,7 +102,7 @@ ax = fig.add_subplot()
 ax.set_xlabel('Real axis')
 ax.set_ylabel('Imaginary axis')
 ax.set_aspect('equal', adjustable='box')
-ax.grid(b=True, which='both', axis='both')
+ax.grid(visible=True, which='both', axis='both')
 for k in range(len(Gs_pole)):
     ax.scatter(Gs_pole[k].real, Gs_pole[k].imag, color=color[k], label=legend[k], marker='x', s=100)
 ax.legend()
@@ -131,7 +131,7 @@ t = np.linspace(0.0, 5.0, 200)
 r = np.ones(len(t))
 y = [[] for k in range(len(Gs))]
 for k in range(len(Gs)):
-    y[k], tout, xout = matlab.lsim(Gs[k], r, t)
+    y[k], tout, xout = matlab.lsim(ctrl.tf2ss(Gs[k]), r, t)
 
 print('Plotting figures...')
 # Time response
@@ -186,11 +186,12 @@ ax = fig.add_subplot()
 ax.set_xlabel('Real axis')
 ax.set_ylabel('Imaginary axis')
 ax.set_aspect('equal', adjustable='box')
-ax.grid(b=True, which='both', axis='both')
+ax.grid(visible=True, which='both', axis='both')
 for k in range(len(Gs_pole)):
     ax.scatter(Gs_pole[k].real, Gs_pole[k].imag, color=color[k], label=legend[k], marker='x', s=100)
 ax.legend()
 plt.title('Pole placement')
 plot.savefig(figurefolderName+'/freq_pole2.png')
 
+plot.showfig()
 print('Finished.')

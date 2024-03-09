@@ -38,11 +38,13 @@ def gettxtdata(filePath):
     line = f.readlines()
     f.close()
     dataList = line[0].split('\t')[:-1]
+    # dataList = line[0].split()
     dataValue = [[] for i in range(len(dataList))]
     for n in range(len(dataList)):
         dataline = []
         for k in range(1, len(line)):
             dataline.append(float(line[k].split('\t')[n]))
+            # dataline.append(float(line[k].split()[n]))
         dataValue[n] = np.array(dataline)
     dt = dataValue[0][1] - dataValue[0][0]
     t = np.linspace(0.0, len(dataValue[0]) * dt, int(len(dataValue[0])))

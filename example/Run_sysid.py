@@ -91,4 +91,5 @@ plot.plot_tffrd(ax_mag, ax_phase, Pmeas_frd, '-', 'm', 1.5, 1.0, ax_coh=ax_coh, 
 plot.plot_tffrd(ax_mag, ax_phase, Pnz_frd, '--', 'b', 1.5, 1.0, freqrange, legend=['Measurement', 'Model'])
 plot.savefig(figurefolderName+'/freq_P.svg')
 
+plot.showfig()
 print('Finished.')

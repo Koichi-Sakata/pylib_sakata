@@ -82,4 +82,5 @@ plot.plot_tffrd(ax_mag, ax_phase, NFs_frd, '-', 'b', 1.5, 1.0, freqrange, title=
 plot.plot_tffrd(ax_mag, ax_phase, NFz_matched_frd, '--', 'r', 1.5, 1.0, freqrange, [-50, 10], legend=['Continuous', 'Discrete'], loc='lower left')
 plot.savefig(figurefolderName+'/freq_NF.png')
 
+plot.showfig()
 print('Finished.')

@@ -145,4 +145,5 @@ plot.plot_nyquist(ax, Gn_fssrc_frd, '-', 'm', 1.5, 1.0, xrange=[-5, 5], yrange=[
 plot.plot_nyquist_assistline(ax)
 plot.savefig(figurefolderName+'/nyquist_.png')
 
+plot.showfig()
 print('Finished.')

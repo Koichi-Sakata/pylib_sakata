@@ -212,4 +212,5 @@ plot.plot_nyquist(ax, G_frd, '-', 'g', 1.5, 1.0, legend=['w/o NF', 'with NF'])
 plot.plot_nyquist_assistline(ax)
 plot.savefig(figurefolderName+'/nyquist.png')
 
+plot.showfig()
 print('Finished.')

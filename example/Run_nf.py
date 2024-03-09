@@ -96,4 +96,5 @@ plot.plot_tffrd(ax_mag, ax_phase, NFz_tustin_frd, '-', 'g', 1.5, 1.0)
 plot.plot_tffrd(ax_mag, ax_phase, NFz_matched_frd, '--', 'r', 1.5, 1.0, legend=['Continuous', 'Discrete: Tustin', 'Discrete: Matched'])
 plot.savefig(figurefolderName+'/freq_NF_discrete.png')
 
+plot.showfig()
 print('Finished.')

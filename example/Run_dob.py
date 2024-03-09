@@ -117,4 +117,5 @@ plot.plot_nyquist(ax, Gdob_frd, '-', 'r', 1.5, 1.0, legend=['w/o DOB', 'with DOB
 plot.plot_nyquist_assistline(ax)
 plot.savefig(figurefolderName+'/nyquist.png')
 
+plot.showfig()
 print('Finished.')

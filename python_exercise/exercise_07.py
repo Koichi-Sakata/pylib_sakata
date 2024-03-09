@@ -72,15 +72,15 @@ Ts_frd = 1 - Ss_frd
 print('Time response analysis is running...')
 ti = np.linspace(0.0, 5.0e-3, dataNum)
 ri = np.ones(len(ti))
-yi, touti, xout = matlab.lsim(Ti, ri, ti)
-ei, touti, xout = matlab.lsim(Si, ri, ti)
-ui, touti, xout = matlab.lsim(Ci, ei, ti)
+yi, touti, xout = matlab.lsim(matlab.tf2ss(Ti), ri, ti)
+ei, touti, xout = matlab.lsim(ctrl.tf2ss(Si), ri, ti)
+ui, touti, xout = matlab.lsim(ctrl.tf2ss(Ci), ei, ti)
 
 tp = np.linspace(0.0, 0.05, dataNum)
 rp = np.ones(len(tp))
-yp, toutp, xout = matlab.lsim(Ts, rp, tp)
-ep, toutp, xout = matlab.lsim(Ss, rp, tp)
-up, toutp, xout = matlab.lsim(Cs, ep, tp)
+yp, toutp, xout = matlab.lsim(ctrl.tf2ss(Ts), rp, tp)
+ep, toutp, xout = matlab.lsim(ctrl.tf2ss(Ss), rp, tp)
+up, toutp, xout = matlab.lsim(ctrl.tf2ss(Cs), ep, tp)
 
 print('Plotting figures...')
 # Time response of current
@@ -129,4 +129,5 @@ plot.plot_nyquist(ax, Gs_frd, '-', 'b', 1.5, 1.0, title='Nyquist Diagram of posi
 plot.plot_nyquist_assistline(ax)
 plot.savefig(figurefolderName+'/nyquist_p.png')
 
+plot.showfig()
 print('Finished.')

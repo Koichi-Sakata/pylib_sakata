@@ -57,11 +57,13 @@ Sn_frd = 1/(1 + Gn_frd)
 Tn_frd = 1 - Sn_frd
 
 print('Time response analysis is running...')
+Snz = ctrl.feedback(Pnz, Cz, sys='S')
+Tnz = ctrl.feedback(Pnz, Cz, sys='T')
 t = np.linspace(0.0, 0.1, int(0.1/Ts)+1)
 r = np.ones(len(t))
-y, tout, xout = matlab.lsim(ctrl.feedback(Pnz, Cz, sys='T'), r, t)
-e, tout, xout = matlab.lsim(ctrl.feedback(Pnz, Cz, sys='S'), r, t)
-u, tout, xout = matlab.lsim(Cz, e, t)
+y, tout, xout = matlab.lsim(ctrl.tf2ss(Tnz), r)
+e, tout, xout = matlab.lsim(ctrl.tf2ss(Snz), r)
+u, tout, xout = matlab.lsim(ctrl.tf2ss(Cz), e)
 
 print('Plotting figures...')
 # Time response
@@ -114,4 +116,5 @@ plot.plot_nyquist(ax, Gn_frd, '-', 'b', 1.5, 1.0, title='Nyquist Diagram')
 plot.plot_nyquist_assistline(ax)
 plot.savefig(figurefolderName+'/nyquist.png')
 
+plot.showfig()
 print('Finished.')

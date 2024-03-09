@@ -130,4 +130,5 @@ plot.plot_nyquist(ax, Gs_pf_frd, '-', 'r', 1.5, 1.0, legend=['w/o PF', 'with PF'
 plot.plot_nyquist_assistline(ax)
 plot.savefig(figurefolderName+'/nyquist_pf_zoom.png')
 
+plot.showfig()
 print('Finished.')

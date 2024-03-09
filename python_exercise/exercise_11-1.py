@@ -137,4 +137,5 @@ plot.plot_nyquist(ax, Gn2_frd, '-', 'r', 1.5, 1.0, legend=['Rigid', 'Motor side'
 plot.plot_nyquist_assistline(ax)
 plot.savefig(figurefolderName+'/nyquist_zoom.png')
 
+plot.showfig()
 print('Finished.')

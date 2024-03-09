@@ -131,7 +131,7 @@ ax_phase = None
 plot.plot_tffrd(ax_mag, ax_phase, Sn1_frd, '-', 'b', 1.5, 1.0, title='Frequency response of sensitivity function')
 plot.plot_tffrd(ax_mag, ax_phase, Sn2_frd, '-', 'r', 1.5, 1.0)
 plot.plot_tffrd(ax_mag, ax_phase, Sn1_pl_frd, '-', 'c', 1.5, 1.0)
-plot.plot_tffrd(ax_mag, ax_phase, Sn2_pl_frd, '-', 'm', 1.5, 1.0, freqrange, [-60, 20], legend=['Motor side', 'Load side', 'Motor side with NF', 'Load side with NF'])
+plot.plot_tffrd(ax_mag, ax_phase, Sn2_pl_frd, '-', 'm', 1.5, 1.0, freqrange, [-60, 20], legend=['Motor side', 'Load side', 'Motor side with PL', 'Load side with PL'])
 plot.savefig(figurefolderName+'/freq_S.png')
 
 # Complementary sensitivity function
@@ -141,7 +141,7 @@ ax_phase = fig.add_subplot(212)
 plot.plot_tffrd(ax_mag, ax_phase, Tn1_frd, '-', 'b', 1.5, 1.0, title='Frequency response of complementary sensitivity function')
 plot.plot_tffrd(ax_mag, ax_phase, Tn2_frd, '-', 'r', 1.5, 1.0)
 plot.plot_tffrd(ax_mag, ax_phase, Tn1_pl_frd, '-', 'c', 1.5, 1.0)
-plot.plot_tffrd(ax_mag, ax_phase, Tn2_pl_frd, '-', 'm', 1.5, 1.0, freqrange, [-60, 20], legend=['Motor side', 'Load side', 'Motor side with NF', 'Load side with NF'])
+plot.plot_tffrd(ax_mag, ax_phase, Tn2_pl_frd, '-', 'm', 1.5, 1.0, freqrange, [-60, 20], legend=['Motor side', 'Load side', 'Motor side with PL', 'Load side with PL'])
 plot.savefig(figurefolderName+'/freq_T.png')
 
 # Nyquist
@@ -150,7 +150,7 @@ ax = fig.add_subplot(111)
 plot.plot_nyquist(ax, Gn1_frd, '-', 'b', 1.5, 1.0, title='Nyquist Diagram')
 plot.plot_nyquist(ax, Gn2_frd, '-', 'r', 1.5, 1.0)
 plot.plot_nyquist(ax, Gn1_pl_frd, '-', 'c', 1.5, 1.0)
-plot.plot_nyquist(ax, Gn2_pl_frd, '-', 'm', 1.5, 1.0, legend=['Motor side', 'Load side', 'Motor side with NF', 'Load side with NF'])
+plot.plot_nyquist(ax, Gn2_pl_frd, '-', 'm', 1.5, 1.0, legend=['Motor side', 'Load side', 'Motor side with PL', 'Load side with PL'])
 plot.plot_nyquist_assistline(ax)
 plot.savefig(figurefolderName+'/nyquist.png')
 
@@ -159,8 +159,9 @@ ax = fig.add_subplot(111)
 plot.plot_nyquist(ax, Gn1_frd, '-', 'b', 1.5, 1.0, title='Nyquist Diagram')
 plot.plot_nyquist(ax, Gn2_frd, '-', 'r', 1.5, 1.0)
 plot.plot_nyquist(ax, Gn1_pl_frd, '-', 'c', 1.5, 1.0)
-plot.plot_nyquist(ax, Gn2_pl_frd, '-', 'm', 1.5, 1.0, xrange=[-5, 5], yrange=[-5, 5], legend=['Motor side', 'Load side', 'Motor side with NF', 'Load side with NF'])
+plot.plot_nyquist(ax, Gn2_pl_frd, '-', 'm', 1.5, 1.0, xrange=[-5, 5], yrange=[-5, 5], legend=['Motor side', 'Load side', 'Motor side with PL', 'Load side with PL'])
 plot.plot_nyquist_assistline(ax)
 plot.savefig(figurefolderName+'/nyquist_.png')
 
+plot.showfig()
 print('Finished.')
