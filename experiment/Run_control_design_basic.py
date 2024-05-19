@@ -16,8 +16,9 @@ from pylib_sakata import plot
 print('Start simulation!')
 
 # Common parameters
-# srcpathName = 'src'
-srcpathName = 'C:/Users/sakat/source/repos/TwinCAT-CppMotionControl-main/TwinCAT-CppMotionControl/StaticLibrary1'
+srcpathName = 'src'
+# srcpathName = 'C:/Users/sakat/source/repos/TwinCAT-CppMotionControl-main/TwinCAT-CppMotionControl/StaticLibrary1'
+ftype = 'cpp'
 Ts = 1/8000
 dataNum = 10000
 freqrange = [1, 1000]
@@ -63,9 +64,9 @@ Pmechz_axes = [Pmechz for i in range(axis_num)]
 Cz_PID_axes = [Cz_PID for i in range(axis_num)]
 Cz_PD_axes = [Cz_PD for i in range(axis_num)]
 
-ctrl.makeprmset(srcpathName)
-ctrl.defprmset(Pmechz_axes, 'gstModelInf['+str(axis_num)+']', srcpathName)
-ctrl.defprmset(Cz_PID_axes, 'gstPIDInf['+str(axis_num)+']', srcpathName)
-ctrl.defprmset(Cz_PD_axes, 'gstPDInf['+str(axis_num)+']', srcpathName)
+ctrl.makeprmset(srcpathName, ftype)
+ctrl.defprmset(Pmechz_axes, 'gstModelInf['+str(axis_num)+']', srcpathName, ftype)
+ctrl.defprmset(Cz_PID_axes, 'gstPIDInf['+str(axis_num)+']', srcpathName, ftype)
+ctrl.defprmset(Cz_PD_axes, 'gstPDInf['+str(axis_num)+']', srcpathName, ftype)
 
 print('Finished.')

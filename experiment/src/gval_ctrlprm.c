@@ -1,6 +1,4 @@
-#include "TcPch.h"
-#pragma hdrstop
-#include "head_ctrlprm.h"
+#include "head_common.h"
 
 
 TF2_INF	gstModelInf[6] = {

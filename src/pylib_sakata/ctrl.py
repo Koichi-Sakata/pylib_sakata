@@ -706,12 +706,15 @@ def minreal(sys):
         return sys
 
 
-def makeprmset(path='.'):
-    path_cpp = path + '/gval_ctrlprm.cpp'
+def makeprmset(path='.', ftype='cpp'):
+    path_cpp = path + '/gval_ctrlprm.'+ ftype
     f = open(path_cpp, 'w')
-    f.write('#include "TcPch.h"\n')
-    f.write('#pragma hdrstop\n')
-    f.write('#include "head_ctrlprm.h"\n\n')
+    if ftype == 'cpp':
+        f.write('#include "TcPch.h"\n')
+        f.write('#pragma hdrstop\n')
+        f.write('#include "head_ctrlprm.h"\n\n')
+    elif ftype == 'c':
+        f.write('#include "head_common.h"\n\n')
 
     path_h = path + '/head_ctrlprm.h'
     f = open(path_h, 'w')
@@ -738,7 +741,8 @@ def makeprmset(path='.'):
     f.write('#endif\n')
 
 
-def defprmset(tfz, prmSetName, path='.', mode='a'):
+def defprmset(tfz, prmSetName, path='.', ftype='cpp', mode='a'):
+    path_cpp = path + '/gval_ctrlprm.' + ftype
     if isinstance(tfz, list):
         tfz = np.array(tfz)
     if type(tfz).__module__ != 'numpy':
@@ -746,7 +750,6 @@ def defprmset(tfz, prmSetName, path='.', mode='a'):
         den = tfz.den[0][0]
         if len(den) - len(num) > 0:
             num = np.concatenate([np.zeros(len(den) - len(num)), num])
-        path_cpp = path + '/gval_ctrlprm.cpp'
         f = open(path_cpp, mode)
         f.write('\n')
         if len(den) == 2:
@@ -827,7 +830,6 @@ def defprmset(tfz, prmSetName, path='.', mode='a'):
         f.close()
     else:
         if type(tfz[0]).__module__ != 'numpy':
-            path_cpp = path + '/gval_ctrlprm.cpp'
             f = open(path_cpp, mode)
             f.write('\n')
             den = tfz[0].den[0][0]
@@ -894,7 +896,6 @@ def defprmset(tfz, prmSetName, path='.', mode='a'):
             f.write('\n#endif\n')
             f.close()
         else:
-            path_cpp = path + '/gval_ctrlprm.cpp'
             f = open(path_cpp, mode)
             f.write('\n')
             den = tfz[0][0].den[0][0]
