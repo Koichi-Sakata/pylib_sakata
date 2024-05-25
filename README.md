@@ -1391,10 +1391,10 @@ $$y(t) = \text{ifft}(\text{FreqResp}(\omega)\times\text{fft}(u(t)))$$
 
 ### 5.1. MeasData
 
-class pylib_sakata.meas.**MeasData**(*time, list, value, time, dt*)
+class pylib_sakata.meas.**MeasData**(*list, value, time, dt*)
 
 - Parameters:
-  - dataList: array of data list (*str*)
+  - list: array of data list (*str*)
   - value: array of data value
   - time: 1-D array time data [s]
   - dt: sampling time of the time response data
