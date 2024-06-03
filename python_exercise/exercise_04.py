@@ -49,7 +49,7 @@ print('A peak filter was designed.')
 
 print('Frequency response analysis is running...')
 Cs = Cs * Fs
-Cs_frd = Cs_frd
+Cs_frd = Cs_frd * Fs_frd
 
 Ss = ctrl.feedback(Ps, Cs, sys='S')
 Ts = ctrl.feedback(Ps, Cs, sys='T')

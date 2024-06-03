@@ -278,8 +278,8 @@ def tf2ss(tf, form=None):
 
 
 def tf2zpk(tf):
-    zeros = tf.zero()
-    poles = tf.pole()
+    zeros = tf.zeros()
+    poles = tf.poles()
     gain = tf.num[0][0][0] / tf.den[0][0][0]
     dt = tf.dt
     zpk = ZpkModel(zeros, poles, gain, dt)
