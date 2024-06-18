@@ -18,6 +18,7 @@ print('Start simulation!')
 # Common parameters
 srcpathName = 'src'
 # srcpathName = 'C:/Users/sakat/source/repos/TwinCAT-CppMotionControl-main/TwinCAT-CppMotionControl/StaticLibrary1'
+# srcpathName = 'C:/Users/sakat/source/repos/PowerPMAC IDE/PowerPMAC2_ECAT/PowerPMAC2_ECAT/C Language/Realtime Routines'
 ftype = 'cpp'
 Ts = 1/8000
 dataNum = 10000
@@ -35,7 +36,7 @@ Pmechs = ctrl.tf([1.0], [M, C, K])
 Pmechz = ctrl.c2d(Pmechs, Ts, method='zoh')
 numDelay, denDelay = matlab.pade(Ts*4, n=4)
 Ds = ctrl.tf(numDelay, denDelay)
-Dz = z**-3
+Dz = z**-5
 Pns = Pmechs * Ds
 Pnz = ctrl.c2d(Pmechs, Ts, method='zoh') * Dz
 Pnz_frd = ctrl.sys2frd(Pnz, freq)
@@ -128,6 +129,14 @@ Cz_Hap = ctrl.pd(freq1, freq2, zeta2, M_dob, C_dob, K_dob, Ts)
 Cz_Hap_frd = ctrl.sys2frd(Cz_Hap, freq)
 print('Haptics controller was designed.')
 
+# Anti-LPF
+freq_lpf = 150.0
+omega_lpf = 2.0 * np.pi * freq_lpf
+tau = 0.001
+AntiLPFs = ctrl.tf([1.0, omega_lpf], [tau, omega_lpf])
+AntiLPFz = ctrl.c2d(AntiLPFs, Ts)
+AntiLPFz_frd = ctrl.sys2frd(AntiLPFz, freq)
+
 print('Creating parameter set Cpp and header files...')
 axis_num = 6
 Pmechz_axes = [Pmechz for i in range(axis_num)]
@@ -143,6 +152,7 @@ DOBesty_axes = [DOBesty for i in range(axis_num)]
 Czpetc_axes = [Czpetc for i in range(axis_num)]
 ImpModel_axes = [ImpModel for i in range(axis_num)]
 Cz_Hap_axes = [Cz_Hap for i in range(axis_num)]
+AntiLPFz_axes = [AntiLPFz for i in range(axis_num)]
 
 ctrl.makeprmset(srcpathName, ftype)
 ctrl.defprmset(Pmechz_axes, 'gstModelInf['+str(axis_num)+']', srcpathName, ftype)
@@ -158,5 +168,6 @@ ctrl.defprmset(DOBesty_axes, 'gstDOBestyInf['+str(axis_num)+']', srcpathName, ft
 ctrl.defprmset(Czpetc_axes, 'gstZPETInf['+str(axis_num)+']', srcpathName, ftype)
 ctrl.defprmset(ImpModel_axes, 'gstImpInf['+str(axis_num)+']', srcpathName, ftype)
 ctrl.defprmset(Cz_Hap_axes, 'gstHapInf['+str(axis_num)+']', srcpathName, ftype)
+ctrl.defprmset(AntiLPFz_axes, 'gstAntiLPFInf['+str(axis_num)+']', srcpathName, ftype)
 
 print('Finished.')

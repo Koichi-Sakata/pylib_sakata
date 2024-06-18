@@ -18,6 +18,7 @@ print('Start simulation!')
 # Common parameters
 srcpathName = 'src'
 # srcpathName = 'C:/Users/sakat/source/repos/TwinCAT-CppMotionControl-main/TwinCAT-CppMotionControl/StaticLibrary1'
+# srcpathName = 'C:/Users/sakat/source/repos/PowerPMAC IDE/PowerPMAC2_ECAT/PowerPMAC2_ECAT/C Language/Realtime Routines'
 ftype = 'cpp'
 Ts = 1/8000
 dataNum = 10000
@@ -58,15 +59,25 @@ Cz_PID = ctrl.pid(freq1, zeta1, freq2, zeta2, M, C, K, Ts)
 Cz_PID_frd = ctrl.sys2frd(Cz_PID, freq)
 print('PID controller was designed.')
 
+# Anti-LPF
+freq_lpf = 150.0
+omega_lpf = 2.0 * np.pi * freq_lpf
+tau = 0.001
+AntiLPFs = ctrl.tf([1.0, omega_lpf], [tau, omega_lpf])
+AntiLPFz = ctrl.c2d(AntiLPFs, Ts)
+AntiLPFz_frd = ctrl.sys2frd(AntiLPFz, freq)
+
 print('Creating parameter set Cpp and header files...')
 axis_num = 6
 Pmechz_axes = [Pmechz for i in range(axis_num)]
 Cz_PID_axes = [Cz_PID for i in range(axis_num)]
 Cz_PD_axes = [Cz_PD for i in range(axis_num)]
+AntiLPFz_axes = [AntiLPFz for i in range(axis_num)]
 
 ctrl.makeprmset(srcpathName, ftype)
 ctrl.defprmset(Pmechz_axes, 'gstModelInf['+str(axis_num)+']', srcpathName, ftype)
 ctrl.defprmset(Cz_PID_axes, 'gstPIDInf['+str(axis_num)+']', srcpathName, ftype)
 ctrl.defprmset(Cz_PD_axes, 'gstPDInf['+str(axis_num)+']', srcpathName, ftype)
+ctrl.defprmset(AntiLPFz_axes, 'gstAntiLPFInf['+str(axis_num)+']', srcpathName, ftype)
 
 print('Finished.')
