@@ -152,7 +152,6 @@ DOBesty_axes = [DOBesty for i in range(axis_num)]
 Czpetc_axes = [Czpetc for i in range(axis_num)]
 ImpModel_axes = [ImpModel for i in range(axis_num)]
 Cz_Hap_axes = [Cz_Hap for i in range(axis_num)]
-AntiLPFz_axes = [AntiLPFz for i in range(axis_num)]
 
 ctrl.makeprmset(srcpathName, ftype)
 ctrl.defprmset(Pmechz_axes, 'gstModelInf['+str(axis_num)+']', srcpathName, ftype)
@@ -168,6 +167,5 @@ ctrl.defprmset(DOBesty_axes, 'gstDOBestyInf['+str(axis_num)+']', srcpathName, ft
 ctrl.defprmset(Czpetc_axes, 'gstZPETInf['+str(axis_num)+']', srcpathName, ftype)
 ctrl.defprmset(ImpModel_axes, 'gstImpInf['+str(axis_num)+']', srcpathName, ftype)
 ctrl.defprmset(Cz_Hap_axes, 'gstHapInf['+str(axis_num)+']', srcpathName, ftype)
-ctrl.defprmset(AntiLPFz_axes, 'gstAntiLPFInf['+str(axis_num)+']', srcpathName, ftype)
 
 print('Finished.')
