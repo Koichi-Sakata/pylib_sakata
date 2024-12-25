@@ -1,4 +1,4 @@
-pylib-sakata User's Manual version-0.2.1
+pylib-sakata User's Manual version-0.2.2
 ===
 
 <!-- code_chunk_output -->
@@ -112,7 +112,7 @@ $ sudo pip3 install --upgrade pip
 ```
 The required python libraries can be installed using pip as the following commands on the command prompt or on the shell.
 ```shell
-pip install numpy
+pip install numpy=1.26.4
 pip install scipy
 pip install matplotlib
 pip install pandas

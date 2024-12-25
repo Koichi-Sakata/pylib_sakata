@@ -24,9 +24,10 @@
 # sys = hpf1st(freq, dt=None, method='tustin')
 # sys = hpf2nd(freq, zeta, dt=None, method='tustin')
 # sys = nf(freq, zeta, depth, dt=None, method='matched')
-# sys = pf(freq, zeta, k, phi, dt=None, method='matched')
+# sys = pf(freq, zeta, k, phi, dt=None, method='tustin')
 # freq, zeta, kpdb = pfoptparam(freq, zeta, depth, sysT)
 # sys = pfopt(freq, zeta, kpdb, sysT, dt=None, method='matched')
+# sys = irf(fanti, freso, Creso, M, C, K, dt=None, method='matched')
 # DOBu, DOBy = dob(freq, zeta, M, C, K, dt, nd = 0)
 # Czpetc, Nzpetc = zpetc(Pz, zerothr=0.99)
 # sys = filt(num, den, dt)
@@ -581,6 +582,31 @@ def pfopt(freq, zeta, depth, sysT, dt=None, method='tustin'):
         return TFs
     else:
         TFz = pf(freq, zeta, k, phi, dt=dt, method=method)
+        return TFz
+
+
+# Inverse resonance filter
+def irf(fanti, freso, Creso, M, C, K, dt=None, method='matched'):
+    # Inverse resonance filter
+    if (len(fanti) == len(freso) == len(Creso)) == False:
+        print('Error: length of inverse resonance filter parameters is different!')
+    TFs = np.array([matlab.tf([0.0], [1.0]) for i in range(len(fanti))])
+    TFz = np.array([matlab.tf([0.0], [1.0], dt) for i in range(len(fanti))])
+    for i in range(len(fanti)):
+        M1 = (fanti[i] / freso[i]) ** 2 * M
+        M2 = M - M1
+        Kreso = (2.0 * np.pi * fanti[i]) ** 2 * M2
+        k1 = M2/(M1 * (M1 + M2))
+        omegaPreso = np.sqrt(Kreso * (M1 + M2)/(M1 * M2))
+        zetaPreso = 0.5 * Creso[i]*np.sqrt((M1 + M2)/(Kreso * M1 * M2))
+        num = [1, 2.0*zetaPreso*omegaPreso, omegaPreso**2]
+        den = [1 + k1 * M, 2.0 * zetaPreso * omegaPreso + k1 * C, omegaPreso ** 2 + k1 * K]
+        TFs[i] = matlab.tf(num, den)
+    if dt == None:
+        return TFs
+    else:
+        for i in range(len(fanti)):
+            TFz[i] = matlab.c2d(TFs[i], dt, method=method)
         return TFz
 
 
