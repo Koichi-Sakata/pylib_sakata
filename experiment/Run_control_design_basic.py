@@ -6,19 +6,15 @@ from pylib_sakata import init as init
 # init.close_all()
 # init.clear_all()
 
-import os
-import shutil
 import numpy as np
 from control import matlab
 from pylib_sakata import ctrl
-from pylib_sakata import plot
 
 print('Start simulation!')
 
 # Common parameters
 srcpathName = 'src'
 # srcpathName = 'C:/Users/sakat/source/repos/TwinCAT-CppMotionControl-main/TwinCAT-CppMotionControl/StaticLibrary1'
-# srcpathName = 'C:/Users/sakat/source/repos/PowerPMAC IDE/PowerPMAC2_ECAT/PowerPMAC2_ECAT/C Language/Realtime Routines'
 ftype = 'cpp'
 Ts = 1/8000
 dataNum = 10000

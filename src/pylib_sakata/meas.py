@@ -6,12 +6,16 @@
 # MeasData = getdata(filePath)
 # index = getdataindex(measdata, dataName)
 # freqresp, coh = measdata2frd(filePath, inputName, outputName, flagName, freq, inputGain=1.0, outputGain=1.0, windivnum=4, overlap=0.5)
+# measdata2frdcsv(filePath, measdataPath, inputName, outputName, flagName, freq, inputGain=1.0, outputGain=1.0, windivnum=4, overlap=0.5)
+# frd2frdcsv(filePath, freqresp, coh=None)
+# freqresp, coh = frdcsv2frd(filePath, dt=None)
 
 
 from scipy import io
 import numpy as np
 import pandas as pd
 from .fft import tfestimate
+from .fft import FreqResp
 
 class MeasData:
  
@@ -107,3 +111,34 @@ def measdata2frd(filePath, inputName, outputName, flagName, freq, inputGain=1.0,
     return freqresp, coh
 
 
+def measdata2frdcsv(filePath, measdataPath, inputName, outputName, flagName, freq, inputGain=1.0, outputGain=1.0, windivnum=4, overlap=0.5):
+    freqresp, coh = measdata2frd(measdataPath, inputName, outputName, flagName, freq, inputGain, outputGain, windivnum, overlap)
+    df = pd.DataFrame([freqresp.freq, freqresp.resp.real, freqresp.resp.imag, coh]).T
+    df.columns = ['freq', 'real', 'imag', 'coh']
+    df.to_csv(filePath, index=False)
+    return freqresp, coh
+
+
+def frd2frdcsv(filePath, freqresp, coh=None):
+    if coh == None:
+        df = pd.DataFrame([freqresp.freq, freqresp.resp.real, freqresp.resp.imag]).T
+        df.columns = ['freq', 'real', 'imag']
+        df.to_csv(filePath, index=False)
+    else:
+        df = pd.DataFrame([freqresp.freq, freqresp.resp.real, freqresp.resp.imag, coh]).T
+        df.columns = ['freq', 'real', 'imag', 'coh']
+        df.to_csv(filePath, index=False)
+
+
+def frdcsv2frd(filePath, dt=None):
+    df = pd.read_csv(filePath, dtype=object)
+    dataValue = df.values.T.astype(float)
+    if len(dataValue) == 3:
+        freq = dataValue[0]
+        resp = dataValue[1]+dataValue[2]*1j
+        return FreqResp(freq, resp, dt)
+    else:
+        freq = dataValue[0]
+        resp = dataValue[1]+dataValue[2]*1j
+        coh = dataValue[3]
+        return FreqResp(freq, resp, dt), coh

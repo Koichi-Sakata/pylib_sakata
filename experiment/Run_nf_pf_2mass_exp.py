@@ -130,7 +130,7 @@ T_frd_nf = 1 - S_frd_nf
 freqPF = [10.0, 20.0, 30.0, 60.0, 70.0, 90.0]
 zetaPF = [0.001, 0.001, 0.001, 0.001, 0.001, 0.001]
 depthPF = [0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
-PFz = ctrl.pfopt(freqPF, zetaPF, depthPF, ctrl.feedback(Pnz, Cz * NFz_all, sys='T'), Ts)
+PFz = ctrl.pfopt(freqPF, zetaPF, depthPF, T_frd_nf, Ts)
 PFz_frd = 0.0
 for i in range(len(freqPF)):
     PFz_frd += ctrl.sys2frd(PFz[i], freq)

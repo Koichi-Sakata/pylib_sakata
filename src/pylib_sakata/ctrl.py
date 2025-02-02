@@ -17,6 +17,7 @@
 # sys = pi(freq, zeta, L, R, dt=None, method='tustin')
 # sys = pd(freq1, freq2, zeta2, M, C, K, dt=None, method='tustin')
 # sys = pid(freq1, zeta1, freq2, zeta2, M, C, K, dt=None, method='tustin')
+# zeta = butterworth(order)
 # sys = pl1st(freq1, freq2, dt=None, method='tustin')
 # sys = pl2nd(freq1, zeta1, freq2, zeta2, dt=None, method='tustin')
 # sys = lpf1st(freq, dt=None, method='tustin')
@@ -444,6 +445,20 @@ def pid(freq1, zeta1, freq2, zeta2, M, C, K, dt=None, method='tustin'):
     else:
         TFz = c2d(TFs, dt, method=method)
         return TFz
+
+
+def butterworth(order):
+    if order < 2:
+        print('Error: The order must be two or larger!')
+    zeta = np.array([])
+    if order % 2:   # odd
+        zeta = np.append(zeta, 0)
+        for k in range(1, int((order-1)/2)+1):
+           zeta = np.append(zeta, np.sin( np.pi/order * (k-1) + np.pi/(2*order) ) )
+    else:           # even
+        for k in range(1, int(order/2)+1):
+           zeta = np.append(zeta, np.sin( np.pi/order * (k-1) + np.pi/(2*order) ) )
+    return zeta
 
 
 def pl1st(freq1, freq2, dt=None, method='tustin'):

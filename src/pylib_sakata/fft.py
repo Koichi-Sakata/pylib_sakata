@@ -189,7 +189,7 @@ def frdresize(freqresp, freq):
 
 
 def frdsim(freqresp, x, dt):
-    # Resie freqresp
+    # Resize freqresp
     lenInput = len(x)
     lenInputHalf = round((lenInput + 1)/2)
     freq_tmp = np.arange(lenInput)/lenInput/dt

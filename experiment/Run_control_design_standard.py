@@ -1,24 +1,20 @@
 # Copyright (c) 2022 Koichi Sakata
-
-
+from experiment.Run_control_design_basic import Cz_PID_frd
 from pylib_sakata import init as init
 # uncomment the follows when the file is executed in a Python console.
 # init.close_all()
 # init.clear_all()
 
-import os
-import shutil
 import numpy as np
 from control import matlab
 from pylib_sakata import ctrl
-from pylib_sakata import plot
+from pylib_sakata import meas
 
 print('Start simulation!')
 
 # Common parameters
 srcpathName = 'src'
 # srcpathName = 'C:/Users/sakat/source/repos/TwinCAT-CppMotionControl-main/TwinCAT-CppMotionControl/StaticLibrary1'
-# srcpathName = 'C:/Users/sakat/source/repos/PowerPMAC IDE/PowerPMAC2_ECAT/PowerPMAC2_ECAT/C Language/Realtime Routines'
 ftype = 'cpp'
 Ts = 1/8000
 dataNum = 10000
@@ -79,6 +75,11 @@ for i in range(len(freqNF)):
 print('Notch filters were designed.')
 
 # Design peak filters
+measfileName = 'data/freq_resp_2mass_20230720.csv'
+Pmeas_frd, coh = meas.measdata2frd(measfileName, 'ServoOutN[0]', 'ActPosUm[0]', 'FlagInject', freq, 1., 1.e-6, 8, 0.8)
+G_frd_nf = Pmeas_frd * Cz_PID_frd * NFz_frd
+S_frd_nf = 1/(1 + G_frd_nf)
+T_frd_nf = 1 - S_frd_nf
 freqPF = [10.0, 20.0, 30.0, 60.0, 70.0, 90.0]
 zetaPF = [0.001, 0.001, 0.001, 0.001, 0.001, 0.001]
 depthPF = [0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
