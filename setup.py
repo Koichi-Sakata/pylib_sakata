@@ -7,7 +7,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="pylib-sakata",
-    version="0.3.0",
+    version="0.3.1",
     author="Koichi Sakata",
     author_email="",
     description="Control system design and analysis package",

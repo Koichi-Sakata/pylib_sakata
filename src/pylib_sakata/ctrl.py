@@ -563,7 +563,7 @@ def rf(freq, zeta, k, phi, dt=None, method='tustin'):
 
 def pf(freq, zeta, k, phi, dt=None, method='tustin'):
     print('Warning: this function will not be available. Please use the function: rf instead of pf')
-    return pf(freq, zeta, k, phi, dt, method)
+    return rf(freq, zeta, k, phi, dt, method)
 
 
 def rfoptparam(freq, zeta, depth, sysT):
@@ -596,23 +596,23 @@ def rfoptparam(freq, zeta, depth, sysT):
 
 def pfoptparam(freq, zeta, depth, sysT):
     print('Warning: this function will not be available. Please use the function: rfoptparam instead of pfoptparam')
-    return pfoptparam(freq, zeta, depth, sysT)
+    return rfoptparam(freq, zeta, depth, sysT)
 
 
 def rfopt(freq, zeta, depth, sysT, dt=None, method='tustin'):
     # Optimized peak filter
-    freq, zeta, k, phi = pfoptparam(freq, zeta, depth, sysT)
+    freq, zeta, k, phi = rfoptparam(freq, zeta, depth, sysT)
     if dt == None:
-        TFs = pf(freq, zeta, k, phi)
+        TFs = rf(freq, zeta, k, phi)
         return TFs
     else:
-        TFz = pf(freq, zeta, k, phi, dt=dt, method=method)
+        TFz = rf(freq, zeta, k, phi, dt=dt, method=method)
         return TFz
 
 
 def pfopt(freq, zeta, depth, sysT, dt=None, method='tustin'):
     print('Warning: this function will not be available. Please use the function: rfopt instead of pfopt')
-    return pfopt(freq, zeta, depth, sysT, dt, method)
+    return rfopt(freq, zeta, depth, sysT, dt, method)
 
 
 # Inverse resonance filter
