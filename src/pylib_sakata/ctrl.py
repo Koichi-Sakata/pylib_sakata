@@ -25,9 +25,9 @@
 # sys = hpf1st(freq, dt=None, method='tustin')
 # sys = hpf2nd(freq, zeta, dt=None, method='tustin')
 # sys = nf(freq, zeta, depth, dt=None, method='matched')
-# sys = pf(freq, zeta, k, phi, dt=None, method='tustin')
-# freq, zeta, kpdb = pfoptparam(freq, zeta, depth, sysT)
-# sys = pfopt(freq, zeta, kpdb, sysT, dt=None, method='matched')
+# sys = rf(freq, zeta, k, phi, dt=None, method='tustin')
+# freq, zeta, kpdb = rfoptparam(freq, zeta, depth, sysT)
+# sys = rfopt(freq, zeta, kpdb, sysT, dt=None, method='matched')
 # sys = irf(fanti, freso, Creso, M, C, K, dt=None, method='matched')
 # DOBu, DOBy = dob(freq, zeta, M, C, K, dt, nd = 0)
 # Czpetc, Nzpetc = zpetc(Pz, zerothr=0.99)
@@ -544,7 +544,7 @@ def nf(freq, zeta, depth, dt=None, method='matched'):
         return TFz
 
 
-def pf(freq, zeta, k, phi, dt=None, method='tustin'):
+def rf(freq, zeta, k, phi, dt=None, method='tustin'):
     # Peak filter
     if (len(freq) == len(zeta) == len(k) == len(phi)) == False:
         print('Error: length of peak filter parameters is different!')
@@ -561,7 +561,12 @@ def pf(freq, zeta, k, phi, dt=None, method='tustin'):
         return TFz
 
 
-def pfoptparam(freq, zeta, depth, sysT):
+def pf(freq, zeta, k, phi, dt=None, method='tustin'):
+    print('Warning: this function will not be available. Please use the function: rf instead of pf')
+    return pf(freq, zeta, k, phi, dt, method)
+
+
+def rfoptparam(freq, zeta, depth, sysT):
     # Optimized peak filter
     if (len(freq) == len(zeta) == len(depth)) == False:
         print('Error: length of peak filter parameters is different!')
@@ -589,7 +594,12 @@ def pfoptparam(freq, zeta, depth, sysT):
     return freq, zeta, k, phi
 
 
-def pfopt(freq, zeta, depth, sysT, dt=None, method='tustin'):
+def pfoptparam(freq, zeta, depth, sysT):
+    print('Warning: this function will not be available. Please use the function: rfoptparam instead of pfoptparam')
+    return pfoptparam(freq, zeta, depth, sysT)
+
+
+def rfopt(freq, zeta, depth, sysT, dt=None, method='tustin'):
     # Optimized peak filter
     freq, zeta, k, phi = pfoptparam(freq, zeta, depth, sysT)
     if dt == None:
@@ -598,6 +608,11 @@ def pfopt(freq, zeta, depth, sysT, dt=None, method='tustin'):
     else:
         TFz = pf(freq, zeta, k, phi, dt=dt, method=method)
         return TFz
+
+
+def pfopt(freq, zeta, depth, sysT, dt=None, method='tustin'):
+    print('Warning: this function will not be available. Please use the function: rfopt instead of pfopt')
+    return pfopt(freq, zeta, depth, sysT, dt, method)
 
 
 # Inverse resonance filter

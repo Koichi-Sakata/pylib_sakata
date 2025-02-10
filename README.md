@@ -1,4 +1,4 @@
-pylib-sakata User's Manual version-0.2.3
+pylib-sakata User's Manual version-0.3.0
 ===
 
 <!-- code_chunk_output -->
@@ -45,9 +45,9 @@ pylib-sakata User's Manual version-0.2.3
   - [3.22. hpf1st](#322-hpf1st)
   - [3.23. hpf2nd](#323-hpf2nd)
   - [3.24. nf](#324-nf)
-  - [3.25. pf](#325-pf)
-  - [3.26. pfoptparam](#326-pfoptparam)
-  - [3.27. pfopt](#327-pfopt)
+  - [3.25. rf](#325-rf)
+  - [3.26. rfoptparam](#326-rfoptparam)
+  - [3.27. rfopt](#327-rfopt)
   - [3.28. dob](#328-dob)
   - [3.29. zpetc](#329-zpetc)
   - [3.30. filt](#330-filt)
@@ -955,86 +955,86 @@ array([TransferFunction(array([ 0.9876627 , -1.59787102,  0.9874145 ]), array([ 
       dtype=object)
 ```
 
-### 3.25. pf
+### 3.25. rf
 
-pylib_sakata.ctrl.**pf**(*freq, zeta, k, phi, dt=None, method='tustin'*)
+pylib_sakata.ctrl.**rf**(*freq, zeta, k, phi, dt=None, method='tustin'*)
 
-This function is for design of peak filters ([resonant filters](https://ieeexplore.ieee.org/document/4291569)).
-$$F_{peak}(s) = \frac{k(s^2-\phi s)}{s^2+2\zeta (2\pi f)s+(2\pi f)^2}$$
+This function is for design of resonant filters ([resonant filters](https://ieeexplore.ieee.org/document/4291569)).
+$$F_{reso}(s) = \frac{k(s^2-\phi s)}{s^2+2\zeta (2\pi f)s+(2\pi f)^2}$$
 
 - Parameters:
-  - freq: array of frequency[Hz] of the peak filters
-  - zeta: array of damping of the peak filters
-  - k: array of peak width of the peak filters
-  - phi: array of phase lead of the peak filter
+  - freq: array of frequency[Hz] of the resonant filters
+  - zeta: array of damping of the resonant filters
+  - k: array of peak width of the resonant filters
+  - phi: array of phase lead of the resonant filter
   - dt: sampling time of the LTI model (Optional), Default: 0, set the value >= 0. If dt = 0, the system is continuous time system.
   - method: discretized method (Optional), Default: 'tustin', set a method if dt > 0
 - Returns:
-  - out: array of instance of TransferFunction class of the peak filters
+  - out: array of instance of TransferFunction class of the resonant filters
 
 **Examples**
 ```python
->>> ctrl.pf([2., 3., 5.], [0.001, 0.001, 0.001], [-0.00025695, -0.00049616, 0.0003898], [860.21053991, 633.22924516, -1090.49879949])
->>> ctrl.pf([2., 3., 5.], [0.001, 0.001, 0.001], [-0.00025695, -0.00049616, 0.0003898], [860.21053991, 633.22924516, -1090.49879949])
+>>> ctrl.rf([2., 3., 5.], [0.001, 0.001, 0.001], [-0.00025695, -0.00049616, 0.0003898], [860.21053991, 633.22924516, -1090.49879949])
+>>> ctrl.rf([2., 3., 5.], [0.001, 0.001, 0.001], [-0.00025695, -0.00049616, 0.0003898], [860.21053991, 633.22924516, -1090.49879949])
 array([TransferFunction(array([-0.00025695,  0.2210311 ,  0.        ]), array([1.00000000e+00, 2.51327412e-02, 1.57913670e+02])),
        TransferFunction(array([-0.00049616,  0.31418302,  0.        ]), array([1.00000000e+00, 3.76991118e-02, 3.55305758e+02])),
        TransferFunction(array([3.89800000e-04, 4.25076432e-01, 0.00000000e+00]), array([1.00000000e+00, 6.28318531e-02, 9.86960440e+02]))],
       dtype=object)
 ```
 ```python
->>> ctrl.pf([2., 3., 5.], [0.001, 0.001, 0.001], [-0.00025695, -0.00049616, 0.0003898], [860.21053991, 633.22924516, -1090.49879949], 0.001)
+>>> ctrl.rf([2., 3., 5.], [0.001, 0.001, 0.001], [-0.00025695, -0.00049616, 0.0003898], [860.21053991, 633.22924516, -1090.49879949], 0.001)
 array([TransferFunction(array([-0.00014643,  0.00051387, -0.00036745]), array([ 1.        , -1.99981696,  0.99997487]), 0.001),
        TransferFunction(array([-0.00033903,  0.00099221, -0.00065318]), array([ 1.        , -1.99960704,  0.9999623 ]), 0.001),
        TransferFunction(array([ 0.00060217, -0.00077938,  0.00017721]), array([ 1.        , -1.9989505 ,  0.99993719]), 0.001)],
       dtype=object)
 ```
 
-### 3.26. pfoptparam
-pylib_sakata.ctrl.**pfoptparam**(freq, zeta, depth, sysT)
+### 3.26. rfoptparam
+pylib_sakata.ctrl.**rfoptparam**(freq, zeta, depth, sysT)
 
-This function is for getting parameters of optimized peak filters ([resonant filters](https://ieeexplore.ieee.org/document/4291569)).
+This function is for getting parameters of optimized resonant filters ([resonant filters](https://ieeexplore.ieee.org/document/4291569)).
 
 - Parameters:
-  - freq: array of frequency[Hz] of the peak filters
-  - zeta: array of damping of the peak filters
-  - depth: array of depth of the peak filters (0 < depth < 1)
+  - freq: array of frequency[Hz] of the resonant filters
+  - zeta: array of damping of the resonant filters
+  - depth: array of depth of the resonant filters (0 < depth < 1)
   - sysT: LTI model (StateSpace or TransferFunction or ZpkModel or FreqResp) of complementary sensitivity function of the previous feedback system
 - Returns:
-  - freq: array of frequency[Hz] of the peak filters
-  - zeta: array of damping of the peak filters
-  - k: array of peak width of the peak filters
-  - phi: array of phase lead of the peak filter
+  - freq: array of frequency[Hz] of the resonant filters
+  - zeta: array of damping of the resonant filters
+  - k: array of peak width of the resonant filters
+  - phi: array of phase lead of the resonant filter
 
 **Examples**
 ```python
 >>> Ps = ctrl.tf([1.], [2., 10., 0.])
 >>> Cs = ctrl.pid(10., 1., 10., 0.7, 2., 10., 0.)
->>> ctrl.pfoptparam([2., 3., 5.], [0.001, 0.001, 0.001], [0.1, 0.1, 0.1], ctrl.feedback(Ps, Cs, sys='T'))
+>>> ctrl.rfoptparam([2., 3., 5.], [0.001, 0.001, 0.001], [0.1, 0.1, 0.1], ctrl.feedback(Ps, Cs, sys='T'))
 The common pole-zeros of the zpk model have been deleted.
 ([2.0, 3.0, 5.0], [0.001, 0.001, 0.001], array([-0.00025695, -0.00049616,  0.0003898 ]), array([  860.21053991,   633.22924516, -1090.49879949]))
 ```
 
-### 3.27. pfopt
+### 3.27. rfopt
 
-pylib_sakata.ctrl.**pfopt**(*freq, zeta, depth, sysT, dt=None, method='tustin'*)
+pylib_sakata.ctrl.**rfopt**(*freq, zeta, depth, sysT, dt=None, method='tustin'*)
 
-This function is for design of optimized peak filters ([resonant filters](https://ieeexplore.ieee.org/document/4291569)).
+This function is for design of optimized resonant filters ([resonant filters](https://ieeexplore.ieee.org/document/4291569)).
 
 - Parameters:
-  - freq: array of frequency[Hz] of the peak filters
-  - zeta: array of damping of the peak filters
-  - depth: array of depth of the peak filters (0 < depth < 1)
+  - freq: array of frequency[Hz] of the resonant filters
+  - zeta: array of damping of the resonant filters
+  - depth: array of depth of the resonant filters (0 < depth < 1)
   - sysT: LTI model (StateSpace or TransferFunction or ZpkModel or FreqResp) of complementary sensitivity function of the previous feedback system
   - dt: sampling time of the LTI model (Optional), Default: 0, set the value >= 0. If dt = 0, the system is continuous time system.
   - method: discretized method (Optional), Default: 'tustin', set a method if dt > 0
 - Returns:
-  - out: array of instance of TransferFunction class of the peak filters
+  - out: array of instance of TransferFunction class of the resonant filters
 
 **Examples**
 ```python
 >>> Ps = ctrl.tf([1.], [2., 10., 0.])
 >>> Cs = ctrl.pid(10., 1., 10., 0.7, 2., 10., 0.)
->>> ctrl.pfopt([2., 3., 5.], [0.001, 0.001, 0.001], [0.1, 0.1, 0.1], ctrl.feedback(Ps, Cs, sys='T'))
+>>> ctrl.rfopt([2., 3., 5.], [0.001, 0.001, 0.001], [0.1, 0.1, 0.1], ctrl.feedback(Ps, Cs, sys='T'))
 The common pole-zeros of the zpk model have been deleted.
 array([TransferFunction(array([0.00486434, 0.24323591, 0.        ]), array([1.00000000e+00, 2.51327412e-02, 1.57913670e+02])),
        TransferFunction(array([0.00723091, 0.35823306, 0.        ]), array([1.00000000e+00, 3.76991118e-02, 3.55305758e+02])),
@@ -1042,7 +1042,7 @@ array([TransferFunction(array([0.00486434, 0.24323591, 0.        ]), array([1.00
       dtype=object)
 ```
 ```python
->>> ctrl.pfopt([2., 3., 5.], [0.001, 0.001, 0.001], [0.1, 0.1, 0.1], ctrl.feedback(Ps, Cs, sys='T'), 0.001)
+>>> ctrl.rfopt([2., 3., 5.], [0.001, 0.001, 0.001], [0.1, 0.1, 0.1], ctrl.feedback(Ps, Cs, sys='T'), 0.001)
 The common pole-zeros of the zpk model have been deleted.
 array([TransferFunction(array([ 0.0049857 , -0.00972818,  0.00474248]), array([ 1.        , -1.99981696,  0.99997487]), 0.001),
        TransferFunction(array([ 0.00740923, -0.01446026,  0.00705103]), array([ 1.        , -1.99960704,  0.9999623 ]), 0.001),

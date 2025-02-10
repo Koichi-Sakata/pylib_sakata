@@ -1,5 +1,6 @@
 # Copyright (c) 2022 Koichi Sakata
-from experiment.Run_control_design_basic import Cz_PID_frd
+
+
 from pylib_sakata import init as init
 # uncomment the follows when the file is executed in a Python console.
 # init.close_all()
@@ -83,7 +84,7 @@ T_frd_nf = 1 - S_frd_nf
 freqPF = [10.0, 20.0, 30.0, 60.0, 70.0, 90.0]
 zetaPF = [0.001, 0.001, 0.001, 0.001, 0.001, 0.001]
 depthPF = [0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
-PFz = ctrl.pfopt(freqPF, zetaPF, depthPF, ctrl.feedback(Pnz, Cz_PID * NFz_all, sys='T'), Ts)
+PFz = ctrl.pfopt(freqPF, zetaPF, depthPF,T_frd_nf, Ts)
 PFz_frd = 0.0
 for i in range(len(freqPF)):
     PFz_frd += ctrl.sys2frd(PFz[i], freq)
