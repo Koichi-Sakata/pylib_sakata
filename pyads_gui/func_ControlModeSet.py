@@ -9,7 +9,7 @@ import pyads
 sigName = [
     'FBType',
     'NF',
-    'PF',
+    'RF',
     'DOB',
     'DOBType',
     'ZPET',
@@ -34,12 +34,12 @@ adsName = [
         'Motion1_Obj1 (Module1).Inputs.ControlMode.NF[5]'
     ],
     [
-        'Motion1_Obj1 (Module1).Inputs.ControlMode.PF[0]',
-        'Motion1_Obj1 (Module1).Inputs.ControlMode.PF[1]',
-        'Motion1_Obj1 (Module1).Inputs.ControlMode.PF[2]',
-        'Motion1_Obj1 (Module1).Inputs.ControlMode.PF[3]',
-        'Motion1_Obj1 (Module1).Inputs.ControlMode.PF[4]',
-        'Motion1_Obj1 (Module1).Inputs.ControlMode.PF[5]'
+        'Motion1_Obj1 (Module1).Inputs.ControlMode.RF[0]',
+        'Motion1_Obj1 (Module1).Inputs.ControlMode.RF[1]',
+        'Motion1_Obj1 (Module1).Inputs.ControlMode.RF[2]',
+        'Motion1_Obj1 (Module1).Inputs.ControlMode.RF[3]',
+        'Motion1_Obj1 (Module1).Inputs.ControlMode.RF[4]',
+        'Motion1_Obj1 (Module1).Inputs.ControlMode.RF[5]'
     ],
     [
         'Motion1_Obj1 (Module1).Inputs.ControlMode.DOB[0]',

@@ -6,9 +6,12 @@ from pylib_sakata import init as init
 # init.close_all()
 # init.clear_all()
 
+import os
+import shutil
 import numpy as np
 from control import matlab
 from pylib_sakata import ctrl
+from pylib_sakata import plot
 from pylib_sakata import meas
 
 print('Start simulation!')
@@ -26,7 +29,7 @@ z = ctrl.tf([1, 0], [1], Ts)
 print('Common parameters were set.')
 
 # Plant model
-M = 0.11
+M = 0.09
 C = 0.7
 K = 0.0
 Pmechs = ctrl.tf([1.0], [M, C, K])
@@ -48,10 +51,12 @@ Cz_PD_frd = ctrl.sys2frd(Cz_PD, freq)
 print('PD controller was designed.')
 
 # Design PID controller
-freq1 = 20.0
+freq1 = 25.0
 zeta1 = 0.7
-freq2 = 20.0
-zeta2 = 0.7
+freq3 = 10
+freq4 = 100
+freq2 = np.sqrt(freq3 * freq4)
+zeta2 = 0.5*(freq3 + freq4)/freq2
 Cz_PID = ctrl.pid(freq1, zeta1, freq2, zeta2, M, C, K, Ts)
 Cz_PID_frd = ctrl.sys2frd(Cz_PID, freq)
 print('PID controller was designed.')
@@ -64,7 +69,7 @@ Cz_PI_frd = ctrl.sys2frd(Cz_PI, freq)
 print('PI velocity controller was designed.')
 
 # Design notch filters
-freqNF = [265]
+freqNF = [378]
 zetaNF = [0.2]
 depthNF = [0.02]
 NFz = ctrl.nf(freqNF, zetaNF, depthNF, Ts)
@@ -75,20 +80,24 @@ for i in range(len(freqNF)):
     NFz_frd *= ctrl.sys2frd(NFz[i], freq)
 print('Notch filters were designed.')
 
-# Design peak filters
-measfileName = 'data/freq_resp_2mass_20230720.csv'
+# Design resonant filters
+print('Getting measurement data...')
+measfileName = 'data/freq_resp_2mass_20250124.csv'
+# Frequency response
 Pmeas_frd, coh = meas.measdata2frd(measfileName, 'ServoOutN[0]', 'ActPosUm[0]', 'FlagInject', freq, 1., 1.e-6, 8, 0.8)
 G_frd_nf = Pmeas_frd * Cz_PID_frd * NFz_frd
 S_frd_nf = 1/(1 + G_frd_nf)
 T_frd_nf = 1 - S_frd_nf
-freqPF = [10.0, 20.0, 30.0, 60.0, 70.0, 90.0]
-zetaPF = [0.001, 0.001, 0.001, 0.001, 0.001, 0.001]
-depthPF = [0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
-PFz = ctrl.pfopt(freqPF, zetaPF, depthPF,T_frd_nf, Ts)
-PFz_frd = 0.0
-for i in range(len(freqPF)):
-    PFz_frd += ctrl.sys2frd(PFz[i], freq)
-print('Peak filters were designed.')
+
+freqRF = [10.0, 20.0, 30.0, 60.0, 70.0, 90.0]
+zetaRF = [0.001, 0.001, 0.001, 0.001, 0.001, 0.001]
+depthRF = [0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
+# RFz = ctrl.rfopt(freqRF, zetaRF, depthRF, ctrl.feedback(Pnz, Cz * NFz_all, sys='T'), Ts)
+RFz = ctrl.rfopt(freqRF, zetaRF, depthRF, T_frd_nf, Ts)
+RFz_frd = 0.0
+for i in range(len(freqRF)):
+    RFz_frd += ctrl.sys2frd(RFz[i], freq)
+print('Resonant filters were designed.')
 
 # Design DOB for FB
 M_dob = M
@@ -131,14 +140,6 @@ Cz_Hap = ctrl.pd(freq1, freq2, zeta2, M_dob, C_dob, K_dob, Ts)
 Cz_Hap_frd = ctrl.sys2frd(Cz_Hap, freq)
 print('Haptics controller was designed.')
 
-# Anti-LPF
-freq_lpf = 150.0
-omega_lpf = 2.0 * np.pi * freq_lpf
-tau = 0.001
-AntiLPFs = ctrl.tf([1.0, omega_lpf], [tau, omega_lpf])
-AntiLPFz = ctrl.c2d(AntiLPFs, Ts)
-AntiLPFz_frd = ctrl.sys2frd(AntiLPFz, freq)
-
 print('Creating parameter set Cpp and header files...')
 axis_num = 6
 Pmechz_axes = [Pmechz for i in range(axis_num)]
@@ -146,7 +147,7 @@ Cz_PID_axes = [Cz_PID for i in range(axis_num)]
 Cz_PD_axes = [Cz_PD for i in range(axis_num)]
 Cz_PI_axes = [Cz_PI for i in range(axis_num)]
 NFz_axes = [[NFz[j] for j in range(len(NFz))] for i in range(axis_num)]
-PFz_axes = [[PFz[j] for j in range(len(PFz))] for i in range(axis_num)]
+RFz_axes = [[RFz[j] for j in range(len(RFz))] for i in range(axis_num)]
 DOBfbu_axes = [DOBfbu for i in range(axis_num)]
 DOBfby_axes = [DOBfby for i in range(axis_num)]
 DOBestu_axes = [DOBestu for i in range(axis_num)]
@@ -161,7 +162,7 @@ ctrl.defprmset(Cz_PID_axes, 'gstPIDInf['+str(axis_num)+']', srcpathName, ftype)
 ctrl.defprmset(Cz_PD_axes, 'gstPDInf['+str(axis_num)+']', srcpathName, ftype)
 ctrl.defprmset(Cz_PI_axes, 'gstPIInf['+str(axis_num)+']', srcpathName, ftype)
 ctrl.defprmset(NFz_axes, 'gstNFInf['+str(axis_num)+']['+str(len(NFz))+']', srcpathName, ftype)
-ctrl.defprmset(PFz_axes, 'gstPFInf['+str(axis_num)+']['+str(len(PFz))+']', srcpathName, ftype)
+ctrl.defprmset(RFz_axes, 'gstRFInf['+str(axis_num)+']['+str(len(RFz))+']', srcpathName, ftype)
 ctrl.defprmset(DOBfbu_axes, 'gstDOBfbuInf['+str(axis_num)+']', srcpathName, ftype)
 ctrl.defprmset(DOBfby_axes, 'gstDOBfbyInf['+str(axis_num)+']', srcpathName, ftype)
 ctrl.defprmset(DOBestu_axes, 'gstDOBestuInf['+str(axis_num)+']', srcpathName, ftype)

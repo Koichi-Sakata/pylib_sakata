@@ -32,11 +32,11 @@ z = ctrl.tf([1, 0], [1], Ts)
 print('Common parameters were set.')
 
 # Plant model
-M = 0.11
+M = 0.09
 C = 0.7
 K = 0.0
-fanti = 147
-freso = 269
+fanti = 164
+freso = 378
 Creso = 2.5
 M1 = (fanti / freso) ** 2 * M
 M2 = M - M1
@@ -61,7 +61,7 @@ Pnz_frd = Pnz1_frd
 print('Plant model was set.')
 
 print('Getting measurement data...')
-measfileName = 'data/freq_resp_2mass_20230720.csv'
+measfileName = 'data/freq_resp_2mass_20250124.csv'
 # Frequency response
 Pmeas_frd, coh = meas.measdata2frd(measfileName, 'ServoOutN[0]', 'ActPosUm[0]', 'FlagInject', freq, 1., 1.e-6, 8, 0.8)
 

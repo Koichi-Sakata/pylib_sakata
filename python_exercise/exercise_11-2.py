@@ -101,18 +101,11 @@ plot.plot_tffrd(ax_mag, ax_phase, Pns1_frd, '-', 'b', 1.5, 1.0)
 plot.plot_tffrd(ax_mag, ax_phase, Pns2_frd, '-', 'r', 1.5, 1.0, freqrange, legend=['Rigid', 'Motor side', 'Load side'])
 plot.savefig(figurefolderName+'/freq_P.png')
 
-# PID controller
-fig = plot.makefig()
-ax_mag = fig.add_subplot(211)
-ax_phase = fig.add_subplot(212)
-plot.plot_tffrd(ax_mag, ax_phase, Cs_frd, '-', 'b', 1.5, 1.0, freqrange, title='Frequency response of PID controller')
-plot.savefig(figurefolderName+'/freq_C.png')
-
 # Notch filters
 fig = plot.makefig()
 ax_mag = fig.add_subplot(211)
 ax_phase = fig.add_subplot(212)
-plot.plot_tffrd(ax_mag, ax_phase, NFs_frd, '-', 'b', 1.5, 1.0, freqrange, title='Frequency response of filters')
+plot.plot_tffrd(ax_mag, ax_phase, NFs_frd, '-', 'b', 1.5, 1.0, freqrange, title='Frequency response of notch filters')
 plot.savefig(figurefolderName+'/freq_NF.png')
 
 # PID controller
@@ -121,7 +114,7 @@ ax_mag = fig.add_subplot(211)
 ax_phase = fig.add_subplot(212)
 plot.plot_tffrd(ax_mag, ax_phase, Cs_frd, '-', 'b', 1.5, 1.0, freqrange, title='Frequency response of PID controller')
 plot.plot_tffrd(ax_mag, ax_phase, Cs_frd * NFs_frd, '-', 'r', 1.5, 1.0, freqrange, legend=['w/o NF', 'with NF'])
-plot.savefig(figurefolderName+'/freq_C_nf.png')
+plot.savefig(figurefolderName+'/freq_C.png')
 
 # Open loop function
 fig = plot.makefig()
