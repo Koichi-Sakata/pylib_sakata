@@ -34,7 +34,7 @@
 # sys = filt(num, den, dt)
 # sys = minreal(sys)
 # makeprmset(path='.')
-# writeprmset(tfz, prmSetName, path='.', mode='a')
+# defprmset(tfz, prmSetName, path='.', mode='a')
 
 
 import os
@@ -762,7 +762,7 @@ def minreal(sys):
         return sys
 
 
-def makeprmset(path='.', ftype='cpp'):
+def makeprmset(path='.', ftype='cpp', axisNum=6, nfNum=0, rfNum=0):
     path_cpp = path + '/gval_ctrlprm.'+ ftype
     f = open(path_cpp, 'w')
     if ftype == 'cpp':
@@ -776,25 +776,37 @@ def makeprmset(path='.', ftype='cpp'):
     f = open(path_h, 'w')
     f.write('#ifndef _HEAD_CTRLPRM_\n')
     f.write('#define _HEAD_CTRLPRM_\n\n')
+    f.write('#define AXIS_NUM	')
+    f.write(str(int(axisNum)))
+    f.write('	    // Number of control axis\n')
+    if nfNum > 0:
+        f.write('#define NF_NUM		')
+        f.write(str(int(nfNum)))
+        f.write('	    // Number of notch filter\n')
+    if rfNum > 0:
+        f.write('#define RF_NUM		')
+        f.write(str(int(rfNum)))
+        f.write('	    // Number of resonant filter\n')
+    f.write('\n')
     f.write('typedef struct {\n')
     f.write('	double	dA[2];\n')
     f.write('	double	dB[2];\n')
     f.write('	double	dInPre;\n')
     f.write('	double	dOutPre;\n')
-    f.write('} TF1_INF;						// 1st order TF information\n\n')
+    f.write('} TF1_INF;					// 1st order TF information\n\n')
     f.write('typedef struct {\n')
     f.write('	double	dA[3];\n')
     f.write('	double	dB[3];\n')
     f.write('	double	dInPre[2];\n')
     f.write('	double	dOutPre[2];\n')
-    f.write('} TF2_INF;						// 2nd order TF information\n\n')
+    f.write('} TF2_INF;					// 2nd order TF information\n\n')
     f.write('typedef struct {\n')
     f.write('	double	dA[4];\n')
     f.write('	double	dB[4];\n')
     f.write('	double	dInPre[3];\n')
     f.write('	double	dOutPre[3];\n')
-    f.write('} TF3_INF;						// 3rd order TF information\n\n')
-    f.write('#endif\n')
+    f.write('} TF3_INF;					// 3rd order TF information\n\n')
+    f.write('\n#endif\n')
 
 
 def defprmset(tfz, prmSetName, path='.', ftype='cpp', mode='a'):
@@ -870,7 +882,7 @@ def defprmset(tfz, prmSetName, path='.', ftype='cpp', mode='a'):
         path_h = path + '/head_ctrlprm.h'
         with open(path_h) as reader:
             content = reader.read()
-        content = content.replace('#endif\n', '')
+        content = content.replace('\n#endif\n', '')
         with open(path_h, 'w') as writer:
             writer.write(content)
         f = open(path_h, mode)
@@ -937,7 +949,7 @@ def defprmset(tfz, prmSetName, path='.', ftype='cpp', mode='a'):
             path_h = path + '/head_ctrlprm.h'
             with open(path_h) as reader:
                 content = reader.read()
-            content = content.replace('#endif\n', '')
+            content = content.replace('\n#endif\n', '')
             with open(path_h, 'w') as writer:
                 writer.write(content)
             f = open(path_h, mode)
@@ -1009,7 +1021,7 @@ def defprmset(tfz, prmSetName, path='.', ftype='cpp', mode='a'):
             path_h = path + '/head_ctrlprm.h'
             with open(path_h) as reader:
                 content = reader.read()
-            content = content.replace('#endif\n', '')
+            content = content.replace('\n#endif\n', '')
             with open(path_h, 'w') as writer:
                 writer.write(content)
             f = open(path_h, mode)

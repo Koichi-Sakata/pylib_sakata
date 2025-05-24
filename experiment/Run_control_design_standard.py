@@ -51,7 +51,7 @@ Cz_PD_frd = ctrl.sys2frd(Cz_PD, freq)
 print('PD controller was designed.')
 
 # Design PID controller
-freq1 = 25.0
+freq1 = 20.0
 zeta1 = 0.7
 freq3 = 10
 freq4 = 100
@@ -156,19 +156,19 @@ Czpetc_axes = [Czpetc for i in range(axis_num)]
 ImpModel_axes = [ImpModel for i in range(axis_num)]
 Cz_Hap_axes = [Cz_Hap for i in range(axis_num)]
 
-ctrl.makeprmset(srcpathName, ftype)
-ctrl.defprmset(Pmechz_axes, 'gstModelInf['+str(axis_num)+']', srcpathName, ftype)
-ctrl.defprmset(Cz_PID_axes, 'gstPIDInf['+str(axis_num)+']', srcpathName, ftype)
-ctrl.defprmset(Cz_PD_axes, 'gstPDInf['+str(axis_num)+']', srcpathName, ftype)
-ctrl.defprmset(Cz_PI_axes, 'gstPIInf['+str(axis_num)+']', srcpathName, ftype)
-ctrl.defprmset(NFz_axes, 'gstNFInf['+str(axis_num)+']['+str(len(NFz))+']', srcpathName, ftype)
-ctrl.defprmset(RFz_axes, 'gstRFInf['+str(axis_num)+']['+str(len(RFz))+']', srcpathName, ftype)
-ctrl.defprmset(DOBfbu_axes, 'gstDOBfbuInf['+str(axis_num)+']', srcpathName, ftype)
-ctrl.defprmset(DOBfby_axes, 'gstDOBfbyInf['+str(axis_num)+']', srcpathName, ftype)
-ctrl.defprmset(DOBestu_axes, 'gstDOBestuInf['+str(axis_num)+']', srcpathName, ftype)
-ctrl.defprmset(DOBesty_axes, 'gstDOBestyInf['+str(axis_num)+']', srcpathName, ftype)
-ctrl.defprmset(Czpetc_axes, 'gstZPETInf['+str(axis_num)+']', srcpathName, ftype)
-ctrl.defprmset(ImpModel_axes, 'gstImpInf['+str(axis_num)+']', srcpathName, ftype)
-ctrl.defprmset(Cz_Hap_axes, 'gstHapInf['+str(axis_num)+']', srcpathName, ftype)
+ctrl.makeprmset(srcpathName, ftype, axis_num, len(NFz), len(RFz))
+ctrl.defprmset(Pmechz_axes, 'gstModelInf[AXIS_NUM]', srcpathName, ftype)
+ctrl.defprmset(Cz_PID_axes, 'gstPIDInf[AXIS_NUM]', srcpathName, ftype)
+ctrl.defprmset(Cz_PD_axes, 'gstPDInf[AXIS_NUM]', srcpathName, ftype)
+ctrl.defprmset(Cz_PI_axes, 'gstPIInf[AXIS_NUM]', srcpathName, ftype)
+ctrl.defprmset(NFz_axes, 'gstNFInf[AXIS_NUM][NF_NUM]', srcpathName, ftype)
+ctrl.defprmset(RFz_axes, 'gstRFInf[AXIS_NUM][RF_NUM]', srcpathName, ftype)
+ctrl.defprmset(DOBfbu_axes, 'gstDOBfbuInf[AXIS_NUM]', srcpathName, ftype)
+ctrl.defprmset(DOBfby_axes, 'gstDOBfbyInf[AXIS_NUM]', srcpathName, ftype)
+ctrl.defprmset(DOBestu_axes, 'gstDOBestuInf[AXIS_NUM]', srcpathName, ftype)
+ctrl.defprmset(DOBesty_axes, 'gstDOBestyInf[AXIS_NUM]', srcpathName, ftype)
+ctrl.defprmset(Czpetc_axes, 'gstZPETInf[AXIS_NUM]', srcpathName, ftype)
+ctrl.defprmset(ImpModel_axes, 'gstImpInf[AXIS_NUM]', srcpathName, ftype)
+ctrl.defprmset(Cz_Hap_axes, 'gstHapInf[AXIS_NUM]', srcpathName, ftype)
 
 print('Finished.')

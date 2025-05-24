@@ -50,7 +50,7 @@ Cz_PD_frd = ctrl.sys2frd(Cz_PD, freq)
 print('PD controller was designed.')
 
 # Design PID controller
-freq1 = 25.0
+freq1 = 50.0
 zeta1 = 0.7
 freq3 = 10
 freq4 = 100
@@ -66,9 +66,9 @@ Pmechz_axes = [Pmechz for i in range(axis_num)]
 Cz_PID_axes = [Cz_PID for i in range(axis_num)]
 Cz_PD_axes = [Cz_PD for i in range(axis_num)]
 
-ctrl.makeprmset(srcpathName, ftype)
-ctrl.defprmset(Pmechz_axes, 'gstModelInf['+str(axis_num)+']', srcpathName, ftype)
-ctrl.defprmset(Cz_PID_axes, 'gstPIDInf['+str(axis_num)+']', srcpathName, ftype)
-ctrl.defprmset(Cz_PD_axes, 'gstPDInf['+str(axis_num)+']', srcpathName, ftype)
+ctrl.makeprmset(srcpathName, ftype, axis_num)
+ctrl.defprmset(Pmechz_axes, 'gstModelInf[AXIS_NUM]', srcpathName, ftype)
+ctrl.defprmset(Cz_PID_axes, 'gstPIDInf[AXIS_NUM]', srcpathName, ftype)
+ctrl.defprmset(Cz_PD_axes, 'gstPDInf[AXIS_NUM]', srcpathName, ftype)
 
 print('Finished.')

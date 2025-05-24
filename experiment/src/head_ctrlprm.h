@@ -1,6 +1,11 @@
 #ifndef _HEAD_CTRLPRM_
 #define _HEAD_CTRLPRM_
 
+// Control axis numbers
+#define AXIS_NUM	6	// Number of control axis
+#define NF_NUM		0	// Number of notch filter
+#define RF_NUM		0	// Number of resonant filter
+
 typedef struct {
 	double	dA[2];
 	double	dB[2];
@@ -32,7 +37,7 @@ extern TF1_INF	gstPIInf[6];
 
 extern TF2_INF	gstNFInf[6][1];
 
-extern TF2_INF	gstPFInf[6][6];
+extern TF2_INF	gstRFInf[6][6];
 
 extern TF2_INF	gstDOBfbuInf[6];
 
