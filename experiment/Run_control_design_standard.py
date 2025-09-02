@@ -29,14 +29,14 @@ z = ctrl.tf([1, 0], [1], Ts)
 print('Common parameters were set.')
 
 # Plant model
-M = 0.09
+M = 0.12
 C = 0.7
 K = 0.0
 Pmechs = ctrl.tf([1.0], [M, C, K])
 Pmechz = ctrl.c2d(Pmechs, Ts, method='zoh')
 numDelay, denDelay = matlab.pade(Ts*4, n=4)
 Ds = ctrl.tf(numDelay, denDelay)
-Dz = z**-5
+Dz = z**-3
 Pns = Pmechs * Ds
 Pnz = ctrl.c2d(Pmechs, Ts, method='zoh') * Dz
 Pnz_frd = ctrl.sys2frd(Pnz, freq)
@@ -53,8 +53,8 @@ print('PD controller was designed.')
 # Design PID controller
 freq1 = 20.0
 zeta1 = 0.7
-freq3 = 10
-freq4 = 100
+freq3 = 20.0
+freq4 = 30.0
 freq2 = np.sqrt(freq3 * freq4)
 zeta2 = 0.5*(freq3 + freq4)/freq2
 Cz_PID = ctrl.pid(freq1, zeta1, freq2, zeta2, M, C, K, Ts)
@@ -69,9 +69,9 @@ Cz_PI_frd = ctrl.sys2frd(Cz_PI, freq)
 print('PI velocity controller was designed.')
 
 # Design notch filters
-freqNF = [378]
-zetaNF = [0.2]
-depthNF = [0.02]
+freqNF = [391]
+zetaNF = [0.3]
+depthNF = [0.01]
 NFz = ctrl.nf(freqNF, zetaNF, depthNF, Ts)
 NFz_all = 1.0
 NFz_frd = 1.0

@@ -79,6 +79,12 @@ plot.savefig(figurefolderName+'/freq_P.png')
 fig = plot.makefig()
 ax_mag = fig.add_subplot(211)
 ax_phase = fig.add_subplot(212)
+plot.plot_tffrd(ax_mag, ax_phase, Cs_frd, '-', 'b', 1.5, 1., freqrange, title='Frequency response of FB controller')
+plot.savefig(figurefolderName+'/freq_Cpre.png')
+
+fig = plot.makefig()
+ax_mag = fig.add_subplot(211)
+ax_phase = fig.add_subplot(212)
 plot.plot_tffrd(ax_mag, ax_phase, Cs_frd, '-', 'b', 1.5, 1.0, title='Frequency response of FB controller')
 plot.plot_tffrd(ax_mag, ax_phase, (Cs_frd + DOBy_frd)/(1.0 - DOBu_frd), '-', 'r', 1.5, 1.0, freqrange, legend=['PID', 'PID + DOB'])
 plot.savefig(figurefolderName+'/freq_C.png')
@@ -90,6 +96,14 @@ ax_phase = fig.add_subplot(212)
 plot.plot_tffrd(ax_mag, ax_phase, Gn_frd, '-', 'b', 1.5, 1.0, title='Frequency response of open loop transfer function')
 plot.plot_tffrd(ax_mag, ax_phase, Gdob_frd, '-', 'r', 1.5, 1.0, freqrange, legend=['w/o DOB', 'with DOB'])
 plot.savefig(figurefolderName+'/freq_G.png')
+
+# Sensitivity function and complementary sensitivity function
+fig = plot.makefig()
+ax_mag = fig.add_subplot(111)
+ax_phase = None
+plot.plot_tffrd(ax_mag, ax_phase, Sn_frd, '-', 'b', 1.5, 1.0, title='Frequency response of S and T')
+plot.plot_tffrd(ax_mag, ax_phase, Tn_frd, '-', 'r', 1.5, 1.0, freqrange, [-60, 10], legend=['S', 'T'])
+plot.savefig(figurefolderName+'/freq_STpre.png')
 
 # Sensitivity function
 fig = plot.makefig()

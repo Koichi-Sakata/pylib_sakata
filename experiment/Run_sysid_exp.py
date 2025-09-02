@@ -32,7 +32,7 @@ z = ctrl.tf([1, 0], [1], Ts)
 print('Common parameters were set.')
 
 # Plant model
-M = 0.027
+M = 0.0185
 C = 0.7
 K = 0.0
 Pmechs = ctrl.tf([1], [M, C, K])
@@ -44,7 +44,7 @@ Pnz = ctrl.c2d(Pmechs, Ts, method='zoh') * Dz
 Pnz_frd = ctrl.sys2frd(Pnz, freq)
 
 print('Getting measurement data...')
-measfileName = 'data/freq_resp_PD_20230720.csv'
+measfileName = 'data/freq_resp_PD_20250903.csv'
 # Frequency response
 Pmeas_frd, coh = meas.measdata2frd(measfileName, 'ServoOutN[0]', 'ActPosUm[0]', 'FlagInject', freq, 1., 1.e-6, 8, 0.8)
 

@@ -32,8 +32,8 @@ z = ctrl.tf([1, 0], [1], Ts)
 print('Common parameters were set.')
 
 # Plant model
-M = 0.022
-C = 1.0
+M = 0.0185
+C = 0.7
 K = 0.0
 Pmechs = ctrl.tf([1], [M, C, K])
 numDelay, denDelay = matlab.pade(Ts*4, n=4)
@@ -45,27 +45,30 @@ Pnz_frd = ctrl.sys2frd(Pnz, freq)
 print('Plant model was set.')
 
 # Design PID controller
-freq1 = 30.0
-zeta1 = 1
-freq2 = 20.0
-zeta2 = 0.7
+freq1 = 50.0
+zeta1 = 0.7
+freq3 = 10
+freq4 = 100
+freq2 = np.sqrt(freq3 * freq4)
+zeta2 = 0.5*(freq3 + freq4)/freq2
 Cz = ctrl.pid(freq1, zeta1, freq2, zeta2, M, C, K, Ts)
 Cz_frd = ctrl.sys2frd(Cz, freq)
 print('PID controller was designed.')
 
 print('Getting measurement data...')
-measfileName = 'data/freq_resp_PD_20230720.csv'
+measfileName = 'data/freq_resp_PD_20250903.csv'
 # Frequency response
 Pmeas_frd, coh = meas.measdata2frd(measfileName, 'ServoOutN[0]', 'ActPosUm[0]', 'FlagInject', freq, 1., 1.e-6, 8, 0.8)
 
 # Time response
-measdata = meas.getdata('data/time_resp.csv')
+measdata = meas.getdata('data/time_resp_20250903.csv')
 time = measdata.time
 RefPosUm = measdata.value[meas.getdataindex(measdata, 'RefPosUm[0]')]
 ErrPosUm = measdata.value[meas.getdataindex(measdata, 'ErrPosUm[0]')]
 ServoOutN = measdata.value[meas.getdataindex(measdata, 'ServoOutN[0]')]
 # FFT
 freq_fft, ErrPosUm_fft = fft.fft(ErrPosUm[8000:72000], Ts)
+freq_fft, ServoOutN_fft = fft.fft(ServoOutN[8000:72000], Ts)
 
 print('Frequency response analysis is running...')
 # Measurement
@@ -86,8 +89,10 @@ plot.savefig(figurefolderName+'/time_resp.png')
 
 # FFT
 fig = plot.makefig()
-ax1 = fig.add_subplot(111)
-plot.plot_xy(ax1, freq_fft, ErrPosUm_fft, '-', 'b', 1.5, 1.0, xscale='log', xrange=[1.0, 1000.0], yrange=[0.0, 1.6], xlabel='Frequency [Hz]', ylabel='Error Pos [um]', title='Power spectrum density')
+ax1 = fig.add_subplot(211)
+ax2 = fig.add_subplot(212)
+plot.plot_xy(ax1, freq_fft, ErrPosUm_fft, '-', 'b', 1.5, 1.0, xscale='log', xrange=[1.0, 1000.0], yrange=[0.0, 2.5], ylabel='Error Pos [um]', title='Power spectrum density')
+plot.plot_xy(ax2, freq_fft, ServoOutN_fft, '-', 'b', 1.5, 1.0, xscale='log', xrange=[1.0, 1000.0], yrange=[0.0, 0.006], xlabel='Frequency [Hz]', ylabel='ServoOut [N]')
 plot.savefig(figurefolderName+'/time_fft.png')
 
 # Plant

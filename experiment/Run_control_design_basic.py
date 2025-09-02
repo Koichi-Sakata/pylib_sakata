@@ -16,8 +16,8 @@ from pylib_sakata import plot
 print('Start simulation!')
 
 # Common parameters
-srcpathName = 'src'
-# srcpathName = 'C:/Users/sakat/source/repos/TwinCAT-CppMotionControl-main/TwinCAT-CppMotionControl/StaticLibrary1'
+# srcpathName = 'src'
+srcpathName = 'C:/Users/sakat/source/repos/TwinCAT-CppMotionControl-main/TwinCAT-CppMotionControl/StaticLibrary1'
 ftype = 'cpp'
 Ts = 1/8000
 dataNum = 10000

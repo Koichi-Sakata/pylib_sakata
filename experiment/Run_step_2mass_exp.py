@@ -35,8 +35,8 @@ print('Common parameters were set.')
 M = 0.11
 C = 0.7
 K = 0.0
-fanti = 147
-freso = 269
+fanti = 166
+freso = 379
 Creso = 2.5
 M1 = (fanti / freso) ** 2 * M
 M2 = M - M1
@@ -61,27 +61,30 @@ Pnz_frd = Pnz1_frd
 print('Plant model was set.')
 
 # Design PID controller
-freq1 = 25.0
+freq1 = 20.0
 zeta1 = 0.7
-freq2 = 25.0
-zeta2 = 0.7
+freq3 = 20.0
+freq4 = 30.0
+freq2 = np.sqrt(freq3 * freq4)
+zeta2 = 0.5*(freq3 + freq4)/freq2
 Cz = ctrl.pid(freq1, zeta1, freq2, zeta2, M, C, K, Ts)
 Cz_frd = ctrl.sys2frd(Cz, freq)
 print('PID controller was designed.')
 
 print('Getting measurement data...')
-measfileName = 'data/freq_resp_2mass_20230720.csv'
+measfileName = 'data/freq_resp_2mass_20250902.csv'
 # Frequency response
 Pmeas_frd, coh = meas.measdata2frd(measfileName, 'ServoOutN[0]', 'ActPosUm[0]', 'FlagInject', freq, 1., 1.e-6, 8, 0.8)
 
 # Time response
-measdata = meas.getdata('data/time_resp_2mass_20230720.csv')
+measdata = meas.getdata('data/time_resp_2mass_20250902.csv')
 time = measdata.time
 RefPosUm = measdata.value[meas.getdataindex(measdata, 'RefPosUm[0]')]
 ErrPosUm = measdata.value[meas.getdataindex(measdata, 'ErrPosUm[0]')]
 ServoOutN = measdata.value[meas.getdataindex(measdata, 'ServoOutN[0]')]
 # FFT
 freq_fft, ErrPosUm_fft = fft.fft(ErrPosUm[8000:72000], Ts)
+freq_fft, ServoOutN_fft = fft.fft(ServoOutN[8000:72000], Ts)
 
 print('Frequency response analysis is running...')
 # Measurement
@@ -96,14 +99,16 @@ ax1 = fig.add_subplot(311)
 ax2 = fig.add_subplot(312)
 ax3 = fig.add_subplot(313)
 plot.plot_xy(ax1, time, RefPosUm*1.0e-3, '-', 'b', 1.5, 1.0, ylabel='Ref Pos [mm]', title='Time response')
-plot.plot_xy(ax2, time, ErrPosUm, '-', 'b', 1.5, 1.0, ylabel='Error Pos [um]')
+plot.plot_xy(ax2, time, ErrPosUm, '-', 'b', 1.5, 1.0, yrange=[-2.5, 2.5], ylabel='Error Pos [um]')
 plot.plot_xy(ax3, time, ServoOutN, '-', 'b', 1.5, 1.0, xlabel='Time [s]', ylabel='ServoOut [N]')
 plot.savefig(figurefolderName+'/time_resp.png')
 
 # FFT
 fig = plot.makefig()
-ax1 = fig.add_subplot(111)
-plot.plot_xy(ax1, freq_fft, ErrPosUm_fft, '-', 'b', 1.5, 1.0, xscale='log', xrange=[1.0, 1000.0], yrange=[0.0, 1.2], xlabel='Frequency [Hz]', ylabel='Error Pos [um]', title='Power spectrum density')
+ax1 = fig.add_subplot(211)
+ax2 = fig.add_subplot(212)
+plot.plot_xy(ax1, freq_fft, ErrPosUm_fft, '-', 'b', 1.5, 1.0, xscale='log', xrange=[1.0, 1000.0], yrange=[0.0, 0.4], ylabel='Error Pos [um]', title='Power spectrum density')
+plot.plot_xy(ax2, freq_fft, ServoOutN_fft, '-', 'b', 1.5, 1.0, xscale='log', xrange=[1.0, 1000.0], yrange=[0.0, 0.003], xlabel='Frequency [Hz]', ylabel='ServoOut [N]')
 plot.savefig(figurefolderName+'/time_fft.png')
 
 # Plant
