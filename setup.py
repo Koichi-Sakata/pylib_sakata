@@ -7,7 +7,13 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="pylib-sakata",
-    version="0.3.2",
+    version="0.3.3",
+    install_requires=[
+        'numpy==1.26.4',
+        'scipy==1.14.1',
+        'pandas>=2.2.3',
+        'control==0.10.2',
+    ],
     author="Koichi Sakata",
     author_email="",
     description="Control system design and analysis package",
@@ -16,5 +22,5 @@ setuptools.setup(
     url="https://github.com/Koichi-Sakata/pylib_sakata",
     package_dir={"": "src"},
     packages=setuptools.find_packages(where="src"),
-    python_requires=">=3.11",
+    python_requires=">=3.9,<3.13",
 )

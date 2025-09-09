@@ -8,6 +8,7 @@
 # makefig()
 # savefig(figName)
 # showfig()
+# closefig(fig)
 
 
 import numpy as np
@@ -230,3 +231,6 @@ def savefig(figName):
 
 def showfig():
     plt.show()
+
+def closefig(fig):
+    plt.close(fig)

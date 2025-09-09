@@ -1,4 +1,4 @@
-pylib-sakata User's Manual version-0.3.2
+pylib-sakata User's Manual version-0.3.3
 ===
 
 <!-- code_chunk_output -->
@@ -6,7 +6,7 @@ pylib-sakata User's Manual version-0.3.2
 - [1. Introduction](#1-introduction)
 - [2. Environment Setup](#2-environment-setup)
   - [2.1. Installation of Python](#21-installation-of-python)
-  - [2.2. Installation  of required Python libraries](#22-installation--of-required-python-libraries)
+  - [2.2. Installation  of required Python libraries](#22-installation-of-required-python-libraries)
   - [2.3. Installation of pylib-sakata](#23-installation-of-pylib-sakata)
   - [2.4. Installation of IDE for Python](#24-installation-of-ide-for-python)
     - [2.4.1. Visual Studio Code (VSCode)](#241-visual-studio-code-vscode)
@@ -18,7 +18,7 @@ pylib-sakata User's Manual version-0.3.2
     - [2.4.3. PyCharm](#243-pycharm)
       - [2.4.3.1. Installation of PyCharm](#2431-installation-of-pycharm)
       - [2.4.3.2. Initial setting of PyCharm](#2432-initial-setting-of-pycharm)
-    - [2.4.4. Comparison between  VSCode and Spyder and PyCharm](#244-comparison-between--vscode-and-spyder-and-pycharm)
+    - [2.4.4. Comparison between  VSCode and Spyder and PyCharm](#244-comparison-between-vscode-and-spyder-and-pycharm)
   - [2.5. Getting started](#25-getting-started)
 - [3. pylib\_sakata.ctrl](#3-pylib_sakatactrl)
   - [3.1. ZpkModel](#31-zpkmodel)
@@ -84,6 +84,7 @@ pylib-sakata User's Manual version-0.3.2
   - [7.6. makefig](#76-makefig)
   - [7.7. savefig](#77-savefig)
   - [7.8. showfig](#78-showfig)
+  - [7.9. closefig](#79-closefig)
 - [8. pylib\_sakata.init](#8-pylib_sakatainit)
   - [8.1. close\_all](#81-close_all)
   - [8.2. clear\_all](#82-clear_all)
@@ -99,7 +100,7 @@ The pylib-sakata package is a set of python classes and functions that make the 
 ### 2.1. Installation of Python
 Python installation exe file can be downloaded [HERE](https://www.python.org/downloads/) for Windows. Check "Add Python 3.x to PATH" when you install Python.
 
-### 2.2. Installation  of required Python libraries
+### 2.2. Installation of required Python libraries
 
 The pylib-sakata package requires [numpy](http://www.numpy.org), [scipy](http://www.scipy.org), [matplotlib](https://matplotlib.org), [pandas](https://pandas.pydata.org/), and [python-control](https://github.com/python-control/python-control). In addition, some routines require the [slycot](https://github.com/python-control/Slycot) library in order to implement more advanced features. 
 First, pip should be upgraded by the following command on the command prompt for Windows OS.
@@ -182,7 +183,7 @@ The latest version of PyCharm installation exe file can be downloaded [HERE](htt
 ##### 2.4.3.2. Initial setting of PyCharm
 It is not necessary.
 
-#### 2.4.4. Comparison between  VSCode and Spyder and PyCharm
+#### 2.4.4. Comparison between VSCode and Spyder and PyCharm
 
 |                    |        VSCode       |      Spyder       |     PyCharm       |
 | ------------------ | :-----------------: | :---------------: | :---------------: |
@@ -1846,6 +1847,17 @@ This function will call matplotlib.pyplot.show()
 **Examples**
 ```python
 showfig()
+```
+
+### 7.9. closefig
+
+pylib_sakata.plot.**closefig**(fig)
+
+This function will call matplotlib.pyplot.close(fig)
+
+**Examples**
+```python
+closefig(fig)
 ```
 
 ## 8. pylib_sakata.init
