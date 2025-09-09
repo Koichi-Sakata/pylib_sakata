@@ -1,4 +1,4 @@
-pylib-sakata User's Manual version-0.3.3
+pylib-sakata User's Manual version-0.3.4
 ===
 
 <!-- code_chunk_output -->
@@ -98,28 +98,19 @@ The pylib-sakata package is a set of python classes and functions that make the 
 ## 2. Environment Setup
 
 ### 2.1. Installation of Python
-Python installation exe file can be downloaded [HERE](https://www.python.org/downloads/) for Windows. Check "Add Python 3.x to PATH" when you install Python.
+Python installation exe file can be downloaded [HERE](https://www.python.org/downloads/) for Windows. Python version requirements are >=3.9 and <3.13. Check "Add Python 3.x to PATH" when you install Python.
 
 ### 2.2. Installation of required Python libraries
 
-The pylib-sakata package requires [numpy](http://www.numpy.org), [scipy](http://www.scipy.org), [matplotlib](https://matplotlib.org), [pandas](https://pandas.pydata.org/), and [python-control](https://github.com/python-control/python-control). In addition, some routines require the [slycot](https://github.com/python-control/Slycot) library in order to implement more advanced features. 
-First, pip should be upgraded by the following command on the command prompt for Windows OS.
+The pylib-sakata package requires [numpy](http://www.numpy.org), [scipy](http://www.scipy.org), [matplotlib](https://matplotlib.org), [pandas](https://pandas.pydata.org/), and [python-control](https://github.com/python-control/python-control). In addition, some routines require the [slycot](https://github.com/python-control/Slycot) library in order to implement more advanced features.
+These required python libraries are installed automatically as following version when you install pylib-sakata.
 ```shell
-python -m pip install --upgrade pip
+numpy==1.26.4
+scipy==1.14.1
+matplotlib==3.8.4
+pandas>=2.2.3
+control==0.10.2
 ```
-For Linux OS, pip can be upgraded by the following command on the shell.
-```shell
-$ sudo pip3 install --upgrade pip
-```
-The required python libraries can be installed using pip as the following commands on the command prompt or on the shell.
-```shell
-pip install numpy==1.26.4
-pip install scipy
-pip install matplotlib
-pip install pandas
-pip install control
-```
-If those libraries can not be installed, please use pip3 instead of pip.
 
 ### 2.3. Installation of pylib-sakata
 
