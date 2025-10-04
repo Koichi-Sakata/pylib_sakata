@@ -1,4 +1,4 @@
-pylib-sakata User's Manual version-0.3.4
+pylib-sakata User's Manual version-0.3.5
 ===
 
 <!-- code_chunk_output -->
@@ -1211,10 +1211,10 @@ Refer examples of [3.11. sys2frd](#311-sys2frd).
 	Right add two FRDs (parallel connection).
 
 - \__**sub**__(*other*)
-	Subtract two FRDs.
+	Subtract two FRDs (parallel connection).
 
 - \__**rsub**__(*other*)
-	Right subtract two FRDs.
+	Right subtract two FRDs (parallel connection).
 
 - \__**mul**__(*other*)
 	Multiply two FRDs (serial connection).
@@ -1223,13 +1223,31 @@ Refer examples of [3.11. sys2frd](#311-sys2frd).
 	Right multiply two FRDs (serial connection).
 
 - \__**truediv**__(*other*)
-	Divide two FRDs.
+	Divide two FRDs (serial connection).
 
 - \__**rtruediv**__(*other*)
-	Right divide two FRDs.
+	Right divide two FRDs (serial connection).
 
 - \__**pow**__(*other*)
 	A FRD to the power of x.
+
+- \__**matmul**__(*other*)
+	Multiply two MIMO FRDs.
+
+- \__**mod**__(*other*)
+	Divide two MIMO FRDs.
+
+- **inv**()
+	Inverse matrix of a MIMO FRD.
+
+- **pinv**()
+	Moore-Penrose pseudo-inverse matrix of a MIMO FRD.
+
+- **rga**()
+	Relative gain array of a MIMO FRD.
+
+- **addeye**()
+	Add identify matrix to a MIMO FRD.
 
 ### 4.2. fft
 

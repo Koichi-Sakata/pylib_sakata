@@ -42,10 +42,13 @@ class FreqResp:
     def __add__(self, other):
         """Add two FRDs (parallel connection)."""
         if isinstance(other, (int, float, complex, np.number)):
-            other = FreqResp(self.freq, np.array([other]*len(self.resp)), self.dt)
+            if self.resp.ndim == 1:
+                other = FreqResp(self.freq, np.array([other] * len(self.resp)), self.dt)
+            else:
+                other = FreqResp(self.freq, other * np.ones(np.shape(self.resp)), self.dt)
         else:
             if not np.array_equal(self.freq, other.freq):
-                print('Error: frequency range of FRDs is different.')
+                raise ValueError('Error: frequency range of FRDs is different.')
             if self.dt != other.dt:
                 print('Warning: sampling time of FRDs is different.')
         return FreqResp(self.freq, self.resp + other.resp, self.dt)
@@ -55,66 +58,145 @@ class FreqResp:
         return self + other
 
     def __sub__(self, other):
-        """Subtract two FRDs."""
+        """Subtract two FRDs (parallel connection)."""
         return self + (-other)
 
     def __rsub__(self, other):
-        """Right subtract two FRDs."""
+        """Right subtract two FRDs (parallel connection)."""
         return other + (-self)
 
     def __mul__(self, other):
-        """Multiply two zpk models (serial connection)."""
+        """Multiply two FRDs (serial connection)."""
         if isinstance(other, (int, float, complex, np.number)):
-            other = FreqResp(self.freq, np.array([other]*len(self.resp)), self.dt)
+            if self.resp.ndim == 1:
+                other = FreqResp(self.freq, np.array([other] * len(self.resp)), self.dt)
+            else:
+                other = FreqResp(self.freq, other * np.ones(np.shape(self.resp)), self.dt)
         else:
             if not np.array_equal(self.freq, other.freq):
-                print('Error: frequency range of FRDs is different.')
+                raise ValueError('Error: frequency range of FRDs is different.')
             if self.dt != other.dt:
                 print('Warning: sampling time of FRDs is different.')
         return FreqResp(self.freq, self.resp * other.resp, self.dt)
 
     def __rmul__(self, other):
-        """Right multiply two zpk models (serial connection)."""
+        """Right multiply two FRDs (serial connection)."""
         if isinstance(other, (int, float, complex, np.number)):
-            other = FreqResp(self.freq, np.array([other]*len(self.resp)), self.dt)
+            if self.resp.ndim == 1:
+                other = FreqResp(self.freq, np.array([other] * len(self.resp)), self.dt)
+            else:
+                other = FreqResp(self.freq, other * np.ones(np.shape(self.resp)), self.dt)
         else:
             if not np.array_equal(self.freq, other.freq):
-                print('Error: frequency range of FRDs is different.')
+                raise ValueError('Error: frequency range of FRDs is different.')
             if self.dt != other.dt:
                 print('Warning: sampling time of FRDs is different.')
         return other * self
 
     def __truediv__(self, other):
-        """Divide two FRDs."""
+        """Divide two FRDs (serial connection)."""
         if isinstance(other, (int, float, complex, np.number)):
-            other = FreqResp(self.freq, np.array([other]*len(self.resp)), self.dt)
+            if self.resp.ndim == 1:
+                other = FreqResp(self.freq, np.array([other] * len(self.resp)), self.dt)
+            else:
+                other = FreqResp(self.freq, other * np.ones(np.shape(self.resp)), self.dt)
         else:
             if not np.array_equal(self.freq, other.freq):
-                print('Error: frequency range of FRDs is different.')
+                raise ValueError('Error: frequency range of FRDs is different.')
             if self.dt != other.dt:
                 print('Warning: sampling time of FRDs is different.')
         return FreqResp(self.freq, self.resp / other.resp, self.dt)
 
     def __rtruediv__(self, other):
-        """Right divide two FRDs."""
+        """Right divide two FRDs (serial connection)."""
         if isinstance(other, (int, float, complex, np.number)):
-            other = FreqResp(self.freq, np.array([other]*len(self.resp)), self.dt)
+            if self.resp.ndim == 1:
+                other = FreqResp(self.freq, np.array([other] * len(self.resp)), self.dt)
+            else:
+                other = FreqResp(self.freq, other * np.ones(np.shape(self.resp)), self.dt)
         else:
             if not np.array_equal(self.freq, other.freq):
-                print('Error: frequency range of FRDs is different.')
+                raise ValueError('Error: frequency range of FRDs is different.')
             if self.dt != other.dt:
                 print('Warning: sampling time of FRDs is different.')
         return other / self
 
     def __pow__(self, other):
+        """A FRD to the power of x."""
         if not type(other) == int:
             raise ValueError("Exponent must be an integer")
         if other == 0:
-            return FreqResp(self.freq, np.array([1.0]*len(self.resp)), self.dt)  # unity
+            if self.resp.ndim == 1:
+                return FreqResp(self.freq, np.array([1.0] * len(self.resp)), self.dt)  # unity
+            else:
+                return FreqResp(self.freq, np.ones(np.shape(self.resp)), self.dt)
         if other > 0:
             return self * (self ** (other - 1))
         if other < 0:
             return (1.0 / self) * (self ** (other + 1))
+
+    def __matmul__(self, other):
+        """Multiply two MIMO FRDs."""
+        if not np.array_equal(self.freq, other.freq):
+            raise ValueError('Error: frequency range of FRDs is different.')
+        if self.dt != other.dt:
+            print('Warning: sampling time of FRDs is different.')
+        m0, n0, k = np.shape(self.resp)
+        m1, n1, k = np.shape(other.resp)
+        if n0 != m1:
+            print('Error: matrix sizes are wrong.')
+        resultresp = np.empty(shape=(m0, n1, len(self.freq)), dtype=complex)
+        for k in range(len(self.freq)):
+            resultresp[:, :, k] = np.dot(self.resp[:, :, k], other.resp[:, :, k])
+        return FreqResp(self.freq, resultresp, self.dt)
+
+    def __mod__(self, other):
+        """Divide two MIMO FRDs."""
+        if not np.array_equal(self.freq, other.freq):
+            raise ValueError('Error: frequency range of FRDs is different.')
+        if self.dt != other.dt:
+            print('Warning: sampling time of FRDs is different.')
+        m0, n0, k = np.shape(self.resp)
+        m1, n1, k = np.shape(other.resp)
+        if n0 != n1:
+            raise ValueError('Error: matrix sizes are wrong.')
+        resultresp = np.empty(shape=(m0, m1, len(self.freq)), dtype=complex)
+        for k in range(len(self.freq)):
+            resultresp[:, :, k] = np.dot(self.resp[:, :, k], np.linalg.pinv(other.resp[:, :, k]))
+        return FreqResp(self.freq, resultresp, self.dt)
+
+    def inv(self):
+        """Inverse matrix of a MIMO FRD."""
+        m0, n0, k = np.shape(self.resp)
+        if m0 != n0:
+            raise ValueError('Error: matrix size is wrong.')
+        resultresp = np.empty(shape=(m0, m0, len(self.freq)), dtype=complex)
+        for k in range(len(self.freq)):
+            resultresp[:, :, k] = np.linalg.inv(self.resp[:, :, k])
+        return FreqResp(self.freq, resultresp, self.dt)
+
+    def pinv(self):
+        m0, n0, k = np.shape(self.resp)
+        resultresp = np.empty(shape=(n0, m0, len(self.freq)), dtype=complex)
+        for k in range(len(self.freq)):
+            resultresp[:, :, k] = np.linalg.pinv(self.resp[:, :, k])
+        return FreqResp(self.freq, resultresp, self.dt)
+
+    def rga(self):
+        m0, n0, k = np.shape(self.resp)
+        resultresp = np.empty(shape=(m0, n0, len(self.freq)), dtype=complex)
+        for k in range(len(self.freq)):
+            resultresp[:, :, k] =  self.resp[:, :, k] * np.linalg.pinv(self.resp[:, :, k]).T
+        return FreqResp(self.freq, resultresp, self.dt)
+
+    def addeye(self):
+        m0, n0, k = np.shape(self.resp)
+        if m0 != n0:
+            raise ValueError('Error: matrix size is wrong.')
+        resultresp = np.empty(shape=(m0, m0, len(self.freq)), dtype=complex)
+        for k in range(len(self.freq)):
+            resultresp[:, :, k] =  self.resp[:, :, k] + np.eye(m0)
+        return FreqResp(self.freq, resultresp, self.dt)
 
 
 def fft(data, dt):
