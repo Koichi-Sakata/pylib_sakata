@@ -165,6 +165,16 @@ class FreqResp:
             resultresp[:, :, k] = np.dot(self.resp[:, :, k], np.linalg.pinv(other.resp[:, :, k]))
         return FreqResp(self.freq, resultresp, self.dt)
 
+    def addeye(self):
+        """Add identify matrix to a MIMO FRD."""
+        m0, n0, k = np.shape(self.resp)
+        if m0 != n0:
+            raise ValueError('Error: matrix size is wrong.')
+        resultresp = np.empty(shape=(m0, m0, len(self.freq)), dtype=complex)
+        for k in range(len(self.freq)):
+            resultresp[:, :, k] =  self.resp[:, :, k] + np.eye(m0)
+        return FreqResp(self.freq, resultresp, self.dt)
+
     def inv(self):
         """Inverse matrix of a MIMO FRD."""
         m0, n0, k = np.shape(self.resp)
@@ -176,6 +186,7 @@ class FreqResp:
         return FreqResp(self.freq, resultresp, self.dt)
 
     def pinv(self):
+        """Moore-Penrose pseudo-inverse matrix of a MIMO FRD."""
         m0, n0, k = np.shape(self.resp)
         resultresp = np.empty(shape=(n0, m0, len(self.freq)), dtype=complex)
         for k in range(len(self.freq)):
@@ -183,19 +194,37 @@ class FreqResp:
         return FreqResp(self.freq, resultresp, self.dt)
 
     def rga(self):
+        """Relative gain array of a MIMO FRD."""
         m0, n0, k = np.shape(self.resp)
         resultresp = np.empty(shape=(m0, n0, len(self.freq)), dtype=complex)
         for k in range(len(self.freq)):
             resultresp[:, :, k] =  self.resp[:, :, k] * np.linalg.pinv(self.resp[:, :, k]).T
         return FreqResp(self.freq, resultresp, self.dt)
 
-    def addeye(self):
+    def det(self):
+        """Determinant of a MIMO FRD."""
+        m0, n0, k = np.shape(self.resp)
+        resultresp = np.empty(shape=(len(self.freq)), dtype=complex)
+        for k in range(len(self.freq)):
+            resultresp[k] =  np.linalg.det(self.resp[:, :, k])
+        return FreqResp(self.freq, resultresp, self.dt)
+
+    def eig(self):
+        """Eigen value of a MIMO FRD."""
         m0, n0, k = np.shape(self.resp)
         if m0 != n0:
             raise ValueError('Error: matrix size is wrong.')
-        resultresp = np.empty(shape=(m0, m0, len(self.freq)), dtype=complex)
+        resultresp = np.empty(shape=(m0, len(self.freq)), dtype=complex)
         for k in range(len(self.freq)):
-            resultresp[:, :, k] =  self.resp[:, :, k] + np.eye(m0)
+            resultresp[:, k] = np.linalg.eig(self.resp[:, :, k]).eigenvalues
+        return FreqResp(self.freq, resultresp, self.dt)
+
+    def svd(self):
+        """Singular value of a MIMO FRD."""
+        m0, n0, k = np.shape(self.resp)
+        resultresp = np.empty(shape=(min(m0, n0), len(self.freq)), dtype=complex)
+        for k in range(len(self.freq)):
+            resultresp[:, k] =  np.linalg.svd(self.resp[:, :, k]).S
         return FreqResp(self.freq, resultresp, self.dt)
 
 
@@ -281,12 +310,12 @@ def frdsim(freqresp, x, dt):
     # Multiplication at frequency domain for first-half part
     x_fft = np.fft.fft(x)
     y_fft = x_fft[0:lenInputHalf] * freqresp_resize.resp
-    y_fft[0] = np.real(y_fft[0])    # Change zero-frequency-point real
+    y_fft[0] = np.real(y_fft[0])    # Change zero-frequency-point
+    # Combine two parts
+    y_fft_full = np.concatenate([y_fft, y_fft_flip])
 
     # Mirror second-half part
     y_fft_flip = np.flip(np.conj(y_fft[1:len(y_fft)]))
-    # Combine two parts
-    y_fft_full = np.concatenate([y_fft, y_fft_flip])
 
     # Calculate time response of output
     y = np.real(np.fft.ifft(y_fft_full))

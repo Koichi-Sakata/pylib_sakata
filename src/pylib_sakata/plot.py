@@ -180,7 +180,7 @@ def plot_tffrd(ax_mag, ax_phase, freqresp, styl='-', col='b', width=1.5, alpha=1
             ax_phase.label_outer()
 
 
-def plot_nyquist(ax, freqresp, styl='-', col='b', width=1.5, alpha=1.0, xrange=None, yrange=None, legend=None,
+def plot_nyquist(ax, freqresp, styl='-', col='b', width=1.5, alpha=1.0, marker=None, xrange=None, yrange=None, legend=None,
                  loc='best', title=None, labelouter=True):
     x = np.real(freqresp.resp)
     y = np.imag(freqresp.resp)
@@ -196,7 +196,7 @@ def plot_nyquist(ax, freqresp, styl='-', col='b', width=1.5, alpha=1.0, xrange=N
     ax.set_aspect('equal', adjustable='box')
     ax.grid(visible=True, which='both', axis='both')
     # plot
-    ax.plot(x, y, linestyle=styl, color=col, linewidth=width, alpha=alpha)
+    ax.plot(x, y, marker=marker, linestyle=styl, color=col, linewidth=width, alpha=alpha)
     # legend and title
     if legend != None:
         ax.legend(legend, loc=loc)

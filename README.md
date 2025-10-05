@@ -1,4 +1,4 @@
-pylib-sakata User's Manual version-0.3.5
+pylib-sakata User's Manual version-0.3.6
 ===
 
 <!-- code_chunk_output -->
@@ -1237,6 +1237,9 @@ Refer examples of [3.11. sys2frd](#311-sys2frd).
 - \__**mod**__(*other*)
 	Divide two MIMO FRDs.
 
+- **addeye**()
+	Add identify matrix to a MIMO FRD.
+
 - **inv**()
 	Inverse matrix of a MIMO FRD.
 
@@ -1246,8 +1249,15 @@ Refer examples of [3.11. sys2frd](#311-sys2frd).
 - **rga**()
 	Relative gain array of a MIMO FRD.
 
-- **addeye**()
-	Add identify matrix to a MIMO FRD.
+- **det**()
+	Determinant of a MIMO FRD.
+
+- **eig**()
+	Eigen value of a MIMO FRD.
+
+- **svd**()
+	Singular value of a MIMO FRD.
+
 
 ### 4.2. fft
 
