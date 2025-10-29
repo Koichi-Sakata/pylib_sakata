@@ -82,7 +82,7 @@ print('Notch filters were designed.')
 
 # Design resonant filters
 print('Getting measurement data...')
-measfileName = 'data/freq_resp_2mass_20250124.csv'
+measfileName = 'data/freq_resp_2mass_20250902.csv'
 # Frequency response
 Pmeas_frd, coh = meas.measdata2frd(measfileName, 'ServoOutN[0]', 'ActPosUm[0]', 'FlagInject', freq, 1., 1.e-6, 8, 0.8)
 G_frd_nf = Pmeas_frd * Cz_PID_frd * NFz_frd

@@ -311,11 +311,12 @@ def frdsim(freqresp, x, dt):
     x_fft = np.fft.fft(x)
     y_fft = x_fft[0:lenInputHalf] * freqresp_resize.resp
     y_fft[0] = np.real(y_fft[0])    # Change zero-frequency-point
-    # Combine two parts
-    y_fft_full = np.concatenate([y_fft, y_fft_flip])
 
     # Mirror second-half part
     y_fft_flip = np.flip(np.conj(y_fft[1:len(y_fft)]))
+
+    # Combine two parts
+    y_fft_full = np.concatenate([y_fft, y_fft_flip])
 
     # Calculate time response of output
     y = np.real(np.fft.ifft(y_fft_full))

@@ -1,4 +1,4 @@
-pylib-sakata User's Manual version-0.3.6
+pylib-sakata User's Manual version-0.3.7
 ===
 
 <!-- code_chunk_output -->
@@ -109,7 +109,7 @@ numpy==1.26.4
 scipy==1.14.1
 matplotlib==3.8.4
 pandas>=2.2.3
-control==0.10.2
+control==0.10.1
 ```
 
 ### 2.3. Installation of pylib-sakata
