@@ -29,7 +29,7 @@
 # freq, zeta, kpdb = rfoptparam(freq, zeta, depth, sysT)
 # sys = rfopt(freq, zeta, kpdb, sysT, dt=None, method='matched')
 # sys = irf(fanti, freso, Creso, M, C, K, dt=None, method='matched')
-# DOBu, DOBy = dob(freq, zeta, M, C, K, dt, nd = 0)
+# DOBu, DOBy = dob(freq, zeta, M, C, K, dt, nd=0)
 # Czpetc, Nzpetc = zpetc(Pz, zerothr=0.99)
 # sys = filt(num, den, dt)
 # sys = minreal(sys)
@@ -416,11 +416,11 @@ def pd(freq1, freq2, zeta2, M, C, K, dt=None, method='tustin'):
     # PID controller
     omega1 = 2.0 * np.pi * freq1
     omega2 = 2.0 * np.pi * freq2
-    ac1 = 2.0 * zeta2 * omega2 + omega1 - C / M
-    bc1 = M * (omega2 ** 2 + 2.0 * zeta2 * omega2 * omega1) - C * ac1 - K
-    bc0 = M * omega1 * omega2 ** 2 - K * ac1
+    ac0 = 2.0 * zeta2 * omega2 + omega1 - C / M
+    bc1 = M * (omega2 ** 2 + 2.0 * zeta2 * omega2 * omega1) - C * ac0 - K
+    bc0 = M * omega1 * omega2 ** 2 - K * ac0
     num = [bc1, bc0]
-    den = [1, ac1]
+    den = [1, ac0]
     TFs = matlab.tf(num, den)
     if dt == None:
         return TFs

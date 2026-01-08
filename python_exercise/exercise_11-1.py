@@ -123,9 +123,9 @@ plot.savefig(figurefolderName+'/freq_T.png')
 # Nyquist
 fig = plot.makefig()
 ax = fig.add_subplot(111)
-plot.plot_nyquist(ax, Gn0_frd, '-', 'k', 1.5, 1.0, [-20, 10], [-15, 15], title='Nyquist Diagram')
-plot.plot_nyquist(ax, Gn1_frd, '-', 'b', 1.5, 1.0, [-20, 10], [-15, 15])
-plot.plot_nyquist(ax, Gn2_frd, '-', 'r', 1.5, 1.0, [-20, 10], [-15, 15], legend=['Rigid', 'Motor side', 'Load side'])
+plot.plot_nyquist(ax, Gn0_frd, '-', 'k', 1.5, 1.0, xrange=[-20, 10], yrange=[-15, 15], title='Nyquist Diagram')
+plot.plot_nyquist(ax, Gn1_frd, '-', 'b', 1.5, 1.0, xrange=[-20, 10], yrange=[-15, 15])
+plot.plot_nyquist(ax, Gn2_frd, '-', 'r', 1.5, 1.0, xrange=[-20, 10], yrange=[-15, 15], legend=['Rigid', 'Motor side', 'Load side'])
 plot.plot_nyquist_assistline(ax)
 plot.savefig(figurefolderName+'/nyquist.png')
 

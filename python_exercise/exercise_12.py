@@ -46,23 +46,23 @@ Cs = ctrl.pid(freq1, zeta1, freq2, zeta2, M, C, K)
 Cs_frd = ctrl.sys2frd(Cs, freq)
 print('PID controller was designed.')
 
-# Design peak filters
-freqPF = [2, 3, 5, 10, 20, 30, 50, 100]
-zetaPF = [0.001, 0.001, 0.001, 0.001, 0.001, 0.001, 0.001, 0.001]
-depthPF = [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
+# Design resonant filters
+freqRF = [2, 3, 5, 10, 20, 30, 50, 100]
+zetaRF = [0.001, 0.001, 0.001, 0.001, 0.001, 0.001, 0.001, 0.001]
+depthRF = [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
 
-RFs = ctrl.rfopt(freqPF, zetaPF, depthPF, ctrl.feedback(Pns, Cs, sys='T'))
+RFs = ctrl.rfopt(freqRF, zetaRF, depthRF, ctrl.feedback(Pns, Cs, sys='T'))
 RFs_frd = 0.0
 for i in range(len(RFs)):
     RFs_frd += ctrl.sys2frd(RFs[i], freq)
-print('Peak filters were designed.')
+print('Resonant filters were designed.')
 
 print('Frequency response analysis is running...')
 # Model
 Gs_frd = Pns_frd * Cs_frd
 Ss_frd = 1/(1 + Gs_frd)
 Ts_frd = 1 - Ss_frd
-# Model with peak filters
+# Model with resonant filters
 Gs_rf_frd = Pns_frd * Cs_frd * (1.0+RFs_frd)
 Ss_rf_frd = 1/(1 + Gs_rf_frd)
 Ts_rf_frd = 1 - Ss_rf_frd

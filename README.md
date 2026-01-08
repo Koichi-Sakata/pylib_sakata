@@ -1,4 +1,4 @@
-pylib-sakata User's Manual version-0.3.8
+pylib-sakata User's Manual version-0.3.9
 ===
 
 <!-- code_chunk_output -->
@@ -1043,7 +1043,7 @@ array([TransferFunction(array([ 0.0049857 , -0.00972818,  0.00474248]), array([ 
 ```
 
 ### 3.28. dob
-pylib_sakata.ctrl.**dob**(*freq, zeta, M, C, K, dt, nd = 0*)
+pylib_sakata.ctrl.**dob**(*freq, zeta, M, C, K, dt, nd=0*)
 
 This function is for design of a discrete-time disturbance observer (DOB).
 $$\hat{d} = -z^{-n_d} Q[z] u + Q[z] P^{-1}[z] y$$
