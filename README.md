@@ -1,4 +1,4 @@
-pylib-sakata User's Manual version-0.3.9
+pylib-sakata User's Manual version-0.3.10
 ===
 
 <!-- code_chunk_output -->

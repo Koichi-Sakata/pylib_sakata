@@ -57,8 +57,8 @@ def plot_tf(ax_mag, ax_phase, sys, freq, styl='-', col='b', width=1.5, alpha=1.0
     phasedeg = phase * 180.0 / np.pi
 
     if freqrange == None:
-        freqmin = min(freqresp.freq)
-        freqmax = max(freqresp.freq)
+        freqmin = min(freq)
+        freqmax = max(freq)
         freqrange = [freqmin, freqmax]
 
     if ax_mag != None:
@@ -177,7 +177,7 @@ def plot_tffrd(ax_mag, ax_phase, freqresp, styl='-', col='b', width=1.5, alpha=1
         # coherence plot
         ax_coh.plot(freqresp.freq, coh, linestyle=styl, color=col, linewidth=width, alpha=alpha)
         if labelouter == True:
-            ax_phase.label_outer()
+            ax_coh.label_outer()
 
 
 def plot_nyquist(ax, freqresp, styl='-', col='b', width=1.5, alpha=1.0, marker=None, xrange=None, yrange=None, legend=None,
