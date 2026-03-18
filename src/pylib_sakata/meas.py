@@ -32,7 +32,7 @@ def getcsvdata(filePath):
     dataList = df.columns.values
     dataValue = df[:-1].values.T.astype(float)
     dt = (dataValue[0][1] - dataValue[0][0]) * 1.0e-3
-    t = np.linspace(0.0, (len(dataValue[0]) - 1) * dt, int(len(dataValue[0])))
+    t = np.arange(len(dataValue[0])) * dt
     return MeasData(dataList, dataValue, t, dt)
 
 
@@ -58,7 +58,7 @@ def gettxtdata(filePath):
                 dataline.append(float(line[k][:-1].split(' \t')[:-1][n]))
             dataValue[n] = np.array(dataline)
     dt = dataValue[0][1] - dataValue[0][0]
-    t = np.linspace(0.0, (len(dataValue[0]) - 1) * dt, int(len(dataValue[0])))
+    t = np.arange(len(dataValue[0])) * dt
     return MeasData(dataList, dataValue, t, dt)
 
 
@@ -73,7 +73,7 @@ def getmatdata(filePath):
     for k in range(dataNum):
         dataList[k] = matdata['dataY'][0][k][0][0]
         dataValue[k] = matdata['dataY'][0][k][1][0]
-    t = np.linspace(0.0, (len(dataValue[0]) - 1) * dt, int(len(dataValue[0])))
+    t = np.arange(len(dataValue[0])) * dt
     return MeasData(dataList, dataValue, t, dt)
 
 

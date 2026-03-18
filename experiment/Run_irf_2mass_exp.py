@@ -86,14 +86,14 @@ ServoOutN = measdata.value[meas.getdataindex(measdata, 'ServoOutN[0]')]
 freq_fft, ErrPosUm_fft = fft.fft(ErrPosUm[8000:72000], Ts)
 freq_fft, ServoOutN_fft = fft.fft(ServoOutN[8000:72000], Ts)
 
-measdata_nf = meas.getdata('data/time_resp_2mass_nf_20230720.csv')
-time_nf = measdata_nf.time
-RefPosUm_nf = measdata_nf.value[meas.getdataindex(measdata_nf, 'RefPosUm[0]')]
-ErrPosUm_nf = measdata_nf.value[meas.getdataindex(measdata_nf, 'ErrPosUm[0]')]
-ServoOutN_nf = measdata_nf.value[meas.getdataindex(measdata_nf, 'ServoOutN[0]')]
+measdata_irf = meas.getdata('data/time_resp_2mass_irf_20230720.csv')
+time_irf = measdata_irf.time
+RefPosUm_irf = measdata_irf.value[meas.getdataindex(measdata_irf, 'RefPosUm[0]')]
+ErrPosUm_irf = measdata_irf.value[meas.getdataindex(measdata_irf, 'ErrPosUm[0]')]
+ServoOutN_irf = measdata_irf.value[meas.getdataindex(measdata_irf, 'ServoOutN[0]')]
 # FFT
-freq_fft_nf, ErrPosUm_fft_nf = fft.fft(ErrPosUm_nf[8000:72000], Ts)
-freq_fft_nf, ServoOutN_fft_nf = fft.fft(ServoOutN_nf[8000:72000], Ts)
+freq_fft_irf, ErrPosUm_fft_irf = fft.fft(ErrPosUm_irf[8000:72000], Ts)
+freq_fft_irf, ServoOutN_fft_irf = fft.fft(ServoOutN_irf[8000:72000], Ts)
 
 print('Frequency response analysis is running...')
 # Measurement w/o IRF
@@ -120,9 +120,9 @@ T_frd = 1 - S_frd
 
 print('Simulating time response with notch filters')
 # Time response
-time_sim, ErrPosUm_nf_sim = fft.frdsim(S_frd/Sn_frd, ErrPosUm, Ts)
+ErrPosUm_irf_sim = fft.frdsim(S_frd/Sn_frd, ErrPosUm, Ts)
 # FFT
-freq_fft_sim, ErrPosUm_fft_nf_sim = fft.fft(ErrPosUm_nf_sim[8000:72000], Ts)
+freq_fft_sim, ErrPosUm_fft_irf_sim = fft.fft(ErrPosUm_irf_sim[8000:72000], Ts)
 
 print('Plotting figures...')
 # Time response
@@ -132,9 +132,9 @@ ax2 = fig.add_subplot(312)
 ax3 = fig.add_subplot(313)
 plot.plot_xy(ax1, time, RefPosUm*1.0e-3, '-', 'b', 1.5, 1.0, ylabel='Ref Pos [mm]', title='Time response')
 plot.plot_xy(ax2, time, ErrPosUm, '-', 'b', 1.5, 1.0)
-plot.plot_xy(ax2, time_nf, ErrPosUm_nf, '-', 'g', 1.5, 1.0, yrange=[-2.5, 2.5], ylabel='Error Pos [um]')
+plot.plot_xy(ax2, time_irf, ErrPosUm_irf, '-', 'g', 1.5, 1.0, yrange=[-2.5, 2.5], ylabel='Error Pos [um]')
 plot.plot_xy(ax3, time, ServoOutN, '-', 'b', 1.5, 1.0)
-plot.plot_xy(ax3, time_nf, ServoOutN_nf, '-', 'g', 1.5, 1.0, yrange=[-0.02, 0.04], xlabel='Time [s]', ylabel='ServoOut [N]', legend=['w/o IRF', 'with IRF'])
+plot.plot_xy(ax3, time_irf, ServoOutN_irf, '-', 'g', 1.5, 1.0, yrange=[-0.02, 0.04], xlabel='Time [s]', ylabel='ServoOut [N]', legend=['w/o IRF', 'with IRF'])
 plot.savefig(figurefolderName+'/time_resp.png')
 
 # FFT
@@ -142,9 +142,9 @@ fig = plot.makefig()
 ax1 = fig.add_subplot(211)
 ax2 = fig.add_subplot(212)
 plot.plot_xy(ax1, freq_fft, ErrPosUm_fft, '-', 'b', 1.5, 1.0, title='Power spectrum density')
-plot.plot_xy(ax1, freq_fft_nf, ErrPosUm_fft_nf, '--', 'g', 1.5, 1.0, xscale='log', xrange=[1.0, 1000.0], yrange=[0.0, 0.4], ylabel='Error Pos [um]', legend=['w/o IRF', 'with IRF'])
+plot.plot_xy(ax1, freq_fft_irf, ErrPosUm_fft_irf, '--', 'g', 1.5, 1.0, xscale='log', xrange=[1.0, 1000.0], yrange=[0.0, 0.4], ylabel='Error Pos [um]', legend=['w/o IRF', 'with IRF'])
 plot.plot_xy(ax2, freq_fft, ServoOutN_fft, '-', 'b', 1.5, 1.0)
-plot.plot_xy(ax2, freq_fft_nf, ServoOutN_fft_nf, '--', 'g', 1.5, 1.0, xscale='log', xrange=[1.0, 1000.0], yrange=[0.0, 0.002], xlabel='Frequency [Hz]', ylabel='ServoOut [N]', legend=['w/o IRF', 'with IRF'])
+plot.plot_xy(ax2, freq_fft_irf, ServoOutN_fft_irf, '--', 'g', 1.5, 1.0, xscale='log', xrange=[1.0, 1000.0], yrange=[0.0, 0.002], xlabel='Frequency [Hz]', ylabel='ServoOut [N]', legend=['w/o IRF', 'with IRF'])
 plot.savefig(figurefolderName+'/time_fft.png')
 
 # Time response
@@ -152,9 +152,9 @@ fig = plot.makefig()
 ax1 = fig.add_subplot(211)
 ax2 = fig.add_subplot(212)
 plot.plot_xy(ax1, time, ErrPosUm, '-', 'b', 1.5, 1.0)
-plot.plot_xy(ax1, time_nf, ErrPosUm_nf, '-', 'g', 1.5, 1.0, yrange=[-2.5, 2.5], ylabel='Error Pos [um]', legend=['w/o IRF (Exp)', 'with IRF (Exp)'], loc='upper right', title='Time response')
+plot.plot_xy(ax1, time_irf, ErrPosUm_irf, '-', 'g', 1.5, 1.0, yrange=[-2.5, 2.5], ylabel='Error Pos [um]', legend=['w/o IRF (Exp)', 'with IRF (Exp)'], loc='upper right', title='Time response')
 plot.plot_xy(ax2, time, ErrPosUm, '-', 'b', 1.5, 1.0)
-plot.plot_xy(ax2, time_sim, ErrPosUm_nf_sim, '-', 'g', 1.5, 1.0, yrange=[-2.5, 2.5], xlabel='Time [s]', ylabel='Error Pos [um]', legend=['w/o IRF (Exp)', 'with IRF (Sim)'], loc='upper right')
+plot.plot_xy(ax2, time, ErrPosUm_irf_sim, '-', 'g', 1.5, 1.0, yrange=[-2.5, 2.5], xlabel='Time [s]', ylabel='Error Pos [um]', legend=['w/o IRF (Exp)', 'with IRF (Sim)'], loc='upper right')
 plot.savefig(figurefolderName+'/time_resp_vs_sim.png')
 
 # FFT
@@ -162,9 +162,9 @@ fig = plot.makefig()
 ax1 = fig.add_subplot(211)
 ax2 = fig.add_subplot(212)
 plot.plot_xy(ax1, freq_fft, ErrPosUm_fft, '-', 'b', 1.5, 1.0, title='Power spectrum density')
-plot.plot_xy(ax1, freq_fft_nf, ErrPosUm_fft_nf, '--', 'g', 1.5, 1.0, xscale='log', xrange=[1.0, 1000.0], yrange=[0.0, 0.4], ylabel='Error Pos [um]', legend=['w/o IRF (Exp)', 'with IRF (Exp)'])
+plot.plot_xy(ax1, freq_fft_irf, ErrPosUm_fft_irf, '--', 'g', 1.5, 1.0, xscale='log', xrange=[1.0, 1000.0], yrange=[0.0, 0.4], ylabel='Error Pos [um]', legend=['w/o IRF (Exp)', 'with IRF (Exp)'])
 plot.plot_xy(ax2, freq_fft, ErrPosUm_fft, '-', 'b', 1.5, 1.0)
-plot.plot_xy(ax2, freq_fft_sim, ErrPosUm_fft_nf_sim, '--', 'g', 1.5, 1.0, xscale='log', xrange=[1.0, 1000.0], yrange=[0.0, 0.4], xlabel='Frequency [Hz]', ylabel='Error Pos [um]', legend=['w/o IRF (Exp)', 'with IRF (Sim)'])
+plot.plot_xy(ax2, freq_fft_sim, ErrPosUm_fft_irf_sim, '--', 'g', 1.5, 1.0, xscale='log', xrange=[1.0, 1000.0], yrange=[0.0, 0.4], xlabel='Frequency [Hz]', ylabel='Error Pos [um]', legend=['w/o IRF (Exp)', 'with IRF (Sim)'])
 plot.savefig(figurefolderName+'/time_fft_vs_sim.png')
 
 # Plant

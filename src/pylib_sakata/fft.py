@@ -293,38 +293,37 @@ def tfestimate(x, y, freq, dt, windivnum=4, overlap=0.5):
 
 
 def frdresize(freqresp, freq):
-    f_real = interpolate.interp1d(freqresp.freq, np.real(freqresp.resp), kind='linear', bounds_error=False, fill_value=1.)
+    f_real = interpolate.interp1d(freqresp.freq, np.real(freqresp.resp), kind='linear', bounds_error=False, fill_value='extrapolate')
     real = f_real(freq)
-    f_imag = interpolate.interp1d(freqresp.freq, np.imag(freqresp.resp), kind='linear', bounds_error=False, fill_value=0.)
+    f_imag = interpolate.interp1d(freqresp.freq, np.imag(freqresp.resp), kind='linear', bounds_error=False, fill_value='extrapolate')
     imag = f_imag(freq)
     resp = real + imag * 1.j
     return FreqResp(freq, resp, freqresp.dt)
 
 
 def frdsim(freqresp, x, dt):
-    # Resize freqresp
-    lenInput = len(x)
-    lenInputHalf = round((lenInput + 1)/2)
-    freq_tmp = np.arange(lenInput)/lenInput/dt
-    freq = freq_tmp[0:lenInputHalf]
+    N = len(x)
+    N_odd = N % 2
+    NHalf = int(np.ceil((N + 1) / 2))
+    freq_tmp = np.arange(N) / N / dt
+    freq = freq_tmp[0:NHalf]
     freqresp_resize = frdresize(freqresp, freq)
 
     # Multiplication at frequency domain for first-half part
     x_fft = np.fft.fft(x)
-    y_fft = x_fft[0:lenInputHalf] * freqresp_resize.resp
-    y_fft[0] = np.real(y_fft[0])    # Change zero-frequency-point
+    Yfft = x_fft[0:NHalf] * freqresp_resize.resp
 
     # Mirror second-half part
-    y_fft_flip = np.flip(np.conj(y_fft[1:len(y_fft)]))
+    if N_odd:
+        Yfft_flip = np.flip(np.conj(Yfft[1:len(Yfft)]))
+    else:
+        Yfft_flip = np.flip(np.conj(Yfft[1:len(Yfft) - 1]))
 
     # Combine two parts
-    y_fft_full = np.concatenate([y_fft, y_fft_flip])
+    Yfft_full = np.concatenate([Yfft, Yfft_flip])
 
     # Calculate time response of output
-    y = np.real(np.fft.ifft(y_fft_full))
-    t = np.linspace(0, (len(y) - 1) * dt, len(y))
-    return t, y
-
+    return np.real(np.fft.ifft(Yfft_full))
 
 def _floorpow2(x):
     # 2のべき乗に切り下げて丸め込み x>1

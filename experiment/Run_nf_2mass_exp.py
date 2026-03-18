@@ -130,7 +130,7 @@ T_frd = 1 - S_frd
 
 print('Simulating time response with notch filters')
 # Time response
-time_sim, ErrPosUm_nf_sim = fft.frdsim(S_frd/Sn_frd, ErrPosUm, Ts)
+ErrPosUm_nf_sim = fft.frdsim(S_frd/Sn_frd, ErrPosUm, Ts)
 # FFT
 freq_fft_sim, ErrPosUm_fft_nf_sim = fft.fft(ErrPosUm_nf_sim[8000:72000], Ts)
 
@@ -164,7 +164,7 @@ ax2 = fig.add_subplot(212)
 plot.plot_xy(ax1, time, ErrPosUm, '-', 'b', 1.5, 1.0)
 plot.plot_xy(ax1, time_nf, ErrPosUm_nf, '-', 'g', 1.5, 1.0, yrange=[-2.5, 2.5], ylabel='Error Pos [um]', legend=['w/o NF (Exp)', 'with NF (Exp)'], loc='upper right', title='Time response')
 plot.plot_xy(ax2, time, ErrPosUm, '-', 'b', 1.5, 1.0)
-plot.plot_xy(ax2, time_sim, ErrPosUm_nf_sim, '-', 'g', 1.5, 1.0, yrange=[-2.5, 2.5], xlabel='Time [s]', ylabel='Error Pos [um]', legend=['w/o NF (Exp)', 'with NF (Sim)'], loc='upper right')
+plot.plot_xy(ax2, time, ErrPosUm_nf_sim, '-', 'g', 1.5, 1.0, yrange=[-2.5, 2.5], xlabel='Time [s]', ylabel='Error Pos [um]', legend=['w/o NF (Exp)', 'with NF (Sim)'], loc='upper right')
 plot.savefig(figurefolderName+'/time_resp_vs_sim.png')
 
 # FFT

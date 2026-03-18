@@ -1,4 +1,4 @@
-pylib-sakata User's Manual version-0.3.10
+pylib-sakata User's Manual version-0.3.11
 ===
 
 <!-- code_chunk_output -->
@@ -166,7 +166,7 @@ $ sudo apt install spyder3
 #### 2.4.3. PyCharm
 Professional version is charged. Community version is free. Community version is enough for control system development. The following figure shows PyCharm window.
 
-<img src="figure\pycharm_disp.png" alt="spyder_disp" style="zoom: 33%;" />
+<img src="figure\pycharm_disp.png" alt="pycharm_disp" style="zoom: 33%;" />
 
 ##### 2.4.3.1. Installation of PyCharm
 The latest version of PyCharm installation exe file can be downloaded [HERE](https://www.jetbrains.com/pycharm/download/). 
@@ -609,7 +609,7 @@ dt = 0.001
 pylib_sakata.ctrl.**pi**(*freq, zeta, L, R, dt=None, method='tustin'*)
 
 This function is for design of a PI controller.
-$$C_{PI}(s) = K_P + \frac{K_I}{s} = \frac{b_1s+b_0}{s}$$
+$$C_{\bold{PI}}(s) = K_P + \frac{K_I}{s} = \frac{b_1s+b_0}{s}$$
 $$P(s) = \frac{1}{Ls+R}$$
 
 - Parameters:
@@ -645,7 +645,7 @@ dt = 0.001
 pylib_sakata.ctrl.**pd**(*freq1, freq2, zeta2, M, C, K, dt=None, method='tustin'*)
 
 This function is for design of a PD controller.
-$$C_{PD}(s) = K_P + \frac{K_D s}{\tau_D s+1} = \frac{b_1s+b_0}{s+a_0}$$
+$$C_{\bold{PD}}(s) = K_P + \frac{K_D s}{\tau_D s+1} = \frac{b_1s+b_0}{s+a_0}$$
 $$P(s) = \frac{1}{Ms^2+Cs+K}$$
 
 - Parameters:
@@ -683,7 +683,7 @@ dt = 0.001
 pylib_sakata.ctrl.**pid**(*freq1, zeta1, freq2, zeta2, M, C, K, dt=None, method='tustin'*)
 
 This function is for design of a PID controller.
-$$C_{PID}(s) = K_P + \frac{K_I}{s} + \frac{K_D s}{\tau_D s+1} = \frac{b_2s^2+b_1s+b_0}{s^2+a_1s}$$
+$$C_{\bold{PID}}(s) = K_P + \frac{K_I}{s} + \frac{K_D s}{\tau_D s+1} = \frac{b_2s^2+b_1s+b_0}{s^2+a_1s}$$
 $$P(s) = \frac{1}{Ms^2+Cs+K}$$
 
 - Parameters:
@@ -722,7 +722,7 @@ dt = 0.001
 pylib_sakata.ctrl.**pl1st**(*freq1, freq2, dt=None, method='tustin'*)
 
 This function is for design of a first order phase lead filter.
-$$F_{PL}(s) = \frac{f_2}{f_1} * \frac{s+2\pi f_1}{s+2\pi f_2}$$
+$$F_{\bold{PL}}(s) = \frac{f_2}{f_1} * \frac{s+2\pi f_1}{s+2\pi f_2}$$
 
 - Parameters:
   - freq1: frequency[Hz] of numerator of the phase lead filter
@@ -755,7 +755,7 @@ dt = 0.001
 pylib_sakata.ctrl.**pl2nd**(*freq1, zeta1, freq2, zeta2, dt=None, method='tustin'*)
 
 This function is for design of a second order phase lead filter.
-$$F_{PL^2}(s) = \left( \frac{f_2}{f_1} \right)^2 * \frac{s^2+2\zeta_1 (2\pi f_1)s+(2\pi f_1)^2}{s^2+2\zeta_2 (2\pi f_2)s+(2\pi f_2)^2}$$
+$$F_{\bold{PL}^2}(s) = \left( \frac{f_2}{f_1} \right)^2 * \frac{s^2+2\zeta_1 (2\pi f_1)s+(2\pi f_1)^2}{s^2+2\zeta_2 (2\pi f_2)s+(2\pi f_2)^2}$$
 
 - Parameters:
   - freq1: frequency[Hz] of numerator of the phase lead filter
@@ -790,7 +790,7 @@ dt = 0.001
 pylib_sakata.ctrl.**lpf1st**(*freq, dt=None, method='tustin'*)
 
 This function is for design of a first order low pass filter.
-$$F_{LP}(s) = \frac{2\pi f}{s+2\pi f}$$
+$$F_{\bold{LP}}(s) = \frac{2\pi f}{s+2\pi f}$$
 
 - Parameters:
   - freq: frequency[Hz] of the low pass filter
@@ -822,7 +822,7 @@ dt = 0.001
 pylib_sakata.ctrl.**lpf2nd**(*freq, zeta, dt=None, method='tustin'*)
 
 This function is for design of a second order low pass filter.
-$$F_{LP^2}(s) = \frac{(2\pi f)^2}{s^2+2\zeta (2\pi f)s+(2\pi f)^2}$$
+$$F_{\bold{LP}^2}(s) = \frac{(2\pi f)^2}{s^2+2\zeta (2\pi f)s+(2\pi f)^2}$$
 
 - Parameters:
   - freq: frequency[Hz] of the low pass filter
@@ -855,7 +855,7 @@ dt = 0.001
 pylib_sakata.ctrl.**hpf1st**(*freq, dt=None, method='tustin'*)
 
 This function is for design of a first order high pass filter.
-$$F_{HP}(s) = 1 - F_{LP}(s) = \frac{s}{s+2\pi f}$$
+$$F_{\bold{HP}}(s) = 1 - F_{LP}(s) = \frac{s}{s+2\pi f}$$
 
 - Parameters:
   - freq: frequency[Hz] of the high pass filter
@@ -887,7 +887,7 @@ dt = 0.001
 pylib_sakata.ctrl.**hpf2nd**(*freq, zeta, dt=None, method='tustin'*)
 
 This function is for design of a second order high pass filter.
-$$F_{HP^2}(s) = 1 - F_{LP^2}(s) = \frac{s^2+2\zeta (2\pi f)s}{s^2+2\zeta (2\pi f)s+(2\pi f)^2}$$
+$$F_{\bold{HP}^2}(s) = 1 - F_{LP^2}(s) = \frac{s^2+2\zeta (2\pi f)s}{s^2+2\zeta (2\pi f)s+(2\pi f)^2}$$
 
 - Parameters:
   - freq: frequency[Hz] of the high pass filter
@@ -920,7 +920,7 @@ dt = 0.001
 pylib_sakata.ctrl.**nf**(*freq, zeta, depth, dt=None, method='matched'*)
 
 This function is for design of notch filters.
-$$F_{notch}(s) = \frac{s^2+2d\zeta (2\pi f)s+(2\pi f)^2}{s^2+2\zeta (2\pi f)s+(2\pi f)^2}$$
+$$F_{\bold{notch}}(s) = \frac{s^2+2d\zeta (2\pi f)s+(2\pi f)^2}{s^2+2\zeta (2\pi f)s+(2\pi f)^2}$$
 
 - Parameters:
   - freq: array of frequency[Hz] of the notch filters
@@ -952,7 +952,7 @@ array([TransferFunction(array([ 0.9876627 , -1.59787102,  0.9874145 ]), array([ 
 pylib_sakata.ctrl.**rf**(*freq, zeta, k, phi, dt=None, method='tustin'*)
 
 This function is for design of resonant filters ([resonant filters](https://ieeexplore.ieee.org/document/4291569)).
-$$F_{reso}(s) = \frac{k(s^2-\phi s)}{s^2+2\zeta (2\pi f)s+(2\pi f)^2}$$
+$$F_{\bold{reso}}(s) = \frac{k(s^2-\phi s)}{s^2+2\zeta (2\pi f)s+(2\pi f)^2}$$
 
 - Parameters:
   - freq: array of frequency[Hz] of the resonant filters
@@ -1382,14 +1382,13 @@ resp = array([-5.10821217e-03-5.65218353e-02j -5.10244172e-03-5.64813436e-02j
 pylib_sakata.fft.**frdsim**(*freqresp, x, dt*)
 
 This function is for simulation steady time response data when a time-domain data is input to a system written by frequency response data.
-$$y(t) = \text{ifft}(\text{FreqResp}(\omega)\times\text{fft}(u(t)))$$
+$$y(t) = \text{ifft}(\text{FreqResp}(\omega)\circ\text{fft}(u(t)))$$
 
 - Parameters:
   - freqresp: instance of FreqResp class
   - x: 1-D array time response data of input
   - dt: sampling time of the time response data
 - Returns:
-  - t: 1-D array time data [s]
   - y: 1-D array time response data of output
 
 **Examples**
@@ -1399,12 +1398,11 @@ $$y(t) = \text{ifft}(\text{FreqResp}(\omega)\times\text{fft}(u(t)))$$
 >>> Sys_tf = ctrl.tf([1., 2.], [3., 4., 5.])
 >>> freqresp = ctrl.sys2frd(Sys_tf, freq)
 >>> dt = 0.001
->>> t = np.linspace(0.0, 10., int(10./dt))
+>>> t = np.arange(int(10./dt)) * dt
 >>> x = np.sin(2*np.pi*10.0*t) + np.sin(2*np.pi*50.0*t)
 >>> fft.frdsim(freqresp, x, dt)
-(array([0.000e+00, 1.000e-03, 2.000e-03, ..., 9.996e+00, 9.997e+00,
-       9.998e+00]), array([-0.00635301, -0.00630568, -0.00612106, ..., -0.00610225,
-       -0.0062943 , -0.00634922]))
+array([-0.00636997, -0.00631177, -0.00613378, ..., -0.00582607,
+       -0.00611703, -0.00630332])
 ```
 
 ## 5. pylib_sakata.meas
@@ -1636,8 +1634,8 @@ traj = traj.SinStep(0, 100, 100, 200, 0.001, 0.5)
 
 The comparison of these trajectories under the specification: posStep = 1, velMax = 1, accAve = 2 is shown as follows.
 
-<img src="figure\time_traj.png" alt="vscode_disp" style="zoom: 15%;" />
-<img src="figure\time_fft.png" alt="vscode_disp" style="zoom: 40%;" />
+<img src="figure\time_traj.png" alt="time_traj" style="zoom: 15%;" />
+<img src="figure\time_fft.png" alt="time_fft" style="zoom: 40%;" />
 
 ## 7. pylib_sakata.plot
 

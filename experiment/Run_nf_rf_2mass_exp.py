@@ -156,8 +156,8 @@ T_frd_nf_rf = 1 - S_frd_nf_rf
 
 print('Simulating time response with resonant filters')
 # Time response
-time_sim_nf, ErrPosUm_sim_nf = fft.frdsim(S_frd_nf/S_frd, ErrPosUm, Ts)
-time_sim_nf_rf, ErrPosUm_sim_nf_rf = fft.frdsim(S_frd_nf_rf/S_frd, ErrPosUm, Ts)
+ErrPosUm_sim_nf = fft.frdsim(S_frd_nf/S_frd, ErrPosUm, Ts)
+ErrPosUm_sim_nf_rf = fft.frdsim(S_frd_nf_rf/S_frd, ErrPosUm, Ts)
 # FFT
 freq_fft_sim_nf, ErrPosUm_fft_sim_nf = fft.fft(ErrPosUm_sim_nf[8000:72000], Ts)
 freq_fft_sim_nf_rf, ErrPosUm_fft_sim_nf_rf = fft.fft(ErrPosUm_sim_nf_rf[8000:72000], Ts)
@@ -197,8 +197,8 @@ plot.plot_xy(ax1, time, ErrPosUm, '-', 'b', 1.5, 1.0)
 plot.plot_xy(ax1, time_nf, ErrPosUm_nf, '--', 'g', 1.5, 1.0)
 plot.plot_xy(ax1, time_nf_rf, ErrPosUm_nf_rf, '--', 'r', 1.5, 1.0, yrange=[-4.0, 4.0], ylabel='Error Pos [um]', legend=['w/o Filters (Exp)', 'with NF (Exp)', 'with NF+RF (Exp)'], loc='upper right', title='Time response')
 plot.plot_xy(ax2, time, ErrPosUm, '-', 'b', 1.5, 1.0)
-plot.plot_xy(ax2, time_sim_nf, ErrPosUm_sim_nf, '--', 'g', 1.5, 1.0)
-plot.plot_xy(ax2, time_sim_nf_rf, ErrPosUm_sim_nf_rf, '--', 'r', 1.5, 1.0, yrange=[-4.0, 4.0], xlabel='Time [s]', ylabel='Error Pos [um]', legend=['w/o Filters (Exp)', 'with NF (Sim)', 'with NF+RF (Sim)'], loc='upper right')
+plot.plot_xy(ax2, time, ErrPosUm_sim_nf, '--', 'g', 1.5, 1.0)
+plot.plot_xy(ax2, time, ErrPosUm_sim_nf_rf, '--', 'r', 1.5, 1.0, yrange=[-4.0, 4.0], xlabel='Time [s]', ylabel='Error Pos [um]', legend=['w/o Filters (Exp)', 'with NF (Sim)', 'with NF+RF (Sim)'], loc='upper right')
 plot.savefig(figurefolderName+'/time_resp_vs_sim.png')
 
 # FFT
