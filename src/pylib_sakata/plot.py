@@ -95,7 +95,7 @@ def plot_tf(ax_mag, ax_phase, sys, freq, styl='-', col='b', width=1.5, alpha=1.0
         ax_phase.grid(visible=True, which='both', axis='both')
         # phase plot
         for k in range(len(phasedeg)):
-            if phasedeg[k] > 0:
+            if phasedeg[k] > 0.01:
                 phasedeg[k] -= 360
         ax_phase.plot(freq, phasedeg, linestyle=styl, color=col, linewidth=width, alpha=alpha)
         # legend and title
@@ -155,7 +155,7 @@ def plot_tffrd(ax_mag, ax_phase, freqresp, styl='-', col='b', width=1.5, alpha=1
         ax_phase.grid(visible=True, which='both', axis='both')
         # phase plot
         for k in range(len(phasedeg)):
-            if phasedeg[k] > 0:
+            if phasedeg[k] > 0.01:
                 phasedeg[k] -= 360
         ax_phase.plot(freqresp.freq, phasedeg, linestyle=styl, color=col, linewidth=width, alpha=alpha)
         # legend and title

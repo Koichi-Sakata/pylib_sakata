@@ -1,4 +1,4 @@
-pylib-sakata User's Manual version-0.3.11
+pylib-sakata User's Manual version-0.3.12
 ===
 
 <!-- code_chunk_output -->
@@ -6,7 +6,7 @@ pylib-sakata User's Manual version-0.3.11
 - [1. Introduction](#1-introduction)
 - [2. Environment Setup](#2-environment-setup)
   - [2.1. Installation of Python](#21-installation-of-python)
-  - [2.2. Installation  of required Python libraries](#22-installation-of-required-python-libraries)
+  - [2.2. Installation of required Python libraries](#22-installation-of-required-python-libraries)
   - [2.3. Installation of pylib-sakata](#23-installation-of-pylib-sakata)
   - [2.4. Installation of IDE for Python](#24-installation-of-ide-for-python)
     - [2.4.1. Visual Studio Code (VSCode)](#241-visual-studio-code-vscode)
@@ -18,7 +18,7 @@ pylib-sakata User's Manual version-0.3.11
     - [2.4.3. PyCharm](#243-pycharm)
       - [2.4.3.1. Installation of PyCharm](#2431-installation-of-pycharm)
       - [2.4.3.2. Initial setting of PyCharm](#2432-initial-setting-of-pycharm)
-    - [2.4.4. Comparison between  VSCode and Spyder and PyCharm](#244-comparison-between-vscode-and-spyder-and-pycharm)
+    - [2.4.4. Comparison between VSCode and Spyder and PyCharm](#244-comparison-between-vscode-and-spyder-and-pycharm)
   - [2.5. Getting started](#25-getting-started)
 - [3. pylib\_sakata.ctrl](#3-pylib_sakatactrl)
   - [3.1. ZpkModel](#31-zpkmodel)
