@@ -19,7 +19,7 @@ from .fft import FreqResp
 
 
 def plot_xy(ax, x, y, styl='-', col='b', width=1.5, alpha=1.0, xrange=None, yrange=None, xlabel=None, ylabel=None,
-            legend=None, loc='best', title=None, xscale='linear', yscale='linear', labelouter=True):
+            legend=None, loc='best', title=None, xscale='linear', yscale='linear', labelouter=True, bbox_to_anchor=None):
     ax.set_xscale(xscale)
     ax.set_yscale(yscale)
     if xrange == None:
@@ -38,10 +38,10 @@ def plot_xy(ax, x, y, styl='-', col='b', width=1.5, alpha=1.0, xrange=None, yran
         ax.set_ylabel(ylabel)
     ax.grid(visible=True, which='both', axis='both')
     # plot
-    ax.plot(x, y, linestyle=styl, color=col, linewidth=width, alpha=alpha)
+    ax.plot(x, y, linestyle=styl, color=col, linewidth=width, alpha=alpha, label=legend)
     # legend and title
     if legend != None:
-        ax.legend(legend, loc=loc)
+        ax.legend(loc=loc, bbox_to_anchor=bbox_to_anchor)
     if title != None:
         ax.set_title(title)
     if labelouter == True:
