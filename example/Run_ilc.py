@@ -1,4 +1,4 @@
-# Copyright (c) 2021 Koichi Sakata
+# Copyright (c) 2026 Koichi Sakata
 
 
 from pylib_sakata import init as init
