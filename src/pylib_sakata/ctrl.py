@@ -35,14 +35,15 @@
 # sys = minreal(sys)
 # makeprmset(path='.')
 # defprmset(tfz, prmSetName, path='.', mode='a')
-
+# e, u, y = trdsim(r, t, Pnz, Cfbz, Cfilz=1, uff=None)
 
 import os
 import math
 import numpy as np
 from numpy.polynomial import polynomial
-import control
+import control as ct
 from control import matlab
+from scipy.signal import lfilter
 from .fft import FreqResp
 import warnings
 warnings.simplefilter("ignore", np.ComplexWarning)
@@ -275,7 +276,7 @@ def tf2ss(tf, form=None):
     if form == None:
         ss = matlab.tf2ss(tf)
     else:
-        ss, T = control.canonical_form(matlab.tf2ss(tf), form=form)
+        ss, T = ct.canonical_form(matlab.tf2ss(tf), form=form)
     return ss
 
 
@@ -1036,3 +1037,33 @@ def defprmset(tfz, prmSetName, path='.', ftype='cpp', mode='a'):
             f.write('\n#endif\n')
             f.close()
 
+def trdsim(r, t, Pnz, Cfbz, Cfilz=1, uff=None):
+    e = np.zeros(len(t))            # Error
+    y = np.zeros(len(t))            # Plant output
+    ufb = np.zeros(len(t))          # FB output
+    ufb_fil = np.zeros(len(t))      # Filter output
+    u = np.zeros(len(t))            # Control input
+
+    b_p, a_p = ct.tfdata(Pnz)
+    b_fb, a_fb = ct.tfdata(Cfbz)
+    b_fil, a_fil = ct.tfdata(Cfilz)
+    b_p, a_p = b_p[0][0], a_p[0][0]
+    b_fb, a_fb = b_fb[0][0], a_fb[0][0]
+    b_fil, a_fil = b_fil[0][0], a_fil[0][0]
+
+    # Initial state variables
+    zi_p = np.zeros(max(len(a_p), len(b_p)) - 1)
+    zi_fb = np.zeros(max(len(a_fb), len(b_fb)) - 1)
+    zi_fb_fil = np.zeros(max(len(a_fil), len(b_fil)) - 1)
+
+    # Silulation loop like simulink
+    for i in range(1, len(t)):
+        e[i] = r[i] - y[i-1]
+        ufb[i], zi_fb = lfilter(b_fb, a_fb, [e[i]], zi=zi_fb)   # FB controller
+        ufb_fil[i], zi_fb_fil = lfilter(b_fil, a_fil, [ufb[i]], zi=zi_fb_fil)   # Filter
+        if uff is None:
+            u[i] = ufb_fil[i]
+        else:
+            u[i] = ufb_fil[i] + uff[i]
+        y[i], zi_p = lfilter(b_p, a_p, [u[i]], zi=zi_p)         # Plant
+    return e, u, y
