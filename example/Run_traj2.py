@@ -1,9 +1,11 @@
 # Copyright (c) 2021 Koichi Sakata
 
 
+import warnings
+warnings.filterwarnings('ignore')
 from pylib_sakata import init as init
-# uncomment the follows when the file is executed in a Python console.
-# init.close_all()
+init.close_all()
+# uncomment the follows when the file is NOT executed in a Python console.
 # init.clear_all()
 
 import os
@@ -51,7 +53,7 @@ ax1 = fig.add_subplot(411)
 ax2 = fig.add_subplot(412)
 ax3 = fig.add_subplot(413)
 ax4 = fig.add_subplot(414)
-plot.plot_xy(ax1, traj0.time, traj0.pos, '-', 'k', 1.5, 1.0, legend='JerkRatio: 0.1')
+plot.plot_xy(ax1, traj0.time, traj0.pos, '-', 'k', 1.5, 1.0, legend='JerkRatio: 0.1', title='Time response')
 plot.plot_xy(ax1, traj1.time, traj1.pos, '-', 'b', 1.5, 1.0, legend='JerkRatio: 0.2')
 plot.plot_xy(ax1, traj2.time, traj2.pos, '-', 'c', 1.5, 1.0, ylabel='Pos [m]', title='Time response', legend='JerkRatio: 0.5')
 plot.plot_xy(ax2, traj0.time, traj0.vel, '-', 'k', 1.5, 1.0)
@@ -59,18 +61,18 @@ plot.plot_xy(ax2, traj1.time, traj1.vel, '-', 'b', 1.5, 1.0)
 plot.plot_xy(ax2, traj2.time, traj2.vel, '-', 'c', 1.5, 1.0, ylabel='Vel [m/s]')
 plot.plot_xy(ax3, traj0.time, traj0.acc, '-', 'k', 1.5, 1.0)
 plot.plot_xy(ax3, traj1.time, traj1.acc, '-', 'b', 1.5, 1.0)
-plot.plot_xy(ax3, traj2.time, traj2.acc, '-', 'c', 1.5, 1.0, ylabel='Acc [m/s2]')
+plot.plot_xy(ax3, traj2.time, traj2.acc, '-', 'c', 1.5, 1.0, ylabel='Acc [m/$s^2$]')
 plot.plot_xy(ax4, traj0.time, traj0.jerk, '-', 'k', 1.5, 1.0)
 plot.plot_xy(ax4, traj1.time, traj1.jerk, '-', 'b', 1.5, 1.0)
-plot.plot_xy(ax4, traj2.time, traj2.jerk, '-', 'c', 1.5, 1.0, yrange=[-50, 50], xlabel='Time [s]', ylabel='Jerk [m/s3]')
+plot.plot_xy(ax4, traj2.time, traj2.jerk, '-', 'c', 1.5, 1.0, yrange=[-50, 50], xlabel='Time [s]', ylabel='Jerk [m/$s^3$]')
 plot.savefig(figurefolderName+'/time_traj.png')
 
 # FFT
 fig = plot.makefig(dpi=200)
 ax1 = fig.add_subplot(111)
-plot.plot_xy(ax1, freq_fft0, jerk0_fft, '-', 'k', 1.5, 1.0, title='Power spectrum density', legend='JerkRatio: 0.1')
-plot.plot_xy(ax1, freq_fft1, jerk1_fft, '-', 'b', 1.5, 1.0, title='Power spectrum density', legend='JerkRatio: 0.2')
-plot.plot_xy(ax1, freq_fft2, jerk2_fft, '-', 'c', 1.5, 1.0, xscale='log', yscale='log', xrange=[1.0, 100.0], yrange=[0.001, 100], xlabel='Frequency [Hz]', ylabel='Ref Jerk [mm/s3]', legend='JerkRatio: 0.5')
+plot.plot_xy(ax1, freq_fft0, jerk0_fft, '-', 'k', 1.5, 1.0, legend='JerkRatio: 0.1', title='Power spectrum density')
+plot.plot_xy(ax1, freq_fft1, jerk1_fft, '-', 'b', 1.5, 1.0, legend='JerkRatio: 0.2')
+plot.plot_xy(ax1, freq_fft2, jerk2_fft, '-', 'c', 1.5, 1.0, xscale='log', yscale='log', xrange=[1.0, 100.0], yrange=[0.001, 100], xlabel='Frequency [Hz]', ylabel='Ref Jerk [mm/$s^3$]', legend='JerkRatio: 0.5')
 plot.savefig(figurefolderName+'/time_fft.png')
 
 plot.showfig()

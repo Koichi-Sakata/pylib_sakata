@@ -1,9 +1,11 @@
 # Copyright (c) 2021 Koichi Sakata
 
 
+import warnings
+warnings.filterwarnings('ignore')
 from pylib_sakata import init as init
-# uncomment the follows when the file is executed in a Python console.
-# init.close_all()
+init.close_all()
+# uncomment the follows when the file is NOT executed in a Python console.
 # init.clear_all()
 
 import os
@@ -79,45 +81,45 @@ plot.savefig(figurefolderName+'/freq_P.png')
 fig = plot.makefig()
 ax_mag = fig.add_subplot(211)
 ax_phase = fig.add_subplot(212)
-plot.plot_tffrd(ax_mag, ax_phase, Cs_frd, '-', 'b', 1.5, 1., freqrange, title='Frequency response of FB controller')
+plot.plot_tffrd(ax_mag, ax_phase, Cs_frd, '-', 'b', 1.5, 1., freqrange, phasebase=180, title='Frequency response of FB controller')
 plot.savefig(figurefolderName+'/freq_Cpre.png')
 
 fig = plot.makefig()
 ax_mag = fig.add_subplot(211)
 ax_phase = fig.add_subplot(212)
-plot.plot_tffrd(ax_mag, ax_phase, Cs_frd, '-', 'b', 1.5, 1.0, title='Frequency response of FB controller')
-plot.plot_tffrd(ax_mag, ax_phase, (Cs_frd + DOBy_frd)/(1.0 - DOBu_frd), '-', 'r', 1.5, 1.0, freqrange, legend=['PID', 'PID + DOB'])
+plot.plot_tffrd(ax_mag, ax_phase, Cs_frd, '-', 'b', 1.5, 1.0, phasebase=180, legend='PID', title='Frequency response of FB controller')
+plot.plot_tffrd(ax_mag, ax_phase, (Cs_frd + DOBy_frd)/(1.0 - DOBu_frd), '-', 'r', 1.5, 1.0, freqrange, phasebase=180, legend='PID + DOB')
 plot.savefig(figurefolderName+'/freq_C.png')
 
 # Open loop function
 fig = plot.makefig()
 ax_mag = fig.add_subplot(211)
 ax_phase = fig.add_subplot(212)
-plot.plot_tffrd(ax_mag, ax_phase, Gn_frd, '-', 'b', 1.5, 1.0, title='Frequency response of open loop transfer function')
-plot.plot_tffrd(ax_mag, ax_phase, Gdob_frd, '-', 'r', 1.5, 1.0, freqrange, legend=['w/o DOB', 'with DOB'])
+plot.plot_tffrd(ax_mag, ax_phase, Gn_frd, '-', 'b', 1.5, 1.0, legend='w/o DOB', title='Frequency response of open loop transfer function')
+plot.plot_tffrd(ax_mag, ax_phase, Gdob_frd, '-', 'r', 1.5, 1.0, freqrange, legend='with DOB')
 plot.savefig(figurefolderName+'/freq_G.png')
 
 # Sensitivity function and complementary sensitivity function
 fig = plot.makefig()
 ax_mag = fig.add_subplot(111)
 ax_phase = None
-plot.plot_tffrd(ax_mag, ax_phase, Sn_frd, '-', 'b', 1.5, 1.0, title='Frequency response of S and T')
-plot.plot_tffrd(ax_mag, ax_phase, Tn_frd, '-', 'r', 1.5, 1.0, freqrange, [-60, 10], legend=['S', 'T'])
+plot.plot_tffrd(ax_mag, ax_phase, Sn_frd, '-', 'b', 1.5, 1.0, legend='S', title='Frequency response of S and T')
+plot.plot_tffrd(ax_mag, ax_phase, Tn_frd, '-', 'r', 1.5, 1.0, freqrange, [-60, 10], legend='T')
 plot.savefig(figurefolderName+'/freq_STpre.png')
 
 # Sensitivity function
 fig = plot.makefig()
 ax_mag = fig.add_subplot(111)
 ax_phase = None
-plot.plot_tffrd(ax_mag, ax_phase, Sn_frd, '-', 'b', 1.5, 1.0, title='Frequency response of sensitivity function')
-plot.plot_tffrd(ax_mag, ax_phase, Sdob_frd, '-', 'r', 1.5, 1.0, freqrange, [-60, 10], legend=['w/o DOB', 'with DOB'])
+plot.plot_tffrd(ax_mag, ax_phase, Sn_frd, '-', 'b', 1.5, 1.0, legend='w/o DOB', title='Frequency response of sensitivity function')
+plot.plot_tffrd(ax_mag, ax_phase, Sdob_frd, '-', 'r', 1.5, 1.0, freqrange, [-60, 10], legend='with DOB')
 plot.savefig(figurefolderName+'/freq_S.png')
 
 # Nyquist
 fig = plot.makefig()
 ax = fig.add_subplot(111)
-plot.plot_nyquist(ax, Gn_frd, '-', 'b', 1.5, 1.0, title='Nyquist Diagram')
-plot.plot_nyquist(ax, Gdob_frd, '-', 'r', 1.5, 1.0, legend=['w/o DOB', 'with DOB'])
+plot.plot_nyquist(ax, Gn_frd, '-', 'b', 1.5, 1.0, legend='w/o DOB', title='Nyquist Diagram')
+plot.plot_nyquist(ax, Gdob_frd, '-', 'r', 1.5, 1.0, legend='with DOB')
 plot.plot_nyquist_assistline(ax)
 plot.savefig(figurefolderName+'/nyquist.png')
 

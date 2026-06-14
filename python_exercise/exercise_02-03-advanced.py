@@ -1,9 +1,11 @@
 # Copyright (c) 2021 Koichi Sakata
 
 
+import warnings
+warnings.filterwarnings('ignore')
 from pylib_sakata import init as init
-# uncomment the follows when the file is executed in a Python console.
-# init.close_all()
+init.close_all()
+# uncomment the follows when the file is NOT executed in a Python console.
 # init.clear_all()
 
 import os
@@ -79,18 +81,18 @@ print('Plotting figures...')
 fig = plot.makefig()
 ax1 = fig.add_subplot(211)
 ax2 = fig.add_subplot(212)
-plot.plot_xy(ax1, t, y1, '-', 'b', 1.5, 1.0, [0, max(t)], title='Time response')
-plot.plot_xy(ax1, t, y2, '-', 'r', 1.5, 1.0, [0, max(t)], ylabel='Current [A]', legend=['y: 2nd order poleplacement', 'y: Pole-zero cancellation'])
-plot.plot_xy(ax2, t, u1, '-', 'b', 1.5, 1.0, [0, max(t)])
-plot.plot_xy(ax2, t, u2, '-', 'r', 1.5, 1.0, [0, max(t)], xlabel='Time [s]', ylabel='Voltage [V]', legend=['u: 2nd order poleplacement', 'u: Pole-zero cancellation'])
+plot.plot_xy(ax1, t, y1, '-', 'b', 1.5, 1.0, [0, max(t)], legend='y: 2nd order poleplacement', title='Time response')
+plot.plot_xy(ax1, t, y2, '-', 'r', 1.5, 1.0, [0, max(t)], ylabel='Current [A]', legend='y: Pole-zero cancellation')
+plot.plot_xy(ax2, t, u1, '-', 'b', 1.5, 1.0, [0, max(t)], legend='u: 2nd order poleplacement')
+plot.plot_xy(ax2, t, u2, '-', 'r', 1.5, 1.0, [0, max(t)], xlabel='Time [s]', ylabel='Voltage [V]', legend='u: Pole-zero cancellation')
 plot.savefig(figurefolderName+'/time_resp.png')
 
 fig = plot.makefig()
 ax1 = fig.add_subplot(211)
 ax2 = fig.add_subplot(212)
-plot.plot_xy(ax1, t, d, '-', 'b', 1.5, 1.0, ylabel='Disturbance [V]', legend=['d'], title='Time response')
-plot.plot_xy(ax2, t, y3*1.0e3, '-', 'b', 1.5, 1.0)
-plot.plot_xy(ax2, t, y4*1.0e3, '-', 'r', 1.5, 1.0, [0, max(t)], xlabel='Time [s]', ylabel='Current [mA]', legend=['y: 2nd order poleplacement', 'y: Pole-zero cancellation'])
+plot.plot_xy(ax1, t, d, '-', 'b', 1.5, 1.0, ylabel='Disturbance [V]', legend='d', title='Time response')
+plot.plot_xy(ax2, t, y3*1.0e3, '-', 'b', 1.5, 1.0, legend='y: 2nd order poleplacement')
+plot.plot_xy(ax2, t, y4*1.0e3, '-', 'r', 1.5, 1.0, [0, max(t)], xlabel='Time [s]', ylabel='Current [mA]', legend='y: Pole-zero cancellation')
 plot.savefig(figurefolderName+'/time_dist.png')
 
 # Plant
@@ -104,18 +106,18 @@ plot.savefig(figurefolderName+'/freq_P.png')
 fig = plot.makefig()
 ax_mag = fig.add_subplot(211)
 ax_phase = fig.add_subplot(212)
-plot.plot_tffrd(ax_mag, ax_phase, Cs_frd, '-', 'b', 1.5, 1.0, freqrange, title='Frequency response of PI controller')
-plot.plot_tffrd(ax_mag, ax_phase, Cs_pzcancel_frd, '-', 'r', 1.5, 1.0, freqrange, legend=['2nd order poleplacement', 'Pole-zero cancellation'])
+plot.plot_tffrd(ax_mag, ax_phase, Cs_frd, '-', 'b', 1.5, 1.0, freqrange, phasebase=180, legend='2nd order poleplacement', title='Frequency response of PI controller')
+plot.plot_tffrd(ax_mag, ax_phase, Cs_pzcancel_frd, '-', 'r', 1.5, 1.0, freqrange, phasebase=180, legend='Pole-zero cancellation')
 plot.savefig(figurefolderName+'/freq_C.png')
 
 # Sensitivity function
 fig = plot.makefig()
 ax_mag = fig.add_subplot(111)
 ax_phase = None
-plot.plot_tffrd(ax_mag, ax_phase, Ss_frd, '-', 'b', 1.5, 1.0, title='Bode diagram')
-plot.plot_tffrd(ax_mag, ax_phase, Ts_frd, '-', 'c', 1.5, 1.0)
-plot.plot_tffrd(ax_mag, ax_phase, Ss_pzcancel_frd, '-', 'r', 1.5, 1.0)
-plot.plot_tffrd(ax_mag, ax_phase, Ts_pzcancel_frd, '-', 'm', 1.5, 1.0, freqrange, magrange=[-50, 10], legend=['S: 2nd order poleplacement', 'T: 2nd order poleplacement', 'S: Pole-zero cancellation', 'T: Pole-zero cancellation'])
+plot.plot_tffrd(ax_mag, ax_phase, Ss_frd, '-', 'b', 1.5, 1.0, legend='S: 2nd order poleplacement', title='Bode diagram of closed loop')
+plot.plot_tffrd(ax_mag, ax_phase, Ts_frd, '-', 'c', 1.5, 1.0, legend='T: 2nd order poleplacement')
+plot.plot_tffrd(ax_mag, ax_phase, Ss_pzcancel_frd, '-', 'r', 1.5, 1.0, legend='S: Pole-zero cancellation')
+plot.plot_tffrd(ax_mag, ax_phase, Ts_pzcancel_frd, '-', 'm', 1.5, 1.0, freqrange, magrange=[-50, 10], legend='T: Pole-zero cancellation')
 plot.savefig(figurefolderName+'/freq_ST.png')
 
 plot.showfig()

@@ -7,7 +7,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="pylib-sakata",
-    version="0.3.13",
+    version="0.4.0",
     install_requires=[
         'numpy==1.26.4',
         'scipy==1.14.1',

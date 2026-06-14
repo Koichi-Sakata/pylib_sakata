@@ -1,9 +1,11 @@
 # Copyright (c) 2021 Koichi Sakata
 
 
+import warnings
+warnings.filterwarnings('ignore')
 from pylib_sakata import init as init
-# uncomment the follows when the file is executed in a Python console.
-# init.close_all()
+init.close_all()
+# uncomment the follows when the file is NOT executed in a Python console.
 # init.clear_all()
 
 import os
@@ -87,32 +89,32 @@ print('Plotting figures...')
 fig = plot.makefig()
 ax1 = fig.add_subplot(211)
 ax2 = fig.add_subplot(212)
-plot.plot_xy(ax1, ti, yi, '-', 'b', 1.5, 1.0, [0, max(ti)], ylabel='Current [A]', legend=['y'], title='Time response of current')
-plot.plot_xy(ax2, ti, ui, '-', 'b', 1.5, 1.0, [0, max(ti)], xlabel='Time [s]', ylabel='Voltage [V]', legend=['u'])
+plot.plot_xy(ax1, ti, yi, '-', 'b', 1.5, 1.0, [0, max(ti)], ylabel='Current [A]', legend='y', title='Time response of current')
+plot.plot_xy(ax2, ti, ui, '-', 'b', 1.5, 1.0, [0, max(ti)], xlabel='Time [s]', ylabel='Voltage [V]', legend='u')
 plot.savefig(figurefolderName+'/time_resp_i.png')
 
 # Time response of position
 fig = plot.makefig()
 ax1 = fig.add_subplot(211)
 ax2 = fig.add_subplot(212)
-plot.plot_xy(ax1, tp, yp, '-', 'b', 1.5, 1.0, [0, max(tp)], ylabel='Position [m]', legend=['y'], title='Time response of position')
-plot.plot_xy(ax2, tp, up, '-', 'b', 1.5, 1.0, [0, max(tp)], xlabel='Time [s]', ylabel='Force [N]', legend=['u'])
+plot.plot_xy(ax1, tp, yp, '-', 'b', 1.5, 1.0, [0, max(tp)], ylabel='Position [m]', legend='y', title='Time response of position')
+plot.plot_xy(ax2, tp, up, '-', 'b', 1.5, 1.0, [0, max(tp)], xlabel='Time [s]', ylabel='Force [N]', legend='u')
 plot.savefig(figurefolderName+'/time_resp_p.png')
 
 # Sensitivity function of current
 fig = plot.makefig()
 ax_mag = fig.add_subplot(211)
 ax_phase = fig.add_subplot(212)
-plot.plot_tffrd(ax_mag, ax_phase, Si_frd, '-', 'b', 1.5, 1.0, freqrange, title='Bode diagram of current loop')
-plot.plot_tffrd(ax_mag, ax_phase, Ti_frd, '-', 'r', 1.5, 1.0, freqrange, magrange=[-50, 10], legend=['S', 'T'])
+plot.plot_tffrd(ax_mag, ax_phase, Si_frd, '-', 'b', 1.5, 1.0, freqrange, phasebase=180, legend='S', title='Bode diagram of current loop')
+plot.plot_tffrd(ax_mag, ax_phase, Ti_frd, '-', 'r', 1.5, 1.0, freqrange, magrange=[-50, 10], phasebase=180, legend='T')
 plot.savefig(figurefolderName+'/freq_ST_i.png')
 
 # Sensitivity function of position
 fig = plot.makefig()
 ax_mag = fig.add_subplot(211)
 ax_phase = fig.add_subplot(212)
-plot.plot_tffrd(ax_mag, ax_phase, Ss_frd, '-', 'b', 1.5, 1.0, freqrange, title='Bode diagram of position loop')
-plot.plot_tffrd(ax_mag, ax_phase, Ts_frd, '-', 'r', 1.5, 1.0, freqrange, magrange=[-50, 10], legend=['S', 'T'])
+plot.plot_tffrd(ax_mag, ax_phase, Ss_frd, '-', 'b', 1.5, 1.0, freqrange, phasebase=180, legend='S', title='Bode diagram of position loop')
+plot.plot_tffrd(ax_mag, ax_phase, Ts_frd, '-', 'r', 1.5, 1.0, freqrange, magrange=[-50, 10], phasebase=180, legend='T')
 plot.savefig(figurefolderName+'/freq_ST_p.png')
 
 # Nyquist of current

@@ -1,9 +1,11 @@
 # Copyright (c) 2021 Koichi Sakata
 
 
+import warnings
+warnings.filterwarnings('ignore')
 from pylib_sakata import init as init
-# uncomment the follows when the file is executed in a Python console.
-# init.close_all()
+init.close_all()
+# uncomment the follows when the file is NOT executed in a Python console.
 # init.clear_all()
 
 import os
@@ -67,25 +69,25 @@ u_4th, tout, xout = matlab.lsim(ctrl.tf2ss(Cs), e_4th, t_4th)
 
 print('Plotting figures...')
 # Time response of step
-fig = plot.makefig()
+fig = plot.makefig(dpi=150, figsize=(6,6))
 ax1 = fig.add_subplot(311)
 ax2 = fig.add_subplot(312)
 ax3 = fig.add_subplot(313)
-plot.plot_xy(ax1, t, r, '--', 'k', 1.5, 1.0, title='Time response')
-plot.plot_xy(ax1, t, y, '-', 'b', 1.5, 1.0, ylabel='Position [m]', legend=['r', 'y'], title='Time response')
-plot.plot_xy(ax2, t, e, '-', 'b', 1.5, 1.0, ylabel='Position [m]', legend=['e'])
-plot.plot_xy(ax3, t, u, '-', 'b', 1.5, 1.0, xlabel='Time [s]', ylabel='Force [N]', legend=['u'])
+plot.plot_xy(ax1, t, r, '--', 'k', 1.5, 1.0, legend='r', title='Time response')
+plot.plot_xy(ax1, t, y, '-', 'b', 1.5, 1.0, ylabel='Position [m]', legend='y', title='Time response')
+plot.plot_xy(ax2, t, e, '-', 'b', 1.5, 1.0, ylabel='Position [m]', legend='e')
+plot.plot_xy(ax3, t, u, '-', 'b', 1.5, 1.0, xlabel='Time [s]', ylabel='Force [N]', legend='u')
 plot.savefig(figurefolderName+'/time_resp_step.png')
 
 # Time response of 4th trajectory
-fig = plot.makefig()
+fig = plot.makefig(dpi=150, figsize=(6,6))
 ax1 = fig.add_subplot(311)
 ax2 = fig.add_subplot(312)
 ax3 = fig.add_subplot(313)
-plot.plot_xy(ax1, t_4th, r_4th, '--', 'k', 1.5, 1.0, title='Time response')
-plot.plot_xy(ax1, t_4th, y_4th, '-', 'b', 1.5, 1.0, ylabel='Position [m]', legend=['r', 'y'], title='Time response')
-plot.plot_xy(ax2, t_4th, e_4th*1.0e3, '-', 'b', 1.5, 1.0, ylabel='Position [mm]', legend=['e'])
-plot.plot_xy(ax3, t_4th, u_4th, '-', 'b', 1.5, 1.0, xlabel='Time [s]', ylabel='Force [N]', legend=['u'])
+plot.plot_xy(ax1, t_4th, r_4th, '--', 'k', 1.5, 1.0, legend='r', title='Time response')
+plot.plot_xy(ax1, t_4th, y_4th, '-', 'b', 1.5, 1.0, ylabel='Position [m]', legend='y', title='Time response')
+plot.plot_xy(ax2, t_4th, e_4th*1.0e3, '-', 'b', 1.5, 1.0, ylabel='Position [mm]', legend='e')
+plot.plot_xy(ax3, t_4th, u_4th, '-', 'b', 1.5, 1.0, xlabel='Time [s]', ylabel='Force [N]', legend='u')
 plot.savefig(figurefolderName+'/time_resp_4th.png')
 
 # Plant
@@ -95,19 +97,19 @@ ax_phase = fig.add_subplot(212)
 plot.plot_tffrd(ax_mag, ax_phase, Ps_frd, '-', 'b', 1.5, 1.0, title='Frequency response of plant')
 plot.savefig(figurefolderName+'/freq_P.png')
 
-# PI controller
+# PID controller
 fig = plot.makefig()
 ax_mag = fig.add_subplot(211)
 ax_phase = fig.add_subplot(212)
-plot.plot_tffrd(ax_mag, ax_phase, Cs_frd, '-', 'b', 1.5, 1.0, freqrange, title='Frequency response of PID controller')
+plot.plot_tffrd(ax_mag, ax_phase, Cs_frd, '-', 'b', 1.5, 1.0, freqrange, phasebase=180, title='Frequency response of PID controller')
 plot.savefig(figurefolderName+'/freq_C.png')
 
 # Sensitivity function
 fig = plot.makefig()
-ax_mag = fig.add_subplot(111)
-ax_phase = None
-plot.plot_tffrd(ax_mag, ax_phase, Ss_frd, '-', 'b', 1.5, 1.0, freqrange, title='Bode diagram')
-plot.plot_tffrd(ax_mag, ax_phase, Ts_frd, '-', 'r', 1.5, 1.0, freqrange, magrange=[-50, 10], legend=['S', 'T'])
+ax_mag = fig.add_subplot(211)
+ax_phase = fig.add_subplot(212)
+plot.plot_tffrd(ax_mag, ax_phase, Ss_frd, '-', 'b', 1.5, 1.0, freqrange, phasebase=180, legend='S', title='Bode diagram of closed loop')
+plot.plot_tffrd(ax_mag, ax_phase, Ts_frd, '-', 'r', 1.5, 1.0, freqrange, magrange=[-50, 10], phasebase=180, legend='T')
 plot.savefig(figurefolderName+'/freq_ST.png')
 
 plot.showfig()

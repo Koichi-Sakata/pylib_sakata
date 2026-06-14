@@ -1,9 +1,11 @@
 # Copyright (c) 2021 Koichi Sakata
 
 
+import warnings
+warnings.filterwarnings('ignore')
 from pylib_sakata import init as init
-# uncomment the follows when the file is executed in a Python console.
-# init.close_all()
+init.close_all()
+# uncomment the follows when the file is NOT executed in a Python console.
 # init.clear_all()
 
 import os
@@ -94,12 +96,12 @@ Tn_frd = 1 - Sn_frd
 
 print('Plotting figures...')
 # Time response
-fig = plot.makefig()
+fig = plot.makefig(dpi=150, figsize=(6,6))
 ax1 = fig.add_subplot(311)
 ax2 = fig.add_subplot(312)
 ax3 = fig.add_subplot(313)
 plot.plot_xy(ax1, time, RefPosUm*1.0e-3, '-', 'b', 1.5, 1.0, ylabel='Ref Pos [mm]', title='Time response')
-plot.plot_xy(ax2, time, ErrPosUm, '-', 'b', 1.5, 1.0, yrange=[-2.5, 2.5], ylabel='Error Pos [um]')
+plot.plot_xy(ax2, time, ErrPosUm, '-', 'b', 1.5, 1.0, yrange=[-2.5, 2.5], ylabel='Error Pos [$\mu$m]')
 plot.plot_xy(ax3, time, ServoOutN, '-', 'b', 1.5, 1.0, xlabel='Time [s]', ylabel='ServoOut [N]')
 plot.savefig(figurefolderName+'/time_resp.png')
 
@@ -107,7 +109,7 @@ plot.savefig(figurefolderName+'/time_resp.png')
 fig = plot.makefig()
 ax1 = fig.add_subplot(211)
 ax2 = fig.add_subplot(212)
-plot.plot_xy(ax1, freq_fft, ErrPosUm_fft, '-', 'b', 1.5, 1.0, xscale='log', xrange=[1.0, 1000.0], yrange=[0.0, 0.4], ylabel='Error Pos [um]', title='Power spectrum density')
+plot.plot_xy(ax1, freq_fft, ErrPosUm_fft, '-', 'b', 1.5, 1.0, xscale='log', xrange=[1.0, 1000.0], yrange=[0.0, 0.4], ylabel='Error Pos [$\mu$m]', title='Power spectrum density')
 plot.plot_xy(ax2, freq_fft, ServoOutN_fft, '-', 'b', 1.5, 1.0, xscale='log', xrange=[1.0, 1000.0], yrange=[0.0, 0.003], xlabel='Frequency [Hz]', ylabel='ServoOut [N]')
 plot.savefig(figurefolderName+'/time_fft.png')
 
@@ -116,15 +118,15 @@ fig = plot.makefig()
 ax_mag = fig.add_subplot(311)
 ax_phase = fig.add_subplot(312)
 ax_coh = fig.add_subplot(313)
-plot.plot_tffrd(ax_mag, ax_phase, Pmeas_frd, '-', 'm', 1.5, 1.0, ax_coh=ax_coh, coh=coh, title='Frequency response of plant')
-plot.plot_tffrd(ax_mag, ax_phase, Pnz_frd, '--', 'b', 1.5, 1.0, freqrange, legend=['Measurement', 'Model'])
+plot.plot_tffrd(ax_mag, ax_phase, Pmeas_frd, '-', 'm', 1.5, 1.0, ax_coh=ax_coh, coh=coh, legend='Measurement', title='Frequency response of plant')
+plot.plot_tffrd(ax_mag, ax_phase, Pnz_frd, '--', 'b', 1.5, 1.0, freqrange, legend='Model')
 plot.savefig(figurefolderName+'/freq_P.png')
 
 # PID controller
 fig = plot.makefig()
 ax_mag = fig.add_subplot(211)
 ax_phase = fig.add_subplot(212)
-plot.plot_tffrd(ax_mag, ax_phase, Cz_frd, '-', 'b', 1.5, 1.0, freqrange, title='Frequency response of PID controller')
+plot.plot_tffrd(ax_mag, ax_phase, Cz_frd, '-', 'b', 1.5, 1.0, freqrange, phasebase=180, title='Frequency response of PID controller')
 plot.savefig(figurefolderName+'/freq_C.png')
 
 # Open loop function
@@ -145,7 +147,7 @@ plot.savefig(figurefolderName+'/freq_S.png')
 fig = plot.makefig()
 ax_mag = fig.add_subplot(211)
 ax_phase = fig.add_subplot(212)
-plot.plot_tffrd(ax_mag, ax_phase, Tn_frd, '-', 'b', 1.5, 1.0, freqrange, [-60, 10], title='Frequency response of complementary sensitivity function')
+plot.plot_tffrd(ax_mag, ax_phase, Tn_frd, '-', 'b', 1.5, 1.0, freqrange, [-60, 10], phasebase=180, title='Frequency response of complementary sensitivity function')
 plot.savefig(figurefolderName+'/freq_T.png')
 
 # Nyquist

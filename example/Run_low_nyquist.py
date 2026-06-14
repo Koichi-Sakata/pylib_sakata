@@ -1,9 +1,11 @@
 # Copyright (c) 2023 Koichi Sakata
 
 
+import warnings
+warnings.filterwarnings('ignore')
 from pylib_sakata import init as init
-# uncomment the follows when the file is executed in a Python console.
-# init.close_all()
+init.close_all()
+# uncomment the follows when the file is NOT executed in a Python console.
 # init.clear_all()
 
 import os
@@ -70,16 +72,16 @@ print('Frequency response analysis is running...')
 fig = plot.makefig()
 ax_mag = fig.add_subplot(211)
 ax_phase = fig.add_subplot(212)
-plot.plot_tffrd(ax_mag, ax_phase, Cs_frd, '-', 'b', 1.5, 1.0, freqrange2, title='Frequency response of PID controller')
-plot.plot_tffrd(ax_mag, ax_phase, Cz_frd, '--', 'r', 1.5, 1.0, freqrange2, [70, 110], legend=['Continuous', 'Discrete'], loc='lower left')
+plot.plot_tffrd(ax_mag, ax_phase, Cs_frd, '-', 'b', 1.5, 1.0, freqrange2, phasebase=180, legend='Continuous', title='Frequency response of PID controller')
+plot.plot_tffrd(ax_mag, ax_phase, Cz_frd, '--', 'r', 1.5, 1.0, freqrange2, [70, 110], phasebase=180, legend='Discrete', loc='lower left')
 plot.savefig(figurefolderName+'/freq_C.png')
 
 # Notch filters
 fig = plot.makefig()
 ax_mag = fig.add_subplot(211)
 ax_phase = fig.add_subplot(212)
-plot.plot_tffrd(ax_mag, ax_phase, NFs_frd, '-', 'b', 1.5, 1.0, freqrange, title='Frequency response of notch filter')
-plot.plot_tffrd(ax_mag, ax_phase, NFz_matched_frd, '--', 'r', 1.5, 1.0, freqrange, [-50, 10], legend=['Continuous', 'Discrete'], loc='lower left')
+plot.plot_tffrd(ax_mag, ax_phase, NFs_frd, '-', 'b', 1.5, 1.0, freqrange, phasebase=180, legend='Continuous', title='Frequency response of notch filter')
+plot.plot_tffrd(ax_mag, ax_phase, NFz_matched_frd, '--', 'r', 1.5, 1.0, freqrange, [-50, 10], phasebase=180, legend='Discrete', loc='lower left')
 plot.savefig(figurefolderName+'/freq_NF.png')
 
 plot.showfig()

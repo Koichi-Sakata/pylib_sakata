@@ -1,9 +1,11 @@
 # Copyright (c) 2025 Koichi Sakata
 
 
+import warnings
+warnings.filterwarnings('ignore')
 from pylib_sakata import init as init
-# uncomment the follows when the file is executed in a Python console.
-# init.close_all()
+init.close_all()
+# uncomment the follows when the file is NOT executed in a Python console.
 # init.clear_all()
 
 import os
@@ -109,10 +111,8 @@ import matplotlib.gridspec as gridspec
 nrows = 2
 ncols = 2
 magrange = [-150, 50]
-legend = ['P', 'RGA']
 loc = 'upper left'
 title='P'
-
 fig = plot.makefig(figsize=(10, 8))
 plt.suptitle('Frequency response of plant')
 gs_main = gridspec.GridSpec(nrows, ncols, figure=fig)
@@ -122,17 +122,14 @@ for m in range(nrows):
         ax_mag = fig.add_subplot(gs_nested[0, 0])
         ax_phase = fig.add_subplot(gs_nested[1, 0])
         plot.plot_tffrd(ax_mag, ax_phase, fft.FreqResp(P_mimo_frd.freq, P_mimo_frd.resp[m, n,:], P_mimo_frd.dt), styl='-', col='b', width=1.5, alpha=1.0, freqrange=None, magrange=magrange,
-                legend=None, loc=loc, title=None, labelouter=True)
+                legend='P', loc=loc, title=None, labelouter=True)
         plot.plot_tffrd(ax_mag, ax_phase, fft.FreqResp(rga_frd.freq, rga_frd.resp[m, n,:], rga_frd.dt), styl='-', col='r', width=1.5, alpha=1.0, freqrange=None, magrange=magrange,
-                legend=legend, loc=loc, title=title+f'({m}, {n})')
-
+                legend='RGA', loc=loc, title=title+f'({m}, {n})')
 plt.tight_layout()
 plot.savefig(figurefolderName+'/freq_plant.png')
 
-legend = ['S', 'T']
 loc = 'upper left'
 title='Sys'
-
 fig = plot.makefig(figsize=(10, 8))
 plt.suptitle('Frequency response of closed loop')
 gs_main = gridspec.GridSpec(nrows, ncols, figure=fig)
@@ -141,11 +138,10 @@ for m in range(nrows):
         gs_nested = gridspec.GridSpecFromSubplotSpec(2, 1, subplot_spec=gs_main[m, n])
         ax_mag = fig.add_subplot(gs_nested[0, 0])
         ax_phase = fig.add_subplot(gs_nested[1, 0])
-        plot.plot_tffrd(ax_mag, ax_phase, fft.FreqResp(S_mimo_frd.freq, S_mimo_frd.resp[m, n,:], S_mimo_frd.dt), styl='-', col='b', width=1.5, alpha=1.0, freqrange=None, magrange=magrange,
-                legend=None, loc=loc, title=None, labelouter=True)
-        plot.plot_tffrd(ax_mag, ax_phase, fft.FreqResp(T_mimo_frd.freq, T_mimo_frd.resp[m, n,:], T_mimo_frd.dt), styl='-', col='r', width=1.5, alpha=1.0, freqrange=None, magrange=magrange,
-                legend=legend, loc=loc, title=title+f'({m}, {n})')
-
+        plot.plot_tffrd(ax_mag, ax_phase, fft.FreqResp(S_mimo_frd.freq, S_mimo_frd.resp[m, n,:], S_mimo_frd.dt), styl='-', col='b', width=1.5, alpha=1.0, freqrange=None, magrange=magrange, phasebase=180,
+                legend='S', loc=loc, title=None, labelouter=True)
+        plot.plot_tffrd(ax_mag, ax_phase, fft.FreqResp(T_mimo_frd.freq, T_mimo_frd.resp[m, n,:], T_mimo_frd.dt), styl='-', col='r', width=1.5, alpha=1.0, freqrange=None, magrange=magrange, phasebase=180,
+                legend='T', loc=loc, title=title+f'({m}, {n})')
 plt.tight_layout()
 plot.savefig(figurefolderName+'/freq_closed.png')
 
@@ -157,18 +153,20 @@ plot.plot_nyquist_assistline(ax)
 plot.savefig(figurefolderName+'/nyquistmimo.png')
 
 # SISO Nyquist
+legend=['L0', 'L1']
 fig = plot.makefig()
 ax = fig.add_subplot(111)
 for m in range(nrows):
-    plot.plot_nyquist(ax, fft.FreqResp(G_mimo_frd.freq, G_mimo_frd.resp[m, m, :], G_mimo_frd.dt), '-', colorlist[m], 1.5, 1.0, title='SISO Nyquist diagram', legend=['L0', 'L1'])
+    plot.plot_nyquist(ax, fft.FreqResp(G_mimo_frd.freq, G_mimo_frd.resp[m, m, :], G_mimo_frd.dt), '-', colorlist[m], 1.5, 1.0, title='SISO Nyquist diagram', legend=legend[m])
 plot.plot_nyquist_assistline(ax)
 plot.savefig(figurefolderName+'/nyquistsiso.png')
 
 # Eigenvalue loci
+legend=['Eig0', 'Eig1']
 fig = plot.makefig()
 ax = fig.add_subplot(111)
 for m in range(nrows):
-    plot.plot_nyquist(ax, fft.FreqResp(eig_frd.freq, eig_frd.resp[m, :], eig_frd.dt), '-', colorlist[m], 1.5, 1.0, title='Eigenvalue loci', legend=['Eig0', 'Eig1'])
+    plot.plot_nyquist(ax, fft.FreqResp(eig_frd.freq, eig_frd.resp[m, :], eig_frd.dt), '-', colorlist[m], 1.5, 1.0, title='Eigenvalue loci', legend=legend[m])
 plot.plot_nyquist_assistline(ax)
 plot.savefig(figurefolderName+'/eigloci.png')
 

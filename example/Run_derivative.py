@@ -1,9 +1,11 @@
 # Copyright (c) 2021 Koichi Sakata
 
 
+import warnings
+warnings.filterwarnings('ignore')
 from pylib_sakata import init as init
-# uncomment the follows when the file is executed in a Python console.
-# init.close_all()
+init.close_all()
+# uncomment the follows when the file is NOT executed in a Python console.
 # init.clear_all()
 
 import os
@@ -37,8 +39,8 @@ print('Plotting figures...')
 fig = plot.makefig()
 ax_mag = fig.add_subplot(211)
 ax_phase = fig.add_subplot(212)
-plot.plot_tffrd(ax_mag, ax_phase, Exact_differential_frd, '-', 'b', 1.5, 1.0, title='Frequency response of derivative')
-plot.plot_tffrd(ax_mag, ax_phase, Quasi_derivative_frd, '--', 'm', 1.5, 1.0, magrange=[0, 100], legend=['Exact differential', 'Quasi-derivative'])
+plot.plot_tffrd(ax_mag, ax_phase, Exact_differential_frd, '-', 'b', 1.5, 1.0, phasebase=180, legend='Exact differential', title='Frequency response of derivative')
+plot.plot_tffrd(ax_mag, ax_phase, Quasi_derivative_frd, '--', 'm', 1.5, 1.0, magrange=[0, 100], phasebase=180, legend='Quasi-derivative')
 plot.savefig(figurefolderName+'/freq_derivative.png')
 
 plot.showfig()

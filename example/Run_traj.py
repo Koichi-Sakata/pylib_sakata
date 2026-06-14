@@ -1,9 +1,11 @@
 # Copyright (c) 2021 Koichi Sakata
 
 
+import warnings
+warnings.filterwarnings('ignore')
 from pylib_sakata import init as init
-# uncomment the follows when the file is executed in a Python console.
-# init.close_all()
+init.close_all()
+# uncomment the follows when the file is NOT executed in a Python console.
 # init.clear_all()
 
 import os
@@ -51,18 +53,18 @@ freq_fft5, jerk5_fft = fft.fft_ave(traj5.jerk, Ts)
 
 print('Plotting figures...')
 # Time response
-fig = plot.makefig(dpi=400, figsize=(12, 12), popwin=True)
+fig = plot.makefig(dpi=400, figsize=(12, 12))
 ax1 = fig.add_subplot(511)
 ax2 = fig.add_subplot(512)
 ax3 = fig.add_subplot(513)
 ax4 = fig.add_subplot(514)
 ax5 = fig.add_subplot(515)
-plot.plot_xy(ax1, traj0.time, traj0.pos, '--', 'k', 1.5, 1.0, legend='3rd')
+plot.plot_xy(ax1, traj0.time, traj0.pos, '--', 'k', 1.5, 1.0, legend='3rd', title='Time response')
 plot.plot_xy(ax1, traj1.time, traj1.pos, '--', 'b', 1.5, 1.0, legend='4th')
 plot.plot_xy(ax1, traj2.time, traj2.pos, '--', 'c', 1.5, 1.0, legend='4th v2')
 plot.plot_xy(ax1, traj3.time, traj3.pos, '-', 'r', 1.0, 1.0, legend='sin')
 plot.plot_xy(ax1, traj4.time, traj3.pos, '-', 'm', 1.0, 1.0, legend='sin v2')
-plot.plot_xy(ax1, traj5.time, traj5.pos, '-', 'g', 1.0, 1.0, ylabel='Pos [m]', title='Time response', legend='sin v3')
+plot.plot_xy(ax1, traj5.time, traj5.pos, '-', 'g', 1.0, 1.0, ylabel='Pos [m]', legend='sin v3')
 plot.plot_xy(ax2, traj0.time, traj0.vel, '--', 'k', 1.5, 1.0)
 plot.plot_xy(ax2, traj1.time, traj1.vel, '--', 'b', 1.5, 1.0)
 plot.plot_xy(ax2, traj2.time, traj2.vel, '--', 'c', 1.5, 1.0)
@@ -74,18 +76,18 @@ plot.plot_xy(ax3, traj1.time, traj1.acc, '--', 'b', 1.5, 1.0)
 plot.plot_xy(ax3, traj2.time, traj2.acc, '--', 'c', 1.5, 1.0)
 plot.plot_xy(ax3, traj3.time, traj3.acc, '-', 'r', 1.0, 1.0)
 plot.plot_xy(ax3, traj4.time, traj4.acc, '-', 'm', 1.0, 1.0)
-plot.plot_xy(ax3, traj5.time, traj5.acc, '-', 'g', 1.0, 1.0, ylabel='Acc [m/s2]')
+plot.plot_xy(ax3, traj5.time, traj5.acc, '-', 'g', 1.0, 1.0, ylabel='Acc [m/$s^2$]')
 plot.plot_xy(ax4, traj0.time, traj0.jerk, '--', 'k', 1.5, 1.0)
 plot.plot_xy(ax4, traj1.time, traj1.jerk, '--', 'b', 1.5, 1.0)
 plot.plot_xy(ax4, traj2.time, traj2.jerk, '--', 'c', 1.5, 1.0)
 plot.plot_xy(ax4, traj3.time, traj3.jerk, '-', 'r', 1.0, 1.0)
 plot.plot_xy(ax4, traj4.time, traj4.jerk, '-', 'm', 1.0, 1.0)
-plot.plot_xy(ax4, traj5.time, traj5.jerk, '-', 'g', 1.0, 1.0, xlabel='Time [s]', ylabel='Jerk [m/s3]')
+plot.plot_xy(ax4, traj5.time, traj5.jerk, '-', 'g', 1.0, 1.0, xlabel='Time [s]', ylabel='Jerk [m/$s^3$]')
 plot.plot_xy(ax5, traj1.time, traj1.snap, '--', 'b', 1.5, 1.0)
 plot.plot_xy(ax5, traj2.time, traj2.snap, '--', 'c', 1.5, 1.0)
 plot.plot_xy(ax5, traj3.time, traj3.snap, '-', 'r', 1.0, 1.0)
 plot.plot_xy(ax5, traj4.time, traj4.snap, '-', 'm', 1.0, 1.0)
-plot.plot_xy(ax5, traj5.time, traj5.snap, '-', 'g', 1.0, 1.0, xlabel='Time [s]', ylabel='Snap [m/s4]')
+plot.plot_xy(ax5, traj5.time, traj5.snap, '-', 'g', 1.0, 1.0, xlabel='Time [s]', ylabel='Snap [m/$s^4$]')
 plot.savefig(figurefolderName+'/time_traj.png')
 
 # FFT
@@ -96,7 +98,7 @@ plot.plot_xy(ax1, freq_fft1, jerk1_fft, '--', 'b', 1.5, 1.0, title='Power spectr
 plot.plot_xy(ax1, freq_fft2, jerk2_fft, '--', 'c', 1.5, 1.0, title='Power spectrum density', legend='4th v2')
 plot.plot_xy(ax1, freq_fft3, jerk3_fft, '-', 'r', 1.5, 1.0, title='Power spectrum density', legend='sin')
 plot.plot_xy(ax1, freq_fft3, jerk4_fft, '-', 'm', 1.5, 1.0, title='Power spectrum density', legend='sin v2')
-plot.plot_xy(ax1, freq_fft4, jerk5_fft, '-', 'g', 1.5, 1.0, xscale='log', yscale='log', xrange=[1.0, 100.0], yrange=[0.001, 100], xlabel='Frequency [Hz]', ylabel='Ref Jerk [mm/s3]', legend='sin v3')
+plot.plot_xy(ax1, freq_fft4, jerk5_fft, '-', 'g', 1.5, 1.0, xscale='log', yscale='log', xrange=[1.0, 100.0], yrange=[0.001, 100], xlabel='Frequency [Hz]', ylabel='Ref Jerk [mm/$s^3$]', legend='sin v3')
 plot.savefig(figurefolderName+'/time_fft.png')
 
 plot.showfig()

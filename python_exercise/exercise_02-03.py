@@ -1,9 +1,11 @@
 # Copyright (c) 2021 Koichi Sakata
 
 
+import warnings
+warnings.filterwarnings('ignore')
 from pylib_sakata import init as init
-# uncomment the follows when the file is executed in a Python console.
-# init.close_all()
+init.close_all()
+# uncomment the follows when the file is NOT executed in a Python console.
 # init.clear_all()
 
 import os
@@ -59,8 +61,8 @@ print('Plotting figures...')
 fig = plot.makefig()
 ax1 = fig.add_subplot(211)
 ax2 = fig.add_subplot(212)
-plot.plot_xy(ax1, t, y, '-', 'b', 1.5, 1.0, [0, max(t)], ylabel='Current [A]', legend=['y'], title='Time response')
-plot.plot_xy(ax2, t, u, '-', 'b', 1.5, 1.0, [0, max(t)], xlabel='Time [s]', ylabel='Voltage [V]', legend=['u'])
+plot.plot_xy(ax1, t, y, '-', 'b', 1.5, 1.0, [0, max(t)], ylabel='Current [A]', legend='y', title='Time response')
+plot.plot_xy(ax2, t, u, '-', 'b', 1.5, 1.0, [0, max(t)], xlabel='Time [s]', ylabel='Voltage [V]', legend='u')
 plot.savefig(figurefolderName+'/time_resp.png')
 
 # Plant
@@ -74,15 +76,15 @@ plot.savefig(figurefolderName+'/freq_P.png')
 fig = plot.makefig()
 ax_mag = fig.add_subplot(211)
 ax_phase = fig.add_subplot(212)
-plot.plot_tffrd(ax_mag, ax_phase, Cs_frd, '-', 'b', 1.5, 1.0, freqrange, title='Frequency response of PI controller')
+plot.plot_tffrd(ax_mag, ax_phase, Cs_frd, '-', 'b', 1.5, 1.0, freqrange, phasebase=180, title='Frequency response of PI controller')
 plot.savefig(figurefolderName+'/freq_C.png')
 
 # Sensitivity function
 fig = plot.makefig()
 ax_mag = fig.add_subplot(111)
 ax_phase = None
-plot.plot_tffrd(ax_mag, ax_phase, Ss_frd, '-', 'b', 1.5, 1.0, freqrange, title='Bode diagram')
-plot.plot_tffrd(ax_mag, ax_phase, Ts_frd, '-', 'r', 1.5, 1.0, freqrange, magrange=[-50, 10], legend=['S', 'T'])
+plot.plot_tffrd(ax_mag, ax_phase, Ss_frd, '-', 'b', 1.5, 1.0, freqrange, legend='S', title='Bode diagram of closed loop')
+plot.plot_tffrd(ax_mag, ax_phase, Ts_frd, '-', 'r', 1.5, 1.0, freqrange, magrange=[-50, 10], legend='T')
 plot.savefig(figurefolderName+'/freq_ST.png')
 
 plot.showfig()

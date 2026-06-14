@@ -1,9 +1,11 @@
 # Copyright (c) 2021 Koichi Sakata
 
 
+import warnings
+warnings.filterwarnings('ignore')
 from pylib_sakata import init as init
-# uncomment the follows when the file is executed in a Python console.
-# init.close_all()
+init.close_all()
+# uncomment the follows when the file is NOT executed in a Python console.
 # init.clear_all()
 
 import os
@@ -98,59 +100,59 @@ print('Plotting figures...')
 fig = plot.makefig()
 ax_mag = fig.add_subplot(211)
 ax_phase = fig.add_subplot(212)
-plot.plot_tffrd(ax_mag, ax_phase, Pnz1_frd, '-', 'b', 1.5, 1.0, title='Frequency response of plant')
-plot.plot_tffrd(ax_mag, ax_phase, Pnz2_frd, '-', 'r', 1.5, 1.0, freqrange, legend=['Motor side', 'Load side'])
+plot.plot_tffrd(ax_mag, ax_phase, Pnz1_frd, '-', 'b', 1.5, 1.0, legend='Motor side', title='Frequency response of plant')
+plot.plot_tffrd(ax_mag, ax_phase, Pnz2_frd, '-', 'r', 1.5, 1.0, freqrange, legend='Load side')
 plot.savefig(figurefolderName+'/freq_P.png')
 
 # PID controller
 fig = plot.makefig()
 ax_mag = fig.add_subplot(211)
 ax_phase = fig.add_subplot(212)
-plot.plot_tffrd(ax_mag, ax_phase, Cz_frd, '-', 'b', 1.5, 1.0, freqrange, title='Frequency response of PID controller')
+plot.plot_tffrd(ax_mag, ax_phase, Cz_frd, '-', 'b', 1.5, 1.0, freqrange, phasebase=180, title='Frequency response of PID controller')
 plot.savefig(figurefolderName+'/freq_C.png')
 
 # Notch filters
 fig = plot.makefig()
 ax_mag = fig.add_subplot(211)
 ax_phase = fig.add_subplot(212)
-plot.plot_tffrd(ax_mag, ax_phase, NFz_frd, '-', 'b', 1.5, 1.0, freqrange, title='Frequency response of filters')
+plot.plot_tffrd(ax_mag, ax_phase, NFz_frd, '-', 'b', 1.5, 1.0, freqrange, phasebase=180, title='Frequency response of filters')
 plot.savefig(figurefolderName+'/freq_NF.png')
 
 # Open loop function
 fig = plot.makefig()
 ax_mag = fig.add_subplot(211)
 ax_phase = fig.add_subplot(212)
-plot.plot_tffrd(ax_mag, ax_phase, Gn1_frd, '-', 'b', 1.5, 1.0, title='Frequency response of open loop transfer function')
-plot.plot_tffrd(ax_mag, ax_phase, Gn2_frd, '-', 'r', 1.5, 1.0, freqrange, legend=['Motor side', 'Load side'])
+plot.plot_tffrd(ax_mag, ax_phase, Gn1_frd, '-', 'b', 1.5, 1.0, legend='Motor side', title='Frequency response of open loop transfer function')
+plot.plot_tffrd(ax_mag, ax_phase, Gn2_frd, '-', 'r', 1.5, 1.0, freqrange, legend='Load side')
 plot.savefig(figurefolderName+'/freq_G.png')
 
 # Sensitivity function
 fig = plot.makefig()
 ax_mag = fig.add_subplot(111)
 ax_phase = None
-plot.plot_tffrd(ax_mag, ax_phase, Sn1_frd, '-', 'b', 1.5, 1.0, title='Frequency response of sensitivity function')
-plot.plot_tffrd(ax_mag, ax_phase, Sn2_frd, '-', 'r', 1.5, 1.0)
-plot.plot_tffrd(ax_mag, ax_phase, Sn1_nf_frd, '-', 'c', 1.5, 1.0)
-plot.plot_tffrd(ax_mag, ax_phase, Sn2_nf_frd, '-', 'm', 1.5, 1.0, freqrange, [-60, 20], legend=['Motor side', 'Load side', 'Motor side with NF', 'Load side with NF'])
+plot.plot_tffrd(ax_mag, ax_phase, Sn1_frd, '-', 'b', 1.5, 1.0, legend='Motor side', title='Frequency response of sensitivity function')
+plot.plot_tffrd(ax_mag, ax_phase, Sn2_frd, '-', 'r', 1.5, 1.0, legend='Load side')
+plot.plot_tffrd(ax_mag, ax_phase, Sn1_nf_frd, '-', 'c', 1.5, 1.0, legend='Motor side with NF')
+plot.plot_tffrd(ax_mag, ax_phase, Sn2_nf_frd, '-', 'm', 1.5, 1.0, freqrange, [-60, 20], legend='Load side with NF')
 plot.savefig(figurefolderName+'/freq_S.png')
 
 # Complementary sensitivity function
 fig = plot.makefig()
 ax_mag = fig.add_subplot(211)
 ax_phase = fig.add_subplot(212)
-plot.plot_tffrd(ax_mag, ax_phase, Tn1_frd, '-', 'b', 1.5, 1.0, title='Frequency response of complementary sensitivity function')
-plot.plot_tffrd(ax_mag, ax_phase, Tn2_frd, '-', 'r', 1.5, 1.0)
-plot.plot_tffrd(ax_mag, ax_phase, Tn1_nf_frd, '-', 'c', 1.5, 1.0)
-plot.plot_tffrd(ax_mag, ax_phase, Tn2_nf_frd, '-', 'm', 1.5, 1.0, freqrange, [-60, 20], legend=['Motor side', 'Load side', 'Motor side with NF', 'Load side with NF'])
+plot.plot_tffrd(ax_mag, ax_phase, Tn1_frd, '-', 'b', 1.5, 1.0, phasebase=180, legend='Motor side', title='Frequency response of complementary sensitivity function')
+plot.plot_tffrd(ax_mag, ax_phase, Tn2_frd, '-', 'r', 1.5, 1.0, phasebase=180, legend='Load side')
+plot.plot_tffrd(ax_mag, ax_phase, Tn1_nf_frd, '-', 'c', 1.5, 1.0, phasebase=180, legend='Motor side with NF')
+plot.plot_tffrd(ax_mag, ax_phase, Tn2_nf_frd, '-', 'm', 1.5, 1.0, freqrange, [-60, 20], phasebase=180, legend='Load side with NF')
 plot.savefig(figurefolderName+'/freq_T.png')
 
 # Nyquist
 fig = plot.makefig()
 ax = fig.add_subplot(111)
-plot.plot_nyquist(ax, Gn1_frd, '-', 'b', 1.5, 1.0, title='Nyquist Diagram')
-plot.plot_nyquist(ax, Gn2_frd, '-', 'r', 1.5, 1.0)
-plot.plot_nyquist(ax, Gn1_nf_frd, '-', 'c', 1.5, 1.0)
-plot.plot_nyquist(ax, Gn2_nf_frd, '-', 'm', 1.5, 1.0, legend=['Motor side', 'Load side', 'Motor side with NF', 'Load side with NF'])
+plot.plot_nyquist(ax, Gn1_frd, '-', 'b', 1.5, 1.0, legend='Motor side', title='Nyquist Diagram')
+plot.plot_nyquist(ax, Gn2_frd, '-', 'r', 1.5, 1.0, legend='Load side')
+plot.plot_nyquist(ax, Gn1_nf_frd, '-', 'c', 1.5, 1.0, legend='Motor side with NF')
+plot.plot_nyquist(ax, Gn2_nf_frd, '-', 'm', 1.5, 1.0, legend='Load side with NF')
 plot.plot_nyquist_assistline(ax)
 plot.savefig(figurefolderName+'/nyquist.png')
 

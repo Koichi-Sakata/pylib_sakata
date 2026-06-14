@@ -1,9 +1,11 @@
 # Copyright (c) 2021 Koichi Sakata
 
 
+import warnings
+warnings.filterwarnings('ignore')
 from pylib_sakata import init as init
-# uncomment the follows when the file is executed in a Python console.
-# init.close_all()
+init.close_all()
+# uncomment the follows when the file is NOT executed in a Python console.
 # init.clear_all()
 
 import os
@@ -70,15 +72,14 @@ e2, tout, xout = matlab.lsim(ctrl.tf2ss((z**-Nzpetc-Czpetc*Pnz)), traj.pos, traj
 e2, tout, xout = matlab.lsim(ctrl.tf2ss(Snz), e2, tout)
 
 print('Plotting figures...')
-# Time response
-fig = plot.makefig()
+fig = plot.makefig(dpi=150, figsize=(6,6))
 ax1 = fig.add_subplot(311)
 ax2 = fig.add_subplot(312)
 ax3 = fig.add_subplot(313)
 plot.plot_xy(ax1, traj.time, traj.pos, '-', 'b', 1.5, 1.0, ylabel='Ref Pos [mm]', title='Time response')
 plot.plot_xy(ax2, traj.time, traj.vel, '-', 'b', 1.5, 1.0, ylabel='Ref Vel [mm/s]')
-plot.plot_xy(ax3, tout, e1*1.0e3, '-', 'b', 1.5, 1.0)
-plot.plot_xy(ax3, tout, e2*1.0e3, '-', 'r', 1.5, 1.0, yrange=[-40.0, 40.0], xlabel='Time [s]', ylabel='Error Pos [um]', legend=['w/o ZPETC', 'with ZPETC'])
+plot.plot_xy(ax3, tout, e1*1.0e3, '-', 'b', 1.5, 1.0, legend='w/o ZPETC')
+plot.plot_xy(ax3, tout, e2*1.0e3, '-', 'r', 1.5, 1.0, yrange=[-40.0, 40.0], xlabel='Time [s]', ylabel='Error Pos [$\mu$m]', legend='with ZPETC')
 plot.savefig(figurefolderName+'/time_inject.png')
 
 # Plant
@@ -92,14 +93,14 @@ plot.savefig(figurefolderName+'/freq_P.png')
 fig = plot.makefig()
 ax_mag = fig.add_subplot(211)
 ax_phase = fig.add_subplot(212)
-plot.plot_tffrd(ax_mag, ax_phase, Pnz_frd*Czpetc_frd*lead_frd, '-', 'b', 1.5, 1.0, title='Frequency response of P[z] * Czpetc[z] * z^Nzpetc')
+plot.plot_tffrd(ax_mag, ax_phase, Pnz_frd*Czpetc_frd*lead_frd, '-', 'b', 1.5, 1.0, phasebase=180, title='Frequency response of $P[z] \cdot C_{zpetc}[z] \cdot z^{N_{zpetc}}$')
 plot.savefig(figurefolderName+'/freq_ZPETC.png')
 
 # PID controller
 fig = plot.makefig()
 ax_mag = fig.add_subplot(211)
 ax_phase = fig.add_subplot(212)
-plot.plot_tffrd(ax_mag, ax_phase, Cz_frd, '-', 'b', 1.5, 1.0, freqrange, title='Frequency response of PID controller')
+plot.plot_tffrd(ax_mag, ax_phase, Cz_frd, '-', 'b', 1.5, 1.0, freqrange, phasebase=180, title='Frequency response of PID controller')
 plot.savefig(figurefolderName+'/freq_C.png')
 
 # Open loop function
@@ -120,7 +121,7 @@ plot.savefig(figurefolderName+'/freq_S.png')
 fig = plot.makefig()
 ax_mag = fig.add_subplot(211)
 ax_phase = fig.add_subplot(212)
-plot.plot_tffrd(ax_mag, ax_phase, Tn_frd, '-', 'b', 1.5, 1.0, freqrange, title='Frequency response of complementary sensitivity function')
+plot.plot_tffrd(ax_mag, ax_phase, Tn_frd, '-', 'b', 1.5, 1.0, freqrange, phasebase=180, title='Frequency response of complementary sensitivity function')
 plot.savefig(figurefolderName+'/freq_T.png')
 
 # Nyquist

@@ -1,5 +1,13 @@
 # Copyright (c) 2021 Koichi Sakata
 
+
+import warnings
+warnings.filterwarnings('ignore')
+from pylib_sakata import init as init
+init.close_all()
+# uncomment the follows when the file is NOT executed in a Python console.
+# init.clear_all()
+
 import os
 import shutil
 import numpy as np

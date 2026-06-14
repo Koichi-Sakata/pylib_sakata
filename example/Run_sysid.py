@@ -1,9 +1,11 @@
 # Copyright (c) 2021 Koichi Sakata
 
 
+import warnings
+warnings.filterwarnings('ignore')
 from pylib_sakata import init as init
-# uncomment the follows when the file is executed in a Python console.
-# init.close_all()
+init.close_all()
+# uncomment the follows when the file is NOT executed in a Python console.
 # init.clear_all()
 
 import os
@@ -51,7 +53,7 @@ print('PD controller was designed.')
 print('System identification simulation is running...')
 Snz = ctrl.feedback(Pnz, Cz, sys='S')
 SPnz = ctrl.feedback(Pnz, Cz, sys='SP')
-t = np.linspace(0.0, 50, int(50/Ts))
+t = np.arange(50/Ts) * Ts
 chirp = signal.chirp(t, f0=0.1, f1=2000, t1=50, method='logarithmic', phi=-90)
 u, tout, xout = matlab.lsim(ctrl.tf2ss(Snz), chirp)
 y, tout, xout = matlab.lsim(ctrl.tf2ss(SPnz), chirp)
@@ -87,8 +89,8 @@ fig = plot.makefig()
 ax_mag = fig.add_subplot(311)
 ax_phase = fig.add_subplot(312)
 ax_coh = fig.add_subplot(313)
-plot.plot_tffrd(ax_mag, ax_phase, Pmeas_frd, '-', 'm', 1.5, 1.0, ax_coh=ax_coh, coh=coh, title='Frequency response of plant')
-plot.plot_tffrd(ax_mag, ax_phase, Pnz_frd, '--', 'b', 1.5, 1.0, freqrange, legend=['Measurement', 'Model'])
+plot.plot_tffrd(ax_mag, ax_phase, Pmeas_frd, '-', 'm', 1.5, 1.0, ax_coh=ax_coh, coh=coh, legend='Measurement', title='Frequency response of plant')
+plot.plot_tffrd(ax_mag, ax_phase, Pnz_frd, '--', 'b', 1.5, 1.0, freqrange, legend='Model')
 plot.savefig(figurefolderName+'/freq_P.png')
 
 plot.showfig()

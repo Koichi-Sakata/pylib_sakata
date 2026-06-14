@@ -1,9 +1,11 @@
 # Copyright (c) 2021 Koichi Sakata
 
 
+import warnings
+warnings.filterwarnings('ignore')
 from pylib_sakata import init as init
-# uncomment the follows when the file is executed in a Python console.
-# init.close_all()
+init.close_all()
+# uncomment the follows when the file is NOT executed in a Python console.
 # init.clear_all()
 
 import os
@@ -65,7 +67,7 @@ ax3 = fig.add_subplot(413)
 ax4 = fig.add_subplot(414)
 plot.plot_xy(ax1, time, NoiseOut, '-', 'b', 0.5, 1.0, ylabel='[Nm]', legend='Sig', loc='upper right', title='Time response')
 plot.plot_xy(ax2, time, ServoOutN, '-', 'b', 0.5, 1.0, ylabel='[Nm]', legend='In', loc='upper right')
-plot.plot_xy(ax3, time, ActPosUm, '-', 'b', 0.5, 1.0, ylabel='[um]', legend='Out', loc='upper right')
+plot.plot_xy(ax3, time, ActPosUm, '-', 'b', 0.5, 1.0, ylabel='[$\mu$m]', legend='Out', loc='upper right')
 plot.plot_xy(ax4, time, FlagInject, '-', 'b', 0.5, 1.0, xlabel='Time [s]', ylabel='[.]', legend='Flag', loc='upper right')
 plot.savefig(figurefolderName+'/time_resp.png')
 
@@ -74,8 +76,8 @@ fig = plot.makefig()
 ax_mag = fig.add_subplot(311)
 ax_phase = fig.add_subplot(312)
 ax_coh = fig.add_subplot(313)
-plot.plot_tffrd(ax_mag, ax_phase, Pmeas_frd, '-', 'm', 1.5, 1.0, ax_coh=ax_coh, coh=coh, labelouter=True, title='Frequency response of plant')
-plot.plot_tffrd(ax_mag, ax_phase, Pnz_frd, '--', 'b', 1.5, 1.0, freqrange, legend=['Measurement', 'Model'])
+plot.plot_tffrd(ax_mag, ax_phase, Pmeas_frd, '-', 'm', 1.5, 1.0, ax_coh=ax_coh, coh=coh, legend='Measurement', title='Frequency response of plant')
+plot.plot_tffrd(ax_mag, ax_phase, Pnz_frd, '--', 'b', 1.5, 1.0, freqrange, legend='Model')
 plot.savefig(figurefolderName+'/freq_P.png')
 
 plot.showfig()

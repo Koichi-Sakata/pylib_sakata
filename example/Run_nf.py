@@ -1,9 +1,11 @@
 # Copyright (c) 2023 Koichi Sakata
 
 
+import warnings
+warnings.filterwarnings('ignore')
 from pylib_sakata import init as init
-# uncomment the follows when the file is executed in a Python console.
-# init.close_all()
+init.close_all()
+# uncomment the follows when the file is NOT executed in a Python console.
 # init.clear_all()
 
 import os
@@ -64,36 +66,36 @@ print('Frequency response analysis is running...')
 fig = plot.makefig()
 ax_mag = fig.add_subplot(211)
 ax_phase = fig.add_subplot(212)
-plot.plot_tffrd(ax_mag, ax_phase, NFs_frd, '-', 'b', 1.5, 1.0, freqrange, title='Frequency response of notch filter')
+plot.plot_tffrd(ax_mag, ax_phase, NFs_frd, '-', 'b', 1.5, 1.0, freqrange, phasebase=180, title='Frequency response of notch filter')
 plot.savefig(figurefolderName+'/freq_NF.png')
 
 # Notch filters
 fig = plot.makefig()
 ax_mag = fig.add_subplot(211)
 ax_phase = fig.add_subplot(212)
-plot.plot_tffrd(ax_mag, ax_phase, NFz_d_frd[0], '-', 'b', 1.5, 1.0, title='Frequency response of notch filter')
-plot.plot_tffrd(ax_mag, ax_phase, NFz_d_frd[1], '-', 'g', 1.5, 1.0)
-plot.plot_tffrd(ax_mag, ax_phase, NFz_d_frd[2], '-', 'r', 1.5, 1.0)
-plot.plot_tffrd(ax_mag, ax_phase, NFz_d_frd[3], '-', 'm', 1.5, 1.0, freqrange, [-50, 10], legend=['d: 0.0', 'd: 0.02', 'd: 0.1', 'd: 0.2'])
+plot.plot_tffrd(ax_mag, ax_phase, NFz_d_frd[0], '-', 'b', 1.5, 1.0, phasebase=180, legend='d = 0.0', title='Frequency response of notch filter')
+plot.plot_tffrd(ax_mag, ax_phase, NFz_d_frd[1], '-', 'g', 1.5, 1.0, phasebase=180, legend='d = 0.02')
+plot.plot_tffrd(ax_mag, ax_phase, NFz_d_frd[2], '-', 'r', 1.5, 1.0, phasebase=180, legend='d = 0.1')
+plot.plot_tffrd(ax_mag, ax_phase, NFz_d_frd[3], '-', 'm', 1.5, 1.0, freqrange, [-50, 10], phasebase=180, legend='d = 0.2')
 plot.savefig(figurefolderName+'/freq_NF_d.png')
 
 # Notch filters
 fig = plot.makefig()
 ax_mag = fig.add_subplot(211)
 ax_phase = fig.add_subplot(212)
-plot.plot_tffrd(ax_mag, ax_phase, NFz_zeta_frd[0], '-', 'b', 1.5, 1.0, title='Frequency response of notch filter')
-plot.plot_tffrd(ax_mag, ax_phase, NFz_zeta_frd[1], '-', 'g', 1.5, 1.0)
-plot.plot_tffrd(ax_mag, ax_phase, NFz_zeta_frd[2], '-', 'r', 1.5, 1.0)
-plot.plot_tffrd(ax_mag, ax_phase, NFz_zeta_frd[3], '-', 'm', 1.5, 1.0, freqrange, [-50, 10], legend=['zeta: 0.01', 'zeta: 0.1', 'zeta: 0.2', 'zeta: 0.7'])
+plot.plot_tffrd(ax_mag, ax_phase, NFz_zeta_frd[0], '-', 'b', 1.5, 1.0, phasebase=180, legend='$\zeta$ = 0.01', title='Frequency response of notch filter')
+plot.plot_tffrd(ax_mag, ax_phase, NFz_zeta_frd[1], '-', 'g', 1.5, 1.0, phasebase=180, legend='$\zeta$ = 0.01')
+plot.plot_tffrd(ax_mag, ax_phase, NFz_zeta_frd[2], '-', 'r', 1.5, 1.0, phasebase=180, legend='$\zeta$ = 0.01')
+plot.plot_tffrd(ax_mag, ax_phase, NFz_zeta_frd[3], '-', 'm', 1.5, 1.0, freqrange, [-50, 10], phasebase=180, legend='$\zeta$ = 0.7')
 plot.savefig(figurefolderName+'/freq_NF_zeta.png')
 
 # Notch filters
 fig = plot.makefig()
 ax_mag = fig.add_subplot(211)
 ax_phase = fig.add_subplot(212)
-plot.plot_tffrd(ax_mag, ax_phase, NFs_frd, '-', 'b', 1.5, 1.0, freqrange, title='Frequency response of notch filter')
-plot.plot_tffrd(ax_mag, ax_phase, NFz_tustin_frd, '-', 'g', 1.5, 1.0)
-plot.plot_tffrd(ax_mag, ax_phase, NFz_matched_frd, '--', 'r', 1.5, 1.0, legend=['Continuous', 'Discrete: Tustin', 'Discrete: Matched'])
+plot.plot_tffrd(ax_mag, ax_phase, NFs_frd, '-', 'b', 1.5, 1.0, freqrange, phasebase=180, legend='Continuous', title='Frequency response of notch filter')
+plot.plot_tffrd(ax_mag, ax_phase, NFz_tustin_frd, '-', 'g', 1.5, 1.0, phasebase=180, legend='Discrete: Tustin')
+plot.plot_tffrd(ax_mag, ax_phase, NFz_matched_frd, '--', 'r', 1.5, 1.0, phasebase=180, legend='Discrete: Matched')
 plot.savefig(figurefolderName+'/freq_NF_discrete.png')
 
 plot.showfig()

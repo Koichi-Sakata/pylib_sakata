@@ -1,9 +1,11 @@
 # Copyright (c) 2021 Koichi Sakata
 
 
+import warnings
+warnings.filterwarnings('ignore')
 from pylib_sakata import init as init
-# uncomment the follows when the file is executed in a Python console.
-# init.close_all()
+init.close_all()
+# uncomment the follows when the file is NOT executed in a Python console.
 # init.clear_all()
 
 import os
@@ -53,17 +55,17 @@ print('Plotting figures...')
 # Time response
 fig = plot.makefig()
 ax = fig.add_subplot(111)
-legend = ['zeta = 0.0', 'zeta = 0.1', 'zeta = 0.3', 'zeta = 0.7', 'zeta = 1.0', 'zeta = 2.0']
+legend = ['$\zeta$ = 0.0', '$\zeta$ = 0.1', '$\zeta$ = 0.3', '$\zeta$ = 0.7', '$\zeta$ = 1.0', '$\zeta$ = 2.0']
 color = ['k', 'b', 'c', 'g', 'r', 'm']
 for k in range(len(y)):
-    plot.plot_xy(ax, tout, y[k], '-', color[k], 1.0, 1.0, yrange=[0.0, 2.0], xlabel='Time [s]', ylabel='y', legend=legend, loc='upper right', title='Time response')
+    plot.plot_xy(ax, tout, y[k], '-', color[k], 1.0, 1.0, yrange=[0.0, 2.0], xlabel='Time [s]', ylabel='y', legend=legend[k], loc='upper right', title='Time response')
 plot.savefig(figurefolderName+'/time_response1.png')
 
 fig = plot.makefig()
 ax_mag = fig.add_subplot(211)
 ax_phase = fig.add_subplot(212)
 for k in range(len(Gs_frd)):
-    plot.plot_tffrd(ax_mag, ax_phase, Gs_frd[k], '-', color[k], 1.5, 1.0, freqrange, magrange=[-40, 40], legend=legend, loc='upper right', title='Frequency response')
+    plot.plot_tffrd(ax_mag, ax_phase, Gs_frd[k], '-', color[k], 1.5, 1.0, freqrange, magrange=[-40, 40], legend=legend[k], loc='upper right', title='Frequency response')
 plot.savefig(figurefolderName+'/freq_Gs1.png')
 
 def axes_set_linewidth(axes, t=1, b=1, r=1, l=1):
@@ -137,17 +139,17 @@ print('Plotting figures...')
 # Time response
 fig = plot.makefig()
 ax = fig.add_subplot(111)
-legend = ['fn = 0.1', 'fn = 0.2', 'fn = 0.4', 'fn = 0.8', 'fn = 1.6', 'fn = 3.2']
+legend = ['$f_n$ = 0.1', '$f_n$ = 0.2', '$f_n$ = 0.4', '$f_n$ = 0.8', '$f_n$ = 1.6', '$f_n$ = 3.2']
 color = ['k', 'b', 'c', 'g', 'r', 'm']
 for k in range(len(y)):
-    plot.plot_xy(ax, tout, y[k], '-', color[k], 1.0, 1.0, yrange=[0.0, 2.0], xlabel='Time [s]', ylabel='y', legend=legend, loc='upper right', title='Time response')
+    plot.plot_xy(ax, tout, y[k], '-', color[k], 1.0, 1.0, yrange=[0.0, 2.0], xlabel='Time [s]', ylabel='y', legend=legend[k], loc='upper right', title='Time response')
 plot.savefig(figurefolderName+'/time_response2.png')
 
 fig = plot.makefig()
 ax_mag = fig.add_subplot(211)
 ax_phase = fig.add_subplot(212)
 for k in range(len(Gs_frd)):
-    plot.plot_tffrd(ax_mag, ax_phase, Gs_frd[k], '-', color[k], 1.5, 1.0, freqrange, magrange=[-40, 40], legend=legend, loc='upper right', title='Frequency response')
+    plot.plot_tffrd(ax_mag, ax_phase, Gs_frd[k], '-', color[k], 1.5, 1.0, freqrange, magrange=[-40, 40], legend=legend[k], loc='upper right', title='Frequency response')
 plot.savefig(figurefolderName+'/freq_Gs2.png')
 
 def axes_set_linewidth(axes, t=1, b=1, r=1, l=1):
