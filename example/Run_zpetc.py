@@ -80,7 +80,7 @@ plot.plot_xy(ax1, traj.time, traj.pos, '-', 'b', 1.5, 1.0, ylabel='Ref Pos [mm]'
 plot.plot_xy(ax2, traj.time, traj.vel, '-', 'b', 1.5, 1.0, ylabel='Ref Vel [mm/s]')
 plot.plot_xy(ax3, tout, e1*1.0e3, '-', 'b', 1.5, 1.0, legend='w/o ZPETC')
 plot.plot_xy(ax3, tout, e2*1.0e3, '-', 'r', 1.5, 1.0, yrange=[-40.0, 40.0], xlabel='Time [s]', ylabel='Error Pos [$\mu$m]', legend='with ZPETC')
-plot.savefig(figurefolderName+'/time_inject.png')
+plot.savefig(figurefolderName+'/time_resp.png')
 
 # Plant
 fig = plot.makefig()

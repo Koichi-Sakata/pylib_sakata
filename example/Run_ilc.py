@@ -17,6 +17,16 @@ from pylib_sakata import traj
 from pylib_sakata import plot
 from scipy import signal
 
+def ilc(Lz1, Lz2, N_L, Qz, Pnz, Cz, r, e, f, t):
+    Le1, tout, xout = matlab.lsim(ctrl.tf2ss(Lz1), e, t)
+    Le1 = np.roll(Le1, -N_L)
+    Le1[-N_L:] = 0
+    Le2, tout, xout = matlab.lsim(ctrl.tf2ss(Lz2), e, t)
+    Le = Le1 + Le2
+    f_new = signal.filtfilt(Qz.num[0][0], Qz.den[0][0], Le + f)
+    e_new, u, y = ctrl.trdsim(r, t, Pnz, Cz, uff=f_new, Ndelay=Ndelay)
+    return e_new, f_new
+
 print('Start simulation!')
 
 # Common parameters
@@ -69,12 +79,10 @@ Q_frd = ctrl.sys2frd(Q, freq)
 print('Q-filter was designed.')
 
 # Design learning-filter
-Snz = ctrl.feedback(Pnz, Cz, sys='S')
-SPnz = ctrl.feedback(Pnz, Cz, sys='SP')
-SPnz_frd = ctrl.sys2frd(SPnz, freq)
-Pinvz, N_L = ctrl.zpetc(Pnz, Ts)
-Lz1 = Pinvz
-Lz2 = Cz
+Pinvz, N_zpet = ctrl.zpetc(Pnz, Ts)
+alpha = 1.0
+Lz1 = Pinvz * alpha
+Lz2 = Cz * alpha
 Lz = Lz1 + Lz2
 Lz1_frd = ctrl.sys2frd(Lz1, freq)
 Lz2_frd = ctrl.sys2frd(Lz2, freq)
@@ -82,17 +90,9 @@ L_frd = Lz1_frd + Lz2_frd
 print('Learning-filter was designed.')
 
 print('Time response analysis is running...')
-def ilc(Sz, SPz, Lz, Qz, r, e, f, t):
-    Le1, tout, xout = matlab.lsim(ctrl.tf2ss(Lz1), e, t)
-    Le2, tout, xout = matlab.lsim(ctrl.tf2ss(Lz2), e, t)
-    Le = Le1 + Le2
-    f_new = signal.filtfilt(Qz.num[0][0], Qz.den[0][0], Le + f)
-    e_new, u, y = ctrl.trdsim(r, t, Pnz, Cz, uff=f_new, Ndelay=Ndelay)
-    return e_new, f_new
-
-posStep = 0.5
-velMax = 0.5
-accAve = 1.0
+posStep = 0.4
+velMax = 1
+accAve = 10
 traj = traj.traj4th(0, posStep, velMax, accAve, Ts, 0.5)
 r = traj.pos
 t = traj.time
@@ -110,16 +110,16 @@ ax3 = fig.add_subplot(413)
 ax4 = fig.add_subplot(414)
 plot.plot_xy(ax1, traj.time, traj.pos * 1.0e3, '-', 'b', 1.5, 1.0, ylabel='Ref Pos [mm]', title='Time response')
 plot.plot_xy(ax2, traj.time, traj.vel * 1.0e3, '-', 'b', 1.5, 1.0, ylabel='Ref Vel [mm/s]')
-plot.plot_xy(ax3, t, e * 1.0e6, '-', col[np.mod(n, len(col))], 1.5, 1.0, ylabel='Error Pos [$\mu$m]', legend=legend[np.mod(n, len(legend))], loc='upper left', bbox_to_anchor=(1, 1))
+plot.plot_xy(ax3, t, e * 1.0e6, '-', col[np.mod(n, len(col))], 1.5, 1.0, ylabel='Error Pos [$\mu$m]', legend='k='+str(n+1), loc='upper left', bbox_to_anchor=(1, 1))
 plot.plot_xy(ax4, t, f, '-', col[np.mod(n, len(col))], 1.5, 1.0, xlabel='Time [s]', ylabel='ILC [N]')
 
 # Nth trial
 n_max = 5
 for n in range(1, n_max):
     # Update ILC
-    e, f = ilc(Snz, SPnz, Lz, Qz, r, e, f, t)
+    e, f = ilc(Lz1, Lz2, N_zpet+Ndelay, Qz, Pnz, Cz, r, e, f, t)
     # Plot
-    plot.plot_xy(ax3, t, e*1.0e6, '-', col[np.mod(n, len(col))], 1.5, 1.0, yrange=[-0.1, 0.1], legend=legend[np.mod(n, len(legend))], loc='upper left', bbox_to_anchor=(1, 1))
+    plot.plot_xy(ax3, t, e*1.0e6, '-', col[np.mod(n, len(col))], 1.5, 1.0, yrange=[-10, 10], legend='k='+str(n+1), loc='upper left', bbox_to_anchor=(1, 1))
     plot.plot_xy(ax4, t, f, '-', col[np.mod(n, len(col))], 1.5, 1.0, xlabel='Time [s]')
     if n == n_max-1:
         plot.savefig(figurefolderName+'/time_resp.png')
