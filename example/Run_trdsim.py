@@ -79,9 +79,9 @@ print('Time response analysis is running...')
 posStep = 0.4
 velMax = 1
 accAve = 10
-traj = traj.traj4th(0, posStep, velMax, accAve, Ts, 0.5)
-r = traj.pos
-t = traj.time
+traj_4th = traj.traj4th(0, posStep, velMax, accAve, Ts, 0.5)
+r = traj_4th.pos
+t = traj_4th.time
 e, u, y = ctrl.trdsim(r, t, Pnz1, Cz, Ndelay=Ndelay)
 
 print('Plotting figures...')

@@ -23,7 +23,7 @@ figurefolderName = 'figure_zpetc'
 if os.path.exists(figurefolderName):
     shutil.rmtree(figurefolderName)
 os.makedirs(figurefolderName)
-Ts = 1/8000
+Ts = 1/4000
 dataNum = 10000
 freqrange = [1, 1000]
 freq = np.logspace(np.log10(freqrange[0]), np.log10(freqrange[1]), dataNum, base=10)
@@ -36,25 +36,23 @@ M = 2.0
 C = 10.0
 K = 0
 Pmechs = ctrl.tf([1], [M, C, K])
-numDelay, denDelay = matlab.pade(Ts*4, n=4)
-Ds = ctrl.tf(numDelay, denDelay)
-Dz = z**-4
-Pns = Pmechs * Ds
-Pnz = ctrl.c2d(Pmechs, Ts, method='zoh') * Dz
+Ndelay = 4
+Dz = z**-Ndelay
+Pnz = ctrl.c2d(Pmechs, Ts, method='zoh')
 Pnz_frd = ctrl.sys2frd(Pnz, freq)
 print('Plant model was set.')
 
 # Design PID controller
-freq1 = 20.0
+freq1 = 10.0
 zeta1 = 1.0
-freq2 = 20.0
+freq2 = 10.0
 zeta2 = 1.0
 Cz = ctrl.pid(freq1, zeta1, freq2, zeta2, M, C, K, Ts)
 Cz_frd = ctrl.sys2frd(Cz, freq)
 print('PID controller was designed.')
 
 # Design ZPETC
-Czpetc, Nzpetc = ctrl.zpetc(Pnz, Ts)
+Czpetc, Nzpetc = ctrl.zpetc(Pnz * Dz, Ts)
 Czpetc_frd = ctrl.sys2frd(Czpetc, freq)
 lead_frd = ctrl.sys2frd(z**Nzpetc, freq)
 print('ZPETC was designed.')
@@ -66,21 +64,38 @@ Tn_frd = 1 - Sn_frd
 
 print('Time response analysis is running...')
 Snz = ctrl.feedback(Pnz, Cz, sys='S')
-traj = traj.traj4th(0, 500, 500, 1000, Ts, 0.5)
-e1, tout, xout = matlab.lsim(ctrl.tf2ss(Snz), traj.pos, traj.time)
-e2, tout, xout = matlab.lsim(ctrl.tf2ss((z**-Nzpetc-Czpetc*Pnz)), traj.pos, traj.time)
-e2, tout, xout = matlab.lsim(ctrl.tf2ss(Snz), e2, tout)
+traj_4th = traj.traj4th(0, 1.0, 0.5, 1.0, Ts, 0.5)
+t_4th = traj_4th.time
+r_4th = traj_4th.pos
+v_4th = traj_4th.vel
+a_4th = traj_4th.acc
+n = Nzpetc
+r_4th_pre = np.roll(r_4th, -n)
+r_4th_pre[-n:] = r_4th[-1]
+n = Ndelay
+r_4th_ff = np.roll(r_4th, -n)
+r_4th_ff[-n:] = r_4th[-1]
+v_4th_ff = np.roll(v_4th, -n)
+v_4th_ff[-n:] = v_4th[-1]
+a_4th_ff = np.roll(a_4th, -n)
+a_4th_ff[-n:] = a_4th[-1]
+uff = M * a_4th_ff + C * v_4th_ff + K * r_4th_ff
+u_zpetc, tout, xout = matlab.lsim(ctrl.tf2ss(Czpetc), r_4th_pre)
+e1, u1, y1 = ctrl.trdsim(r_4th, t_4th, Pnz, Cz, uff=uff, Ndelay=Ndelay)
+e2, u2, y2 = ctrl.trdsim(r_4th, t_4th, Pnz, Cz, uff=u_zpetc, Ndelay=Ndelay)
 
 print('Plotting figures...')
+# Time response
 fig = plot.makefig(dpi=150, figsize=(6,6))
 ax1 = fig.add_subplot(311)
 ax2 = fig.add_subplot(312)
 ax3 = fig.add_subplot(313)
-plot.plot_xy(ax1, traj.time, traj.pos, '-', 'b', 1.5, 1.0, ylabel='Ref Pos [mm]', title='Time response')
-plot.plot_xy(ax2, traj.time, traj.vel, '-', 'b', 1.5, 1.0, ylabel='Ref Vel [mm/s]')
-plot.plot_xy(ax3, tout, e1*1.0e3, '-', 'b', 1.5, 1.0, legend='w/o ZPETC')
-plot.plot_xy(ax3, tout, e2*1.0e3, '-', 'r', 1.5, 1.0, yrange=[-40.0, 40.0], xlabel='Time [s]', ylabel='Error Pos [$\mu$m]', legend='with ZPETC')
-plot.savefig(figurefolderName+'/time_resp.png')
+plot.plot_xy(ax1, t_4th, r_4th, '-', 'b', 1.5, 1.0, ylabel='Ref Pos [m]', title='Time response')
+plot.plot_xy(ax2, t_4th, e1*1.0e6, '-', 'b', 1.5, 1.0, legend='with Continuous FF')
+plot.plot_xy(ax2, t_4th, e2*1.0e6, '-', 'r', 1.5, 1.0, yrange=[-1, 1], xlabel='Time [s]', ylabel='Error Pos [$\mu$m]', legend='with ZPETC')
+plot.plot_xy(ax3, t_4th, u1 - uff, '-', 'b', 1.5, 1.0)
+plot.plot_xy(ax3, t_4th, u2 - u_zpetc, '-', 'r', 1.5, 1.0, yrange=[-0.01, 0.01], xlabel='Time [s]', ylabel='FB Out [N]')
+plot.savefig(figurefolderName+'/time_resp_4th.png')
 
 # Plant
 fig = plot.makefig()
