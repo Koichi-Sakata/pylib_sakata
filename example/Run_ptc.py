@@ -1,4 +1,4 @@
-# Copyright (c) 2021 Koichi Sakata
+# Copyright (c) 2026 Koichi Sakata
 
 
 import warnings
