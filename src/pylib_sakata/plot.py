@@ -48,8 +48,8 @@ def plot_xy(ax, x, y, styl='-', col='b', width=1.5, alpha=1.0, xrange=None, yran
         ax.label_outer()
 
 
-def plot_tf(ax_mag, ax_phase, sys, freq, styl='-', col='b', width=1.5, alpha=1.0, freqrange=None, magrange=None,
-            legend=None, loc='best', title=None, labelouter=True):
+def plot_tf(ax_mag, ax_phase, sys, freq, styl='-', col='b', width=1.5, alpha=1.0, freqrange=None, magrange=None, phasebase=0,
+            legend=None, loc='best', title=None, labelouter=True, bbox_to_anchor=None):
     if type(freq) == list:
         freq = np.array(freq)
     mag, phase, omega = matlab.freqresp(sys, freq * 2.0 * np.pi)
@@ -74,10 +74,10 @@ def plot_tf(ax_mag, ax_phase, sys, freq, styl='-', col='b', width=1.5, alpha=1.0
         ax_mag.set_ylabel('Magnitude [dB]')
         ax_mag.grid(visible=True, which='both', axis='both')
         # mag plot
-        ax_mag.plot(freq, magdb, linestyle=styl, color=col, linewidth=width, alpha=alpha)
+        ax_mag.plot(freq, magdb, linestyle=styl, color=col, linewidth=width, alpha=alpha, label=legend)
         # legend and title
         if legend != None:
-            ax_mag.legend(legend, loc=loc)
+            ax_mag.legend(loc=loc, bbox_to_anchor=bbox_to_anchor)
         if title != None:
             ax_mag.set_title(title)
         if labelouter == True:
@@ -86,30 +86,28 @@ def plot_tf(ax_mag, ax_phase, sys, freq, styl='-', col='b', width=1.5, alpha=1.0
     if ax_phase != None:
         ax_phase.set_xscale('log')
         ax_phase.set_xlim(freqrange)
-        # ax_phase.set_ylim(-200, 200)
-        ax_phase.set_ylim(-400, 40)
+        ax_phase.set_ylim(phasebase - 400, phasebase + 40)
         ax_phase.set_xlabel('Frequency [Hz]')
         ax_phase.set_ylabel('Phase [deg]')
-        # ax_phase.set_yticks([-180, -90, 0, 90, 180])
-        ax_phase.set_yticks([-360, -270, -180, -90, 0])
+        ax_phase.set_yticks([phasebase - 360, phasebase - 270, phasebase - 180, phasebase - 90, phasebase])
         ax_phase.grid(visible=True, which='both', axis='both')
         # phase plot
         for k in range(len(phasedeg)):
-            if phasedeg[k] > 0.01:
+            if phasedeg[k] > phasebase + 0.1:
                 phasedeg[k] -= 360
-        ax_phase.plot(freq, phasedeg, linestyle=styl, color=col, linewidth=width, alpha=alpha)
+        ax_phase.plot(freq, phasedeg, linestyle=styl, color=col, linewidth=width, alpha=alpha, label=legend)
         # legend and title
         if ax_mag == None:
             if legend != None:
-                ax_phase.legend(legend, loc=loc)
+                ax_phase.legend(loc=loc, bbox_to_anchor=bbox_to_anchor)
             if title != None:
                 ax_phase.set_title(title)
         if labelouter == True:
             ax_phase.label_outer()
 
 
-def plot_tffrd(ax_mag, ax_phase, freqresp, styl='-', col='b', width=1.5, alpha=1.0, freqrange=None, magrange=None,
-               legend=None, loc='best', title=None, labelouter=True, ax_coh=None, coh=None):
+def plot_tffrd(ax_mag, ax_phase, freqresp, styl='-', col='b', width=1.5, alpha=1.0, freqrange=None, magrange=None, phasebase=0,
+               legend=None, loc='best', title=None, labelouter=True, bbox_to_anchor=None, ax_coh=None, coh=None):
     mag = np.absolute(freqresp.resp)
     phase = np.angle(freqresp.resp)
     magdb = 20.0 * np.log10(mag)
@@ -133,10 +131,10 @@ def plot_tffrd(ax_mag, ax_phase, freqresp, styl='-', col='b', width=1.5, alpha=1
         ax_mag.set_ylabel('Magnitude [dB]')
         ax_mag.grid(visible=True, which='both', axis='both')
         # mag plot
-        ax_mag.plot(freqresp.freq, magdb, linestyle=styl, color=col, linewidth=width, alpha=alpha)
+        ax_mag.plot(freqresp.freq, magdb, linestyle=styl, color=col, linewidth=width, alpha=alpha, label=legend)
         # legend and title
         if legend != None:
-            ax_mag.legend(legend, loc=loc)
+            ax_mag.legend(loc=loc, bbox_to_anchor=bbox_to_anchor)
         if title != None:
             ax_mag.set_title(title)
         if labelouter == True:
@@ -145,23 +143,21 @@ def plot_tffrd(ax_mag, ax_phase, freqresp, styl='-', col='b', width=1.5, alpha=1
     if ax_phase != None:
         ax_phase.set_xscale('log')
         ax_phase.set_xlim(freqrange)
-        # ax_phase.set_ylim(-200, 200)
-        ax_phase.set_ylim(-400, 40)
+        ax_phase.set_ylim(phasebase - 400, phasebase + 40)
         if ax_coh == None:
             ax_phase.set_xlabel('Frequency [Hz]')
         ax_phase.set_ylabel('Phase [deg]')
-        # ax_phase.set_yticks([-180, -90, 0, 90, 180])
-        ax_phase.set_yticks([-360, -270, -180, -90, 0])
+        ax_phase.set_yticks([phasebase - 360, phasebase - 270, phasebase - 180, phasebase - 90, phasebase])
         ax_phase.grid(visible=True, which='both', axis='both')
         # phase plot
         for k in range(len(phasedeg)):
-            if phasedeg[k] > 0.01:
+            if phasedeg[k] > phasebase + 0.1:
                 phasedeg[k] -= 360
-        ax_phase.plot(freqresp.freq, phasedeg, linestyle=styl, color=col, linewidth=width, alpha=alpha)
+        ax_phase.plot(freqresp.freq, phasedeg, linestyle=styl, color=col, linewidth=width, alpha=alpha, label=legend)
         # legend and title
         if ax_mag == None:
             if legend != None:
-                ax_phase.legend(legend, loc=loc)
+                ax_phase.legend(loc=loc, bbox_to_anchor=bbox_to_anchor)
             if title != None:
                 ax_phase.set_title(title)
         if labelouter == True:
@@ -175,13 +171,13 @@ def plot_tffrd(ax_mag, ax_phase, freqresp, styl='-', col='b', width=1.5, alpha=1
         ax_coh.set_ylabel('Coherence [.]')
         ax_coh.grid(visible=True, which='both', axis='both')
         # coherence plot
-        ax_coh.plot(freqresp.freq, coh, linestyle=styl, color=col, linewidth=width, alpha=alpha)
+        ax_coh.plot(freqresp.freq, coh, linestyle=styl, color=col, linewidth=width, alpha=alpha, label=legend)
         if labelouter == True:
             ax_coh.label_outer()
 
 
 def plot_nyquist(ax, freqresp, styl='-', col='b', width=1.5, alpha=1.0, marker=None, xrange=None, yrange=None, legend=None,
-                 loc='best', title=None, labelouter=True):
+                 loc='best', title=None, labelouter=True, bbox_to_anchor=None):
     x = np.real(freqresp.resp)
     y = np.imag(freqresp.resp)
 
@@ -196,10 +192,10 @@ def plot_nyquist(ax, freqresp, styl='-', col='b', width=1.5, alpha=1.0, marker=N
     ax.set_aspect('equal', adjustable='box')
     ax.grid(visible=True, which='both', axis='both')
     # plot
-    ax.plot(x, y, marker=marker, linestyle=styl, color=col, linewidth=width, alpha=alpha)
+    ax.plot(x, y, marker=marker, linestyle=styl, color=col, linewidth=width, alpha=alpha, label=legend)
     # legend and title
     if legend != None:
-        ax.legend(legend, loc=loc)
+        ax.legend(loc=loc, bbox_to_anchor=bbox_to_anchor)
     if title != None:
         ax.set_title(title)
     if labelouter == True:
