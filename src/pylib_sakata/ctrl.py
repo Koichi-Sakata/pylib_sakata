@@ -1037,7 +1037,7 @@ def defprmset(tfz, prmSetName, path='.', ftype='cpp', mode='a'):
             f.write('\n#endif\n')
             f.close()
 
-def trdsim(r, t, Pnz, Cfbz, Cfilz=1, uff=None):
+def trdsim(r, t, Pnz, Cfbz, Cfilz=1, uff=None, Ndelay=0):
     e = np.zeros(len(t))            # Error
     y = np.zeros(len(t))            # Plant output
     ufb = np.zeros(len(t))          # FB output
@@ -1056,14 +1056,25 @@ def trdsim(r, t, Pnz, Cfbz, Cfilz=1, uff=None):
     zi_fb = np.zeros(max(len(a_fb), len(b_fb)) - 1)
     zi_fb_fil = np.zeros(max(len(a_fil), len(b_fil)) - 1)
 
+    if Ndelay is not 0:
+        delay_buffer = np.zeros(Ndelay)
+
     # Silulation loop like simulink
-    for i in range(1, len(t)):
-        e[i] = r[i] - y[i-1]
+    for i in range(0, len(t)-1):
+        e[i] = r[i] - y[i]
         ufb[i], zi_fb = lfilter(b_fb, a_fb, [e[i]], zi=zi_fb)   # FB controller
         ufb_fil[i], zi_fb_fil = lfilter(b_fil, a_fil, [ufb[i]], zi=zi_fb_fil)   # Filter
         if uff is None:
             u[i] = ufb_fil[i]
         else:
             u[i] = ufb_fil[i] + uff[i]
-        y[i], zi_p = lfilter(b_p, a_p, [u[i]], zi=zi_p)         # Plant
+
+        if Ndelay is not 0:
+            srvout = delay_buffer[0]
+            delay_buffer = np.roll(delay_buffer, -1)
+            delay_buffer[-1] = u[i]
+        else:
+            srvout = u[i]
+
+        y[i+1], zi_p = lfilter(b_p, a_p, [srvout], zi=zi_p)         # Plant
     return e, u, y
