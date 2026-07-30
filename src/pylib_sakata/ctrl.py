@@ -821,7 +821,13 @@ def defprmset(tfz, prmSetName, path='.', ftype='cpp', mode='a'):
             num = np.concatenate([np.zeros(len(den) - len(num)), num])
         f = open(path_cpp, mode)
         f.write('\n')
-        if len(den) == 2:
+        if len(den) == 1:
+            f.write('double	')
+            f.write(prmSetName)
+            f.write(' = ')
+            f.write(str(num[0]/den[0]))
+            f.write(';\n')
+        elif len(den) == 2:
             f.write('TF1_INF	')
             f.write(prmSetName)
             f.write(' = {\n')
@@ -887,6 +893,8 @@ def defprmset(tfz, prmSetName, path='.', ftype='cpp', mode='a'):
         with open(path_h, 'w') as writer:
             writer.write(content)
         f = open(path_h, mode)
+        if len(den) == 1:
+            f.write('extern double	')
         if len(den) == 2:
             f.write('extern TF1_INF	')
         elif len(den) == 3:
@@ -902,7 +910,11 @@ def defprmset(tfz, prmSetName, path='.', ftype='cpp', mode='a'):
             f = open(path_cpp, mode)
             f.write('\n')
             den = tfz[0].den[0][0]
-            if len(den) == 2:
+            if len(den) == 1:
+                f.write('double	')
+                f.write(prmSetName)
+                f.write(' = { ')
+            elif len(den) == 2:
                 f.write('TF1_INF	')
                 f.write(prmSetName)
                 f.write(' = {\n')
@@ -917,21 +929,28 @@ def defprmset(tfz, prmSetName, path='.', ftype='cpp', mode='a'):
             for i in range(len(tfz)):
                 num = tfz[i].num[0][0]
                 den = tfz[i].den[0][0]
-                if len(den) - len(num) > 0:
-                    num = np.concatenate([np.zeros(len(den) - len(num)), num])
-                f.write('	{\n')
-                f.write('		{ ')
-                for k in range(len(den)):
-                    f.write(str(den[k]))
-                    if k != len(den) - 1:
+                if len(den) == 1:
+                    f.write(str(num[0]/den[0]))
+                    if i == len(tfz) - 1:
+                        f.write(' };\n')
+                    else:
                         f.write(', ')
-                f.write(' },\n')
-                f.write('		{ ')
-                for k in range(len(num)):
-                    f.write(str(num[k]))
-                    if k != len(num) - 1:
-                        f.write(', ')
-                f.write(' },\n')
+                elif len(den) > 1:
+                    if len(den) - len(num) > 0:
+                        num = np.concatenate([np.zeros(len(den) - len(num)), num])
+                    f.write('	{\n')
+                    f.write('		{ ')
+                    for k in range(len(den)):
+                        f.write(str(den[k]))
+                        if k != len(den) - 1:
+                            f.write(', ')
+                    f.write(' },\n')
+                    f.write('		{ ')
+                    for k in range(len(num)):
+                        f.write(str(num[k]))
+                        if k != len(num) - 1:
+                            f.write(', ')
+                    f.write(' },\n')
                 if len(den) == 2:
                     f.write('		{ 0.0 },\n')
                     f.write('		{ 0.0 }\n')
@@ -941,11 +960,13 @@ def defprmset(tfz, prmSetName, path='.', ftype='cpp', mode='a'):
                 elif len(den) == 4:
                     f.write('		{ 0.0, 0.0, 0.0 },\n')
                     f.write('		{ 0.0, 0.0, 0.0 }\n')
-                if i == len(tfz) - 1:
-                    f.write('	}\n')
-                else:
-                    f.write('	},\n')
-            f.write('};\n')
+                if len(den) > 1:
+                    if i == len(tfz) - 1:
+                        f.write('	}\n')
+                    else:
+                        f.write('	},\n')
+            if len(den) > 1:
+                f.write('};\n')
 
             path_h = path + '/head_ctrlprm.h'
             with open(path_h) as reader:
@@ -954,6 +975,8 @@ def defprmset(tfz, prmSetName, path='.', ftype='cpp', mode='a'):
             with open(path_h, 'w') as writer:
                 writer.write(content)
             f = open(path_h, mode)
+            if len(den) == 1:
+                f.write('extern double	')
             if len(den) == 2:
                 f.write('extern TF1_INF	')
             elif len(den) == 3:
@@ -1026,6 +1049,8 @@ def defprmset(tfz, prmSetName, path='.', ftype='cpp', mode='a'):
             with open(path_h, 'w') as writer:
                 writer.write(content)
             f = open(path_h, mode)
+            if len(den) == 1:
+                f.write('extern double	')
             if len(den) == 2:
                 f.write('extern TF1_INF	')
             elif len(den) == 3:
@@ -1059,7 +1084,7 @@ def trdsim(r, t, Pnz, Cfbz, Cfilz=1, uff=None, Ndelay=0):
     if Ndelay is not 0:
         delay_buffer = np.zeros(Ndelay)
 
-    # Silulation loop like simulink
+    # Simulation loop like simulink
     for i in range(0, len(t)-1):
         e[i] = r[i] - y[i]
         ufb[i], zi_fb = lfilter(b_fb, a_fb, [e[i]], zi=zi_fb)   # FB controller
