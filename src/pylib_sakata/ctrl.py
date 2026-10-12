@@ -536,12 +536,18 @@ def nf(freq, zeta, depth, dt=None, method='matched'):
     TFs = np.array([matlab.tf([1.0], [1.0]) for i in range(len(freq))])
     TFz = np.array([matlab.tf([1.0], [1.0], dt) for i in range(len(freq))])
     for i in range(len(freq)):
-        TFs[i] = matlab.tf([1.0, 2.0 * depth[i] * zeta[i] * omega[i], omega[i] ** 2], [1.0, 2.0 * zeta[i] * omega[i], omega[i] ** 2])
+        if omega[i] == 0.0:
+            TFs[i] = matlab.tf([1], [1])
+        else:
+            TFs[i] = matlab.tf([1.0, 2.0 * depth[i] * zeta[i] * omega[i], omega[i] ** 2], [1.0, 2.0 * zeta[i] * omega[i], omega[i] ** 2])
     if dt == None:
         return TFs
     else:
         for i in range(len(freq)):
-            TFz[i] = c2d(TFs[i], dt, method=method)
+            if omega[i] == 0.0:
+                TFz[i] = matlab.tf([1.0, 0.0, 0.0], [1.0, 0.0, 0.0], dt)
+            else:
+                TFz[i] = matlab.c2d(TFs[i], dt, method=method)
         return TFz
 
 
@@ -553,12 +559,19 @@ def rf(freq, zeta, k, phi, dt=None, method='tustin'):
     TFs = np.array([matlab.tf([0.0], [1.0]) for i in range(len(freq))])
     TFz = np.array([matlab.tf([0.0], [1.0], dt) for i in range(len(freq))])
     for i in range(len(freq)):
-        TFs[i] = matlab.tf([k[i], -k[i] * phi[i], 0], [1.0, 2.0 * zeta[i] * omega[i], omega[i] ** 2])
+        if omega[i] == 0.0:
+            TFs[i] = matlab.tf([0], [1])
+        else:
+            TFs[i] = matlab.tf([k[i], -k[i] * phi[i], 0], [1.0, 2.0 * zeta[i] * omega[i], omega[i] ** 2])
     if dt == None:
         return TFs
     else:
         for i in range(len(freq)):
-            TFz[i] = c2d(TFs[i], dt, method=method)
+            if omega[i] == 0.0:
+                TFz[i] = matlab.tf([1.0, 0.0, 0.0], [1.0, 0.0, 0.0], dt)
+                TFz[i].num[0][0] = np.array([0.0, 0.0, 0.0])
+            else:
+                TFz[i] = matlab.c2d(TFs[i], dt, method=method)
         return TFz
 
 
@@ -584,7 +597,12 @@ def rfoptparam(freq, zeta, depth, sysT):
 
     norm_invT = np.sqrt(re_invT ** 2 + im_invT ** 2)
     phi = -omega * re_invT / im_invT
-    k = 2 * np.array(zeta) * omega * (1.0 / np.array(depth) - 1.0) / np.sqrt(phi ** 2 + omega ** 2) * norm_invT
+    k = [[] for i in range(len(freq))]
+    for i in range(len(freq)):
+        if omega[i] == 0.0:
+            k[i] = 0
+        else:
+            k[i] = 2 * zeta[i] * omega[i] * (1.0 / depth[i] - 1.0) / np.sqrt(phi[i] ** 2 + omega[i] ** 2) * norm_invT[i]
     for i in range(len(freq)):
         if (1 - 2.0 * zeta[i] * 2 <= 0):
             print('Warning: peak does not exit at the frequency.')
@@ -991,7 +1009,11 @@ def defprmset(tfz, prmSetName, path='.', ftype='cpp', mode='a'):
             f = open(path_cpp, mode)
             f.write('\n')
             den = tfz[0][0].den[0][0]
-            if len(den) == 2:
+            if len(den) == 1:
+                f.write('double	')
+                f.write(prmSetName)
+                f.write(' = { ')
+            elif len(den) == 2:
                 f.write('TF1_INF	')
                 f.write(prmSetName)
                 f.write(' = {\n')
@@ -1081,7 +1103,7 @@ def trdsim(r, t, Pnz, Cfbz, Cfilz=1, uff=None, Ndelay=0):
     zi_fb = np.zeros(max(len(a_fb), len(b_fb)) - 1)
     zi_fb_fil = np.zeros(max(len(a_fil), len(b_fil)) - 1)
 
-    if Ndelay is not 0:
+    if Ndelay != 0:
         delay_buffer = np.zeros(Ndelay)
 
     # Simulation loop like simulink
@@ -1094,7 +1116,7 @@ def trdsim(r, t, Pnz, Cfbz, Cfilz=1, uff=None, Ndelay=0):
         else:
             u[i] = ufb_fil[i] + uff[i]
 
-        if Ndelay is not 0:
+        if Ndelay != 0:
             srvout = delay_buffer[0]
             delay_buffer = np.roll(delay_buffer, -1)
             delay_buffer[-1] = u[i]
