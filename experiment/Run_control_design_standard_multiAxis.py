@@ -99,6 +99,8 @@ depthNF = [[0.01, 0.01],
            [0.01, 0],
            [0.01, 0],
            [0.01, 0]]
+if np.array_equal(np.array(freqNF).size, np.array(zetaNF).size, np.array(depthNF).size) == False:
+    print('NF parameter size is invalid!')
 NFz = [[] for i in range(axis_num)]
 NFz_frd = [[] for i in range(axis_num)]
 for i in range(axis_num):
@@ -110,7 +112,7 @@ print('Notch filters were designed.')
 
 # Design resonant filters
 print('Getting measurement data...')
-measfileName = 'data/freq_resp_2mass_20251029.csv'
+measfileName = 'data/freq_resp_2mass_20250902.csv'
 # Frequency response
 Pmeas_frd, coh = meas.measdata2frd(measfileName, 'ServoOutN[0]', 'ActPosUm[0]', 'FlagInject', freq, 1., 1.e-6, 8, 0.8)
 L_frd_nf = [[] for i in range(axis_num)]
@@ -139,6 +141,8 @@ depthRF = [[0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
            [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
            [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
            [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]]
+if np.array_equal(np.array(freqRF).size, np.array(zetaRF).size, np.array(depthRF).size) == False:
+    print('RF parameter size is invalid!')
 RFz = [[] for i in range(axis_num)]
 RFz_frd = [[] for i in range(axis_num)]
 for i in range(axis_num):
@@ -219,7 +223,7 @@ Czpetc_axes = [Czpetc[i] for i in range(axis_num)]
 ImpModel_axes = [ImpModel for i in range(axis_num)]
 Cz_Hap_axes = [Cz_Hap for i in range(axis_num)]
 
-ctrl.makeprmset(srcpathName, ftype, axis_num, len(NFz), len(RFz))
+ctrl.makeprmset(srcpathName, ftype, axis_num, len(NFz[0]), len(RFz[0]))
 ctrl.defprmset(Pmechz_axes, 'gstModelInf[AXIS_NUM]', srcpathName, ftype)
 ctrl.defprmset(Cz_PID_axes, 'gstPIDInf[AXIS_NUM]', srcpathName, ftype)
 ctrl.defprmset(Cz_PD_axes, 'gstPDInf[AXIS_NUM]', srcpathName, ftype)
